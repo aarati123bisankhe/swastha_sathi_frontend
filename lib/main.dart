@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/theme/app.dart';
-import 'package:swasthasathi/features/onboarding/presentation/pages/onboarding_screen.dart';
+import 'package:swasthasathi/app/features/splash/presentation/pages/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Swastha Sathi',
       theme: buildAppTheme(),
-      home: const OnboardingScreen(),
+      home: const SplashScreen(),
     );
   }
 }

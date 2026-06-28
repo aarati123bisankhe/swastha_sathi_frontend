@@ -1,0 +1,117 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/features/onboarding/data/datasources/local_onboarding_data_source.dart';
+
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  static const _dataSource = LocalOnboardingDataSource();
+
+  bool _showContent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        setState(() {
+          _showContent = true;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final content = _dataSource.getPageContent();
+
+    return Scaffold(
+      body: AnimatedOpacity(
+        opacity: _showContent ? 1 : 0,
+        duration: const Duration(milliseconds: 900),
+        curve: Curves.easeOut,
+        child: AnimatedScale(
+          scale: _showContent ? 1 : 0.98,
+          duration: const Duration(milliseconds: 900),
+          curve: Curves.easeOutBack,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(content.imageAssetPath, fit: BoxFit.cover),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 34),
+                  child: Column(
+                    children: [
+                      const Spacer(),
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 530),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF0E5DA8,
+                                  ).withValues(alpha: 0.1),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: FilledButton(
+                              onPressed: () {},
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: const Color(0xFF1674CB),
+                                minimumSize: const Size.fromHeight(64),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Text(
+                                    content.buttonLabel,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 0,
+                                    child: const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
