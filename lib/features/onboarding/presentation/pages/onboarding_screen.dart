@@ -53,21 +53,10 @@ class _BrandMark extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1E63B6).withValues(alpha: 0.12),
-              blurRadius: 28,
-              offset: const Offset(0, 16),
-            ),
-          ],
-        ),
-        child: Image.asset(
-          'assets/images/swasthasathi.png',
-          width: 430,
-          fit: BoxFit.contain,
-        ),
+      child: Image.asset(
+        'assets/images/logo.png',
+        width: 430,
+        fit: BoxFit.contain,
       ),
     );
   }
