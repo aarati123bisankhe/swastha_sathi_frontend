@@ -52,6 +52,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Column(
                     children: [
                       const Spacer(),
+                      _OnboardingProgressIndicator(
+                        currentIndex: content.pageIndex,
+                      ),
+                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 530),
@@ -110,6 +115,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _OnboardingProgressIndicator extends StatelessWidget {
+  const _OnboardingProgressIndicator({required this.currentIndex});
+
+  final int currentIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _IndicatorPill(isActive: currentIndex == 0),
+        const SizedBox(width: 6.5),
+        _IndicatorPill(isActive: currentIndex == 1),
+      ],
+    );
+  }
+}
+
+class _IndicatorPill extends StatelessWidget {
+  const _IndicatorPill({required this.isActive});
+
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      width: 14.5,
+      height: 6.5,
+      decoration: BoxDecoration(
+        color: isActive
+            ? Colors.white
+            : const Color(0xFFB0DEE6).withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(999),
       ),
     );
   }
