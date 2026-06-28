@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/onboarding/data/datasources/local_onboarding_data_source.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.pageIndex = 0});
+
+  final int pageIndex;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -29,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final content = _dataSource.getPageContent();
+    final content = _dataSource.getPageContent(widget.pageIndex);
 
     return Scaffold(
       body: AnimatedOpacity(
@@ -67,7 +69,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ],
                             ),
                             child: FilledButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                if (content.pageIndex == 0) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<void>(
+                                      builder: (context) =>
+                                          const OnboardingScreen(pageIndex: 1),
+                                    ),
+                                  );
+                                }
+                              },
                               style: FilledButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFF1674CB),
@@ -80,25 +91,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                                 elevation: 0,
                               ),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Text(
-                                    content.buttonLabel,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 0.2,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 0,
-                                    child: const Icon(
-                                      Icons.arrow_forward_rounded,
-                                      size: 32,
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                content.buttonLabel,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.2,
+                                ),
                               ),
                             ),
                           ),

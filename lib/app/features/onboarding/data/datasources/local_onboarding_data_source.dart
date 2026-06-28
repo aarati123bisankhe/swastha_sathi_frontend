@@ -3,10 +3,21 @@ import 'package:swasthasathi/app/features/onboarding/domain/entities/onboarding_
 class LocalOnboardingDataSource {
   const LocalOnboardingDataSource();
 
-  OnboardingPageContent getPageContent() {
-    return const OnboardingPageContent(
-      imageAssetPath: 'assets/images/onboarding_splash_1.png',
-      buttonLabel: 'Get Started',
-    );
+  OnboardingPageContent getPageContent(int pageIndex) {
+    switch (pageIndex) {
+      case 1:
+        return const OnboardingPageContent(
+          imageAssetPath: 'assets/images/onboarding_splash_2.png',
+          buttonLabel: 'Next',
+          pageIndex: 1,
+        );
+      case 0:
+      default:
+        return const OnboardingPageContent(
+          imageAssetPath: 'assets/images/onboarding_splash_1.png',
+          buttonLabel: 'Get Started',
+          pageIndex: 0,
+        );
+    }
   }
 }
