@@ -48,7 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Image.asset(content.imageAssetPath, fit: BoxFit.cover),
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 34),
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                   child: Column(
                     children: [
                       const Spacer(),
