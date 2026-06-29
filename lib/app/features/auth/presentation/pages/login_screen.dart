@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/features/auth/presentation/pages/sign_up_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -131,7 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) => const SignUpPage(),
+                        ),
+                      );
+                    },
                     style: TextButton.styleFrom(
                       foregroundColor: const Color(0xFF006FB7),
                       padding: EdgeInsets.zero,
