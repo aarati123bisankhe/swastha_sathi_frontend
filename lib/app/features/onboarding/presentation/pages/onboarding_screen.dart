@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/features/auth/presentation/pages/login_screen.dart';
 import 'package:swasthasathi/app/features/onboarding/data/datasources/local_onboarding_data_source.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -80,6 +81,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     MaterialPageRoute<void>(
                                       builder: (context) =>
                                           const OnboardingScreen(pageIndex: 1),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<void>(
+                                      builder: (context) => const LoginScreen(),
                                     ),
                                   );
                                 }
