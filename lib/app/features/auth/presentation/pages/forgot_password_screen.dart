@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/features/auth/presentation/pages/reset_password_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -20,14 +21,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void _sendResetLink() {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('Password reset instructions have been sent.'),
-        ),
-      );
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => const ResetPasswordScreen(),
+      ),
+    );
   }
 
   @override
