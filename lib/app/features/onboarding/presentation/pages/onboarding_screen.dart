@@ -94,9 +94,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               style: FilledButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFF1674CB),
-                                minimumSize: const Size.fromHeight(64),
+                                minimumSize: const Size.fromHeight(52),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
+                                  vertical: 10,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
