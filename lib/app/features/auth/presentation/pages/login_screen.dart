@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:swasthasathi/app/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:swasthasathi/app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:swasthasathi/app/features/auth/presentation/viewmodels/auth_view_model.dart';
 
@@ -141,7 +142,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) => const ForgotPasswordScreen(),
+                        ),
+                      );
+                    },
                     style: TextButton.styleFrom(
                       foregroundColor: const Color(0xFF006FB7),
                       padding: EdgeInsets.zero,
