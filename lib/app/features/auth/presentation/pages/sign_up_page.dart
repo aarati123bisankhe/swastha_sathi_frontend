@@ -280,7 +280,7 @@ class _AuthField extends StatelessWidget {
     required this.hintText,
     this.keyboardType,
     this.obscureText = false,
-    this.suffixIcon,
+    this.suffixIcon, //suffixicons
     this.validator,
   });
 
