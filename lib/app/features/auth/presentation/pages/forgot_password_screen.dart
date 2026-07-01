@@ -43,16 +43,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 20,
-                      color: Color(0xFF202020),
+                  child: Transform.translate(
+                    offset: const Offset(-14, 0),
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: const VisualDensity(
+                        horizontal: -4,
+                        vertical: -4,
+                      ),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 20,
+                        color: Color(0xFF202020),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 0),
                 Center(
                   child: Image.asset(
                     'assets/images/forgot_password_center.png',
@@ -60,7 +69,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 10),
                 Text(
                   'Forgot Password',
                   textAlign: TextAlign.center,
@@ -153,7 +162,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 28),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 26),
                   child: SizedBox(
