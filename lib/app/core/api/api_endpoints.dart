@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 class ApiEndpoints {
   ApiEndpoints._();
-  static const int port = 6060;
+  static const int port = 6000;
 
   // Runtime overrides:
   // 1) Physical devices (Android + iOS):
@@ -88,8 +88,13 @@ class ApiEndpoints {
       return apiHostIos.trim();
     }
 
-    // Physical-device-first default.
-    // This avoids "localhost connection refused" on real phone.
+    // Android emulators reach the host machine through 10.0.2.2.
+    if (Platform.isAndroid) return '10.0.2.2';
+
+    // iOS simulators can use localhost directly.
+    if (Platform.isIOS) return 'localhost';
+
+    // Desktop and physical-device fallback.
     return computerIpAddress;
   }
 

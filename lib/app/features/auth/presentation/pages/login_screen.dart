@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swasthasathi/app/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:swasthasathi/app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:swasthasathi/app/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/dashboard_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -33,19 +34,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final authState = ref.read(authViewModelProvider);
     final message = authState.errorMessage ?? authState.successMessage;
+
     if (message != null && message.isNotEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(message)));
     }
 
-    if (success) return;
+    if (!success || authState.currentUser == null) return;
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (context) => DashboardScreen(user: authState.currentUser),
+      ),
+    );
   }
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose(); //password dipose
+    _passwordController.dispose();
     super.dispose();
   }
 
