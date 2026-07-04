@@ -405,40 +405,44 @@ class EmergencyScreen extends StatelessWidget {
               const SizedBox(height: 6),
 
               Transform.translate(
-                offset: const Offset(0, -45),
+                offset: const Offset(0, -65),
                 child: const _EmergencyActionGrid(),
               ),
 
-              const SizedBox(height: 30),
-
-              const Text(
-                'Emergency Contacts',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                ),
-              ),
-
-              const SizedBox(height: 18),
-
-              const SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
+              Transform.translate(
+                offset: const Offset(0, -40),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _EmergencyContactCard(
-                      title: 'Family\nContact',
-                      avatar: Icons.face_4_outlined,
+                    Text(
+                      'Emergency Contacts',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
                     ),
-                    SizedBox(width: 14),
-                    _EmergencyContactCard(
-                      title: 'Nearby\nHospital',
-                      avatar: Icons.local_hospital_outlined,
-                    ),
-                    SizedBox(width: 14),
-                    _EmergencyContactCard(
-                      title: 'Local Health\nWorker',
-                      avatar: Icons.health_and_safety_outlined,
+                    SizedBox(height: 18),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _EmergencyContactCard(
+                            title: 'Family\nContact',
+                            avatar: Icons.face_4_outlined,
+                          ),
+                          SizedBox(width: 12),
+                          _EmergencyContactCard(
+                            title: 'Nearby\nHospital',
+                            avatar: Icons.local_hospital_outlined,
+                          ),
+                          SizedBox(width: 12),
+                          _EmergencyContactCard(
+                            title: 'Local Health\nWorker',
+                            avatar: Icons.health_and_safety_outlined,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -463,7 +467,7 @@ class _EmergencyHero extends StatelessWidget {
     return SizedBox(
       height: 260,
       child: Transform.translate(
-        offset: const Offset(0, -38),
+        offset: const Offset(0, -49),
         child: Center(
           child: Image.asset(
             'assets/images/emergency_sos_center.png',
@@ -487,7 +491,7 @@ class _EmergencyActionGrid extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 4,
+              flex: 3,
               child: _EmergencyActionCard(
                 title: 'Call\nAmbulance',
                 icon: Icons.emergency,
@@ -673,16 +677,16 @@ class _EmergencyContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 182,
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+      width: 115,
+      padding: const EdgeInsets.fromLTRB(8.8, 8.8, 8.8, 8.2),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(13),
         boxShadow: const [
           BoxShadow(
             color: Color(0x29000000),
-            blurRadius: 10,
-            offset: Offset(0, 6),
+            blurRadius: 6,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -692,21 +696,21 @@ class _EmergencyContactCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 9.8,
               height: 1.15,
               fontWeight: FontWeight.w700,
               color: Colors.black,
             ),
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 7),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: 54,
-                height: 54,
+                width: 34,
+                height: 34,
                 decoration: BoxDecoration(
                   color: const Color(0xFFF7F7F7),
                   shape: BoxShape.circle,
@@ -714,14 +718,14 @@ class _EmergencyContactCard extends StatelessWidget {
                 ),
                 child: Icon(
                   avatar,
-                  size: 30,
+                  size: 17.5,
                   color: const Color(0xFF2A5B9B),
                 ),
               ),
 
               Container(
-                width: 56,
-                height: 56,
+                width: 36,
+                height: 36,
                 decoration: const BoxDecoration(
                   color: Color(0xFF166EF3),
                   shape: BoxShape.circle,
@@ -729,7 +733,7 @@ class _EmergencyContactCard extends StatelessWidget {
                 child: const Icon(
                   Icons.call,
                   color: Colors.white,
-                  size: 28,
+                  size: 15.5,
                 ),
               ),
             ],
