@@ -38,7 +38,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
   String? _selectedDistrict;
   String? _selectedBloodGroup;
 
@@ -279,10 +279,9 @@ class _AuthField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     this.keyboardType,
-    this.obscureText = false,
-    this.suffixIcon, //suffixicons
+    this.obscureText = false, //suffixicons
     this.validator,
-  });
+  }) : suffixIcon = null;
 
   final TextEditingController controller;
   final String hintText;

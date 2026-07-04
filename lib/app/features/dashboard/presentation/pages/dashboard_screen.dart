@@ -658,7 +658,7 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -681,7 +681,7 @@ class DashboardScreen extends StatelessWidget {
                         const Text(
                           'Take care, stay healthy!',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 14,
                             color: Colors.black87,
                             fontWeight: FontWeight.w400,
                           ),
@@ -690,18 +690,18 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.only(top: 0),
+                    padding: const EdgeInsets.all(4),
                     child: const Icon(
                       Icons.notifications,
                       color: Color(0xFF15396B),
-                      size: 34,
+                      size: 26,
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 0),
+              const SizedBox(height: 3),
 
               _StatusCard(bloodGroup: bloodGroup),
 
@@ -726,10 +726,10 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 0),
 
               Transform.translate(
-                offset: const Offset(0, -25),
+                offset: const Offset(0, -29),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    final tileWidth = (constraints.maxWidth - 36) / 4;
+                    final tileWidth = (constraints.maxWidth - 39) / 4;
 
                     return Wrap(
                       spacing: 12,
@@ -766,96 +766,102 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 10),
+              Transform.translate(
+                offset: const Offset(0, -10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Health Features',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
 
-              const Text(
-                'Health Features',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF333333),
+                    const SizedBox(height: 12),
+
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const firstRowSpacing = 10.67;
+                        const secondRowSpacing = 16.0;
+
+                        final firstRowWidth =
+                            (constraints.maxWidth - (firstRowSpacing * 3)) / 4;
+
+                        final secondRowWidth =
+                            (constraints.maxWidth - secondRowSpacing) / 4;
+
+                        return Column(
+                          children: [
+                            Row(
+                              children: const [
+                                _FeatureTile(
+                                  title: 'Symptom\nChecker',
+                                  icon: Icons.health_and_safety,
+                                  iconColor: Color(0xFF1E88E5),
+                                ),
+                                _FeatureTile(
+                                  title: 'First Aid\nGuide',
+                                  icon: Icons.medical_services,
+                                  iconColor: Color(0xFFFF2D55),
+                                ),
+                                _FeatureTile(
+                                  title: 'Hospital',
+                                  icon: Icons.local_hospital,
+                                  iconColor: Color(0xFF1E88E5),
+                                ),
+                                _FeatureTile(
+                                  title: 'Doctor',
+                                  icon: Icons.person,
+                                  iconColor: Color(0xFF12B886),
+                                ),
+                              ].asMap().entries.map((entry) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    right: entry.key == 3 ? 0 : firstRowSpacing,
+                                  ),
+                                  child: SizedBox(
+                                    width: firstRowWidth,
+                                    child: entry.value,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: secondRowWidth,
+                                  child: const _FeatureTile(
+                                    title: 'Health\nRecord',
+                                    icon: Icons.assignment,
+                                    iconColor: Color(0xFF7C4DFF),
+                                  ),
+                                ),
+                                const SizedBox(width: secondRowSpacing),
+                                SizedBox(
+                                  width: secondRowWidth,
+                                  child: const _FeatureTile(
+                                    title: 'Awareness\nVideo',
+                                    icon: Icons.videocam,
+                                    iconColor: Color(0xFF7C4DFF),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
 
-              const SizedBox(height: 18),
-
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  const firstRowSpacing = 10.67;
-                  const secondRowSpacing = 16.0;
-
-                  final firstRowWidth =
-                      (constraints.maxWidth - (firstRowSpacing * 3)) / 4;
-
-                  final secondRowWidth =
-                      (constraints.maxWidth - secondRowSpacing) / 4;
-
-                  return Column(
-                    children: [
-                      Row(
-                        children: const [
-                          _FeatureTile(
-                            title: 'Symptom\nChecker',
-                            icon: Icons.health_and_safety,
-                            iconColor: Color(0xFF1E88E5),
-                          ),
-                          _FeatureTile(
-                            title: 'First Aid\nGuide',
-                            icon: Icons.medical_services,
-                            iconColor: Color(0xFFFF2D55),
-                          ),
-                          _FeatureTile(
-                            title: 'Hospital',
-                            icon: Icons.local_hospital,
-                            iconColor: Color(0xFF1E88E5),
-                          ),
-                          _FeatureTile(
-                            title: 'Doctor',
-                            icon: Icons.person,
-                            iconColor: Color(0xFF12B886),
-                          ),
-                        ].asMap().entries.map((entry) {
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              right: entry.key == 3 ? 0 : firstRowSpacing,
-                            ),
-                            child: SizedBox(
-                              width: firstRowWidth,
-                              child: entry.value,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: secondRowWidth,
-                            child: const _FeatureTile(
-                              title: 'Health\nRecord',
-                              icon: Icons.assignment,
-                              iconColor: Color(0xFF7C4DFF),
-                            ),
-                          ),
-                          const SizedBox(width: secondRowSpacing),
-                          SizedBox(
-                            width: secondRowWidth,
-                            child: const _FeatureTile(
-                              title: 'Awareness\nVideo',
-                              icon: Icons.videocam,
-                              iconColor: Color(0xFF7C4DFF),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
-
-              const SizedBox(height: 26),
+              const SizedBox(height: 8),
 
               const _HealthTipCard(),
             ],
@@ -970,10 +976,10 @@ class _ActionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+      height: 96,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         gradient: LinearGradient(
           colors: colors,
           begin: Alignment.topLeft,
@@ -992,11 +998,11 @@ class _ActionTile extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 34,
+            size: 28,
             color: Colors.white,
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
           Flexible(
             child: Text(
@@ -1005,7 +1011,7 @@ class _ActionTile extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 12.5,
+                fontSize: 11,
                 height: 1.1,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -1032,11 +1038,11 @@ class _FeatureTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 132,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      height: 89,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: const [
           BoxShadow(
             color: Color(0x26000000),
@@ -1050,17 +1056,17 @@ class _FeatureTile extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 38,
+            size: 26,
             color: iconColor,
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 6),
 
           Text(
             title,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 10.5,
               height: 1.12,
               color: Colors.black,
               fontWeight: FontWeight.w500,
@@ -1094,7 +1100,7 @@ class _HealthTipCardState extends State<_HealthTipCard> {
     return Column(
       children: [
         SizedBox(
-          height: 150,
+          height: 128,
           child: PageView.builder(
             itemCount: tips.length,
             onPageChanged: (index) {
@@ -1105,7 +1111,7 @@ class _HealthTipCardState extends State<_HealthTipCard> {
             itemBuilder: (context, index) {
               return Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(22, 18, 18, 16),
+                padding: const EdgeInsets.fromLTRB(18, 14, 16, 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(26),
                   gradient: const LinearGradient(
@@ -1123,6 +1129,19 @@ class _HealthTipCardState extends State<_HealthTipCard> {
                 ),
                 child: Row(
                   children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: Image.asset(
+                        'assets/images/health_tip_side.png',
+                        width: 74,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.centerLeft,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1132,13 +1151,13 @@ class _HealthTipCardState extends State<_HealthTipCard> {
                               Icon(
                                 Icons.spa,
                                 color: Color(0xFF1D9A5A),
-                                size: 24,
+                                size: 19,
                               ),
                               SizedBox(width: 10),
                               Text(
                                 'Daily Health Tip',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFF21895A),
                                 ),
@@ -1151,7 +1170,7 @@ class _HealthTipCardState extends State<_HealthTipCard> {
                           Text(
                             tips[index],
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               height: 1.5,
                               color: Color(0xFF676767),
                               fontWeight: FontWeight.w500,
@@ -1159,14 +1178,6 @@ class _HealthTipCardState extends State<_HealthTipCard> {
                           ),
                         ],
                       ),
-                    ),
-
-                    const SizedBox(width: 10),
-
-                    const Icon(
-                      Icons.local_drink_outlined,
-                      size: 72,
-                      color: Color(0xFF56BFFF),
                     ),
                   ],
                 ),
@@ -1209,38 +1220,41 @@ class _DashboardBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 82,
+      height: 79,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(22),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: const [
-          _BottomNavItem(
-            icon: Icons.home,
-            label: 'Home',
-            active: true,
-          ),
-          _BottomNavItem(
-            icon: Icons.call,
-            label: 'Emergency',
-          ),
-          _BottomNavItem(
-            icon: Icons.headset_mic,
-            label: 'Support',
-          ),
-          _BottomNavItem(
-            icon: Icons.assignment_outlined,
-            label: 'Record',
-          ),
-          _BottomNavItem(
-            icon: Icons.person,
-            label: 'Profile',
-          ),
-        ],
+      child: Transform.translate(
+        offset: const Offset(0, -7),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _BottomNavItem(
+              icon: Icons.home,
+              label: 'Home',
+              active: true,
+            ),
+            _BottomNavItem(
+              icon: Icons.call,
+              label: 'Emergency',
+            ),
+            _BottomNavItem(
+              icon: Icons.headset_mic,
+              label: 'Support',
+            ),
+            _BottomNavItem(
+              icon: Icons.assignment_outlined,
+              label: 'Record',
+            ),
+            _BottomNavItem(
+              icon: Icons.person,
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
