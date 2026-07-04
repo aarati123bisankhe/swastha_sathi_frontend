@@ -865,7 +865,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 5),
 
               Transform.translate(
-                offset: const Offset(0, -19),
+                offset: const Offset(0, -23),
                 child: const _HealthTipCard(),
               ),
             ],
