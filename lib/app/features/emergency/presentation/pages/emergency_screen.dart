@@ -411,7 +411,7 @@ class EmergencyScreen extends StatelessWidget {
 
               Transform.translate(
                 offset: const Offset(0, -40),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -429,19 +429,23 @@ class EmergencyScreen extends StatelessWidget {
                         children: [
                           _EmergencyContactCard(
                             title: 'Family\nContact',
-                            avatar: Icon(
-                              Icons.face_4_outlined,
-                              size: 17.5,
-                              color: Color(0xFF2A5B9B),
+                            avatar: ClipOval(
+                              child: Image.asset(
+                                'assets/images/family_contact_avatar.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
                             title: 'Nearby\nHospital',
-                            avatar: Icon(
-                              Icons.local_hospital_outlined,
-                              size: 17.5,
-                              color: Color(0xFF2A5B9B),
+                            avatar: Image.asset(
+                              'assets/images/hospital_contact_icon.png',
+                              width: 27,
+                              height: 27,
+                              fit: BoxFit.contain,
                             ),
                           ),
                           SizedBox(width: 12),
