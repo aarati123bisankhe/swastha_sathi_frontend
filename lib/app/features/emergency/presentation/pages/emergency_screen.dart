@@ -429,17 +429,28 @@ class EmergencyScreen extends StatelessWidget {
                         children: [
                           _EmergencyContactCard(
                             title: 'Family\nContact',
-                            avatar: Icons.face_4_outlined,
+                            avatar: Icon(
+                              Icons.face_4_outlined,
+                              size: 17.5,
+                              color: Color(0xFF2A5B9B),
+                            ),
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
                             title: 'Nearby\nHospital',
-                            avatar: Icons.local_hospital_outlined,
+                            avatar: Icon(
+                              Icons.local_hospital_outlined,
+                              size: 17.5,
+                              color: Color(0xFF2A5B9B),
+                            ),
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
                             title: 'Local Health\nWorker',
-                            avatar: Icons.health_and_safety_outlined,
+                            avatar: Text(
+                              '🧑‍⚕️',
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
                         ],
                       ),
@@ -672,7 +683,7 @@ class _EmergencyContactCard extends StatelessWidget {
   });
 
   final String title;
-  final IconData avatar;
+  final Widget avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -716,11 +727,7 @@ class _EmergencyContactCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: const Color(0xFFDDDDDD)),
                 ),
-                child: Icon(
-                  avatar,
-                  size: 17.5,
-                  color: const Color(0xFF2A5B9B),
-                ),
+                child: Center(child: avatar),
               ),
 
               Container(
