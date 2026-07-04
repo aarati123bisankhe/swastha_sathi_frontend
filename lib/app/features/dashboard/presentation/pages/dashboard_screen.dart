@@ -726,7 +726,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 0),
 
               Transform.translate(
-                offset: const Offset(0, -29),
+                offset: const Offset(0, -31),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final tileWidth = (constraints.maxWidth - 39) / 4;
@@ -767,7 +767,7 @@ class DashboardScreen extends StatelessWidget {
               ),
 
               Transform.translate(
-                offset: const Offset(0, -10),
+                offset: const Offset(0, -17),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -780,7 +780,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
 
                     LayoutBuilder(
                       builder: (context, constraints) {
@@ -861,9 +861,12 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 5),
 
-              const _HealthTipCard(),
+              Transform.translate(
+                offset: const Offset(0, -19),
+                child: const _HealthTipCard(),
+              ),
             ],
           ),
         ),
@@ -1100,7 +1103,7 @@ class _HealthTipCardState extends State<_HealthTipCard> {
     return Column(
       children: [
         SizedBox(
-          height: 128,
+          height: 120,
           child: PageView.builder(
             itemCount: tips.length,
             onPageChanged: (index) {
@@ -1109,106 +1112,18 @@ class _HealthTipCardState extends State<_HealthTipCard> {
               });
             },
             itemBuilder: (context, index) {
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(18, 14, 16, 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(26),
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFEFFAF0),
-                      Color(0xFFF7FBF1),
-                      Color(0xFFE5F7E8),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  border: Border.all(
-                    color: Color(0xFFE0F0E1),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
-                      child: Image.asset(
-                        'assets/images/health_tip_side.png',
-                        width: 74,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.centerLeft,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Icon(
-                                Icons.spa,
-                                color: Color(0xFF1D9A5A),
-                                size: 19,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                'Daily Health Tip',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF21895A),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          Text(
-                            tips[index],
-                            style: const TextStyle(
-                              fontSize: 12,
-                              height: 1.5,
-                              color: Color(0xFF676767),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(26),
+                child: Image.asset(
+                  'assets/images/daily_health_tip_banner.png',
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               );
             },
           ),
         ),
 
-        const SizedBox(height: 10),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            tips.length,
-            (index) {
-              final isActive = currentIndex == index;
-
-              return Container(
-                width: isActive ? 10 : 8,
-                height: isActive ? 10 : 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: isActive
-                      ? const Color(0xFF18A74B)
-                      : const Color(0xFFD7DDDD),
-                  shape: BoxShape.circle,
-                ),
-              );
-            },
-          ),
-        ),
       ],
     );
   }
