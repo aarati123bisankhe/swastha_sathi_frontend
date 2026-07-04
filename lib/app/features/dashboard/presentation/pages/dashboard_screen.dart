@@ -641,6 +641,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key, this.user});
@@ -871,7 +872,10 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const _DashboardBottomNav(),
+      bottomNavigationBar: DashboardBottomNav(
+        activeTab: DashboardNavTab.home,
+        user: user,
+      ),
     );
   }
 
@@ -1124,91 +1128,6 @@ class _HealthTipCardState extends State<_HealthTipCard> {
           ),
         ),
 
-      ],
-    );
-  }
-}
-
-class _DashboardBottomNav extends StatelessWidget {
-  const _DashboardBottomNav();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 79,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(22),
-        ),
-      ),
-      child: Transform.translate(
-        offset: const Offset(0, -7),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _BottomNavItem(
-              icon: Icons.home,
-              label: 'Home',
-              active: true,
-            ),
-            _BottomNavItem(
-              icon: Icons.call,
-              label: 'Emergency',
-            ),
-            _BottomNavItem(
-              icon: Icons.headset_mic,
-              label: 'Support',
-            ),
-            _BottomNavItem(
-              icon: Icons.assignment_outlined,
-              label: 'Record',
-            ),
-            _BottomNavItem(
-              icon: Icons.person,
-              label: 'Profile',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomNavItem extends StatelessWidget {
-  const _BottomNavItem({
-    required this.icon,
-    required this.label,
-    this.active = false,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = active ? const Color(0xFF0B73E8) : const Color(0xFF183B66);
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          size: 30,
-          color: color,
-        ),
-
-        const SizedBox(height: 3),
-
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: active ? color : Colors.black,
-          ),
-        ),
       ],
     );
   }
