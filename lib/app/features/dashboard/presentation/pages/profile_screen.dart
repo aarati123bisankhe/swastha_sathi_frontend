@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(22, 24, 22, 120),
+          padding: const EdgeInsets.fromLTRB(22, 12, 22, 120),
           child: Column(
             children: [
               const Text(
@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                   color: Color(0xFF24229A),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
               const _ProfileAvatar(),
               const SizedBox(height: 15),
               Text(
@@ -55,31 +55,31 @@ class ProfileScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: Color(0xFF434A51)),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 9),
               _ProfileStatsCard(
                 bloodGroup: bloodGroup,
                 district: district,
                 phoneNumber: phoneNumber,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               const _ProfileMenuCard(
                 icon: Icons.person_rounded,
                 iconBackground: Color(0xFF1E88F7),
                 title: 'Personal Information',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               const _ProfileMenuCard(
                 icon: Icons.medical_services_rounded,
                 iconBackground: Color(0xFF16BF70),
                 title: 'Health Record',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               const _ProfileMenuCard(
                 icon: Icons.language_rounded,
                 iconBackground: Color(0xFFFF8A00),
                 title: 'Language Setting',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               const _ProfileToggleCard(),
               const SizedBox(height: 26),
               const _LogoutButton(),
@@ -283,7 +283,7 @@ class _ProfileMenuCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
@@ -298,13 +298,13 @@ class _ProfileMenuCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: iconBackground,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Colors.white, size: 26),
+            child: Icon(icon, color: Colors.white, size: 19),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -335,7 +335,7 @@ class _ProfileToggleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
@@ -349,7 +349,12 @@ class _ProfileToggleCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Text('🌙', style: TextStyle(fontSize: 28)),
+          Container(
+            width: 34,
+            height: 34,
+            alignment: Alignment.center,
+            child: const Text('🌙', style: TextStyle(fontSize: 19)),
+          ),
           const SizedBox(width: 14),
           const Expanded(
             child: Text(
@@ -362,17 +367,17 @@ class _ProfileToggleCard extends StatelessWidget {
             ),
           ),
           Container(
-            width: 76,
-            height: 42,
+            width: 68,
+            height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: const Color(0xFF6D4FB3),
-              borderRadius: BorderRadius.circular(21),
+              borderRadius: BorderRadius.circular(18),
             ),
             alignment: Alignment.centerRight,
             child: Container(
-              width: 34,
-              height: 34,
+              width: 28,
+              height: 28,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
