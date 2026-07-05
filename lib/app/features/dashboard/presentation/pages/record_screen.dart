@@ -38,9 +38,9 @@ class RecordScreen extends StatelessWidget {
                 bloodGroup: bloodGroup,
                 emergencyNumber: emergencyNumber,
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 15),
               const _RecentActivityCard(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               const Row(
                 children: [
                   Expanded(
@@ -191,14 +191,6 @@ class _ProfileSummaryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  emergencyNumber,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF51606D),
-                  ),
-                ),
               ],
             ),
           ),
@@ -283,6 +275,7 @@ class _RecordInfoGrid extends StatelessWidget {
                 iconColor: const Color(0xFFE21818),
                 title: 'Blood Group',
                 subtitle: bloodGroup,
+                cardHeight: 84,
               ),
             ),
             const SizedBox(width: 16),
@@ -292,7 +285,8 @@ class _RecordInfoGrid extends StatelessWidget {
                 iconBackground: Color(0xFFE3E3A9),
                 iconColor: Color(0xFF121212),
                 title: 'Allergies',
-                subtitle: 'Dust Mite Allergy',
+                subtitle: 'Dust Mit Allergy',
+                cardHeight: 84,
               ),
             ),
           ],
@@ -334,6 +328,7 @@ class _RecordInfoCard extends StatelessWidget {
     required this.iconColor,
     required this.title,
     required this.subtitle,
+    this.cardHeight = 98,
     this.compactTitle = false,
   });
 
@@ -342,21 +337,22 @@ class _RecordInfoCard extends StatelessWidget {
   final Color iconColor;
   final String title;
   final String subtitle;
+  final double cardHeight;
   final bool compactTitle;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 136,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      height: cardHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: const Color(0xFFF9F4F4),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
             color: Color(0x24000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            blurRadius: 8,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -364,43 +360,47 @@ class _RecordInfoCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 58,
-            height: 58,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
               color: iconBackground,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 34),
+            child: Icon(icon, color: iconColor, size: 30),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: compactTitle ? 12.5 : 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF35383D),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF35383D),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  subtitle,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: compactTitle ? 11.5 : 12.5,
-                    height: 1.25,
-                    color: const Color(0xFF35383D),
-                    fontWeight: compactTitle
-                        ? FontWeight.w500
-                        : FontWeight.w400,
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: compactTitle ? 11.5 : 11.5,
+                      height: 1.25,
+                      color: const Color(0xFF35383D),
+                      fontWeight: compactTitle
+                          ? FontWeight.w500
+                          : FontWeight.w400,
+                    ),
                   ),
-                ),
-              ],
+                  const Spacer(),
+                ],
+              ),
             ),
           ),
         ],
@@ -427,7 +427,7 @@ class _RecentActivityCard extends StatelessWidget {
           Text(
             'Recent Health Activity',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
               color: Color(0xFF24229A),
             ),
@@ -473,19 +473,19 @@ class _ActivityItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
               color: iconBackground,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: const Color(0xFF303030), size: 30),
+            child: Icon(icon, color: const Color(0xFF303030), size: 22),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -493,16 +493,16 @@ class _ActivityItem extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF35383D),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   subtitle,
                   style: const TextStyle(
-                    fontSize: 12.5,
+                    fontSize: 10.5,
                     color: Color(0xFF454B52),
                   ),
                 ),
