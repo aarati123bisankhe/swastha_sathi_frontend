@@ -12,7 +12,7 @@ class NotificationScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 74, 20, 32),
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
@@ -30,16 +30,16 @@ class NotificationScreen extends StatelessWidget {
                 icon: Icons.bloodtype,
                 iconColor: Color(0xFFE11B1B),
               ),
-              SizedBox(height: 28),
+              SizedBox(height: 16),
               _NotificationCard(
                 title: 'Emergency Help Request',
                 subtitle: 'Patient need ambulance support near\nkathmandu',
                 timeLabel: '5 min ago',
                 cardColor: Color(0xFFEBD9D9),
                 borderColor: Color(0xFFFF8D8D),
-                iconAsset: 'assets/images/ambulance_icon.png',
+                emoji: '🚑',
               ),
-              SizedBox(height: 28),
+              SizedBox(height: 16),
               _NotificationCard(
                 title: 'Vaccination Camp',
                 subtitle: 'Free vaccination program available this\nsunday',
@@ -49,7 +49,7 @@ class NotificationScreen extends StatelessWidget {
                 icon: Icons.vaccines_rounded,
                 iconColor: Color(0xFF7FA7D7),
               ),
-              SizedBox(height: 28),
+              SizedBox(height: 16),
               _NotificationCard(
                 title: 'Health Camp Alert',
                 subtitle: 'Free health checkup camp at local community\nCenter',
@@ -59,7 +59,7 @@ class NotificationScreen extends StatelessWidget {
                 icon: Icons.local_hospital_rounded,
                 iconColor: Color(0xFF84959B),
               ),
-              SizedBox(height: 28),
+              SizedBox(height: 16),
               _NotificationCard(
                 title: 'Pregnancy Awareness Program',
                 subtitle:
@@ -84,8 +84,19 @@ class _NotificationHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Expanded(
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: const Padding(
+            padding: EdgeInsets.only(top: 8, right: 10),
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF193767),
+              size: 24,
+            ),
+          ),
+        ),
+        const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -109,7 +120,7 @@ class _NotificationHeader extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 4),
           child: Icon(Icons.notifications, color: Color(0xFF193767), size: 30),
         ),
@@ -127,7 +138,7 @@ class _NotificationFilterRow extends StatelessWidget {
       children: const [
         SizedBox(
           width: 95,
-          height: 46,
+          height: 38,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Color(0xFF1E84EA),
@@ -168,7 +179,6 @@ class _NotificationCard extends StatelessWidget {
     required this.borderColor,
     this.icon,
     this.iconColor,
-    this.iconAsset,
     this.emoji,
   });
 
@@ -179,21 +189,13 @@ class _NotificationCard extends StatelessWidget {
   final Color borderColor;
   final IconData? icon;
   final Color? iconColor;
-  final String? iconAsset;
   final String? emoji;
 
   @override
   Widget build(BuildContext context) {
     Widget avatarChild;
 
-    if (iconAsset != null) {
-      avatarChild = Image.asset(
-        iconAsset!,
-        width: 28,
-        height: 28,
-        fit: BoxFit.contain,
-      );
-    } else if (emoji != null) {
+    if (emoji != null) {
       avatarChild = Text(emoji!, style: const TextStyle(fontSize: 28));
     } else {
       avatarChild = Icon(icon, color: iconColor, size: 30);
@@ -201,16 +203,16 @@ class _NotificationCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 16, 16, 18),
+      padding: const EdgeInsets.fromLTRB(12, 7, 12, 9),
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: borderColor, width: 1.6),
         boxShadow: const [
           BoxShadow(
             color: Color(0x22000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            blurRadius: 8,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -221,51 +223,54 @@ class _NotificationCard extends StatelessWidget {
             child: Text(
               timeLabel,
               style: const TextStyle(
-                fontSize: 11,
+                fontSize: 9,
                 color: Color(0xFF5F5F5F),
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: borderColor, width: 1.2),
+          Transform.translate(
+            offset: const Offset(0, -6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: borderColor, width: 1.2),
+                  ),
+                  child: Center(child: avatarChild),
                 ),
-                child: Center(child: avatarChild),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF2F3134),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF2F3134),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        fontSize: 13.2,
-                        height: 1.25,
-                        color: Color(0xFF393B3E),
+                      const SizedBox(height: 1),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          fontSize: 10.4,
+                          height: 1.25,
+                          color: Color(0xFF393B3E),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
