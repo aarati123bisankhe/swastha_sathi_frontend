@@ -81,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 14),
               const _ProfileToggleCard(),
-              const SizedBox(height: 26),
+              const SizedBox(height: 16),
               const _LogoutButton(),
             ],
           ),
