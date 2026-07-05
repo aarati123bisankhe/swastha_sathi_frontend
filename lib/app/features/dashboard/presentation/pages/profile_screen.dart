@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
@@ -95,27 +98,127 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-class _ProfileAvatar extends StatelessWidget {
+class _ProfileAvatar extends StatefulWidget {
   const _ProfileAvatar();
 
   @override
+  State<_ProfileAvatar> createState() => _ProfileAvatarState();
+}
+
+class _ProfileAvatarState extends State<_ProfileAvatar> {
+  final ImagePicker _picker = ImagePicker();
+  XFile? _selectedImage;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final image = await _picker.pickImage(source: source);
+    if (image == null || !mounted) return;
+
+    setState(() {
+      _selectedImage = image;
+    });
+  }
+
+  Future<void> _showImageOptions() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Choose Profile Photo',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF24229A),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                ListTile(
+                  leading: const Icon(Icons.photo_camera_rounded),
+                  title: const Text('Take Photo'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_rounded),
+                  title: const Text('Choose from Gallery'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 134,
-      height: 134,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [Color(0xFF9EC0F2), Color(0xFF87A6D9)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        GestureDetector(
+          onTap: _showImageOptions,
+          child: Container(
+            width: 134,
+            height: 134,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [Color(0xFF9EC0F2), Color(0xFF87A6D9)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: ClipOval(
+              child: _selectedImage != null
+                  ? Image.file(File(_selectedImage!.path), fit: BoxFit.cover)
+                  : const Icon(
+                      Icons.person_rounded,
+                      size: 82,
+                      color: Color(0xFF4B2C22),
+                    ),
+            ),
+          ),
         ),
-      ),
-      child: const Icon(
-        Icons.person_rounded,
-        size: 82,
-        color: Color(0xFF4B2C22),
-      ),
+        Positioned(
+          right: -2,
+          bottom: -2,
+          child: GestureDetector(
+            onTap: _showImageOptions,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFF2287EE),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 3),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x22000000),
+                    blurRadius: 8,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.photo_camera_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
