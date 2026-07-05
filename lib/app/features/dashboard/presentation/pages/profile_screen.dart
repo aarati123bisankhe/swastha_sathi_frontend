@@ -101,8 +101,8 @@ class _ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
-      height: 150,
+      width: 134,
+      height: 134,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
@@ -113,7 +113,7 @@ class _ProfileAvatar extends StatelessWidget {
       ),
       child: const Icon(
         Icons.person_rounded,
-        size: 92,
+        size: 82,
         color: Color(0xFF4B2C22),
       ),
     );
@@ -227,34 +227,34 @@ class _ProfileInfoItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: 34,
+          height: 34,
           decoration: BoxDecoration(
             color: iconBackground,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: iconColor, size: 21),
+          child: Icon(icon, color: iconColor, size: 18),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 2),
+            padding: const EdgeInsets.only(top: 1),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF4A5056),
                   ),
                 ),
-                const SizedBox(height: 1),
+                const SizedBox(height: 0.5),
                 Text(
                   subtitle,
                   style: const TextStyle(
-                    fontSize: 10.5,
+                    fontSize: 9.5,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
                   ),
