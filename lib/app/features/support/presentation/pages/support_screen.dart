@@ -19,16 +19,16 @@ class SupportScreen extends StatelessWidget {
             children: const [
               _SupportHeader(),
 
-              SizedBox(height: 46),
+              SizedBox(height: 0),
 
               _SupportActionGrid(),
 
-              SizedBox(height: 62),
+              SizedBox(height: 10),
 
               Text(
                 'Quick Help Topics',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: Color(0xFF184D81),
                 ),
