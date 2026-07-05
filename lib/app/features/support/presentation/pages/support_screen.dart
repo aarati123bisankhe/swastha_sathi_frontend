@@ -16,105 +16,72 @@ class SupportScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Support',
-                          style: TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF184D81),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'We are here to help you',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Icon(
-                      Icons.notifications,
-                      color: Color(0xFF193767),
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 26),
-              const _SupportHero(),
-              Transform.translate(
-                offset: const Offset(0, -58),
-                child: const _SupportActionGrid(),
-              ),
-              Transform.translate(
-                offset: const Offset(0, -26),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Quick Help Topics',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF184D81),
-                      ),
-                    ),
-                    SizedBox(height: 18),
-                    _SupportTopicCard(
-                      icon: Icons.thermostat_rounded,
-                      iconColor: Color(0xFF5AA9FF),
-                      iconBackground: Color(0xFFE6F1FF),
-                      title: 'Fever and Cold',
-                      subtitle: 'Causes, symptoms and treatment',
-                    ),
-                    SizedBox(height: 14),
-                    _SupportTopicCard(
-                      icon: Icons.pregnant_woman_rounded,
-                      iconColor: Color(0xFF2FC7B9),
-                      iconBackground: Color(0xFFE3FAF7),
-                      title: 'Pregnancy Care',
-                      subtitle: 'Care, tips and important information',
-                    ),
-                    SizedBox(height: 14),
-                    _SupportTopicCard(
-                      icon: Icons.healing_rounded,
-                      iconColor: Color(0xFFFFB27A),
-                      iconBackground: Color(0xFFFFF0E6),
-                      title: 'Bleeding and Injuries',
-                      subtitle: 'First aid and when to seek help',
-                    ),
-                    SizedBox(height: 14),
-                    _SupportTopicCard(
-                      icon: Icons.vaccines_rounded,
-                      iconColor: Color(0xFFA28BFF),
-                      iconBackground: Color(0xFFF0ECFF),
-                      title: 'Vaccination Help',
-                      subtitle: 'Vaccine information and schedules',
-                    ),
-                    SizedBox(height: 14),
-                    _SupportTopicCard(
-                      icon: Icons.coronavirus_rounded,
-                      iconColor: Color(0xFFFF78A6),
-                      iconBackground: Color(0xFFFFEDF4),
-                      title: 'Chronic Disease Management',
-                      subtitle: 'Diabetes, BP, asthma and more',
-                    ),
-                  ],
+            children: const [
+              _SupportHeader(),
+
+              SizedBox(height: 46),
+
+              _SupportActionGrid(),
+
+              SizedBox(height: 62),
+
+              Text(
+                'Quick Help Topics',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF184D81),
                 ),
+              ),
+
+              SizedBox(height: 18),
+
+              _SupportTopicCard(
+                icon: Icons.thermostat_rounded,
+                iconColor: Color(0xFF5AA9FF),
+                iconBackground: Color(0xFFE6F1FF),
+                title: 'Fever and Cold',
+                subtitle: 'Causes, symptoms and treatment',
+              ),
+
+              SizedBox(height: 14),
+
+              _SupportTopicCard(
+                icon: Icons.pregnant_woman_rounded,
+                iconColor: Color(0xFF2FC7B9),
+                iconBackground: Color(0xFFE3FAF7),
+                title: 'Pregnancy Care',
+                subtitle: 'Care, tips and important information',
+              ),
+
+              SizedBox(height: 14),
+
+              _SupportTopicCard(
+                icon: Icons.healing_rounded,
+                iconColor: Color(0xFFFFB27A),
+                iconBackground: Color(0xFFFFF0E6),
+                title: 'Bleeding and Injuries',
+                subtitle: 'First aid and when to seek help',
+              ),
+
+              SizedBox(height: 14),
+
+              _SupportTopicCard(
+                icon: Icons.vaccines_rounded,
+                iconColor: Color(0xFFA28BFF),
+                iconBackground: Color(0xFFF0ECFF),
+                title: 'Vaccination Help',
+                subtitle: 'Vaccine information and schedules',
+              ),
+
+              SizedBox(height: 14),
+
+              _SupportTopicCard(
+                icon: Icons.coronavirus_rounded,
+                iconColor: Color(0xFFFF78A6),
+                iconBackground: Color(0xFFFFEDF4),
+                title: 'Chronic Disease Management',
+                subtitle: 'Diabetes, BP, asthma and more',
               ),
             ],
           ),
@@ -128,60 +95,43 @@ class SupportScreen extends StatelessWidget {
   }
 }
 
-class _SupportHero extends StatelessWidget {
-  const _SupportHero();
+class _SupportHeader extends StatelessWidget {
+  const _SupportHeader();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 188,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFE8F4FF), Color(0xFFCFE4FF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Support',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF184D81),
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'We are here to help you',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 22,
-            left: 20,
-            child: Container(
-              width: 84,
-              height: 84,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.38),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          const Positioned(
-            left: 30,
-            top: 34,
-            child: Icon(
-              Icons.support_agent_rounded,
-              size: 66,
-              color: Color(0xFF1765C1),
-            ),
-          ),
-          const Positioned(
-            left: 26,
-            bottom: 26,
-            child: Text(
-              'Quick help,\ntrusted guidance',
-              style: TextStyle(
-                fontSize: 22,
-                height: 1.1,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF184D81),
-              ),
-            ),
-          ),
-        ],
-      ),
+        Padding(
+          padding: EdgeInsets.only(top: 4),
+          child: Icon(Icons.notifications, color: Color(0xFF193767), size: 30),
+        ),
+      ],
     );
   }
 }
@@ -194,46 +144,34 @@ class _SupportActionGrid extends StatelessWidget {
     return const Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _SupportActionCard(
-                title: 'Chat\nSupport',
-                icon: Icons.chat_bubble_rounded,
-                colors: [Color(0xFF4D9BFF), Color(0xFF256FCA)],
-                height: 132,
+                imageAssetPath: 'assets/images/support_chat_card.png',
               ),
             ),
-            SizedBox(width: 16),
+            SizedBox(width: 5),
             Expanded(
               child: _SupportActionCard(
-                title: 'First Aid\nGuide',
-                icon: Icons.medical_services_rounded,
-                colors: [Color(0xFF27C7B4), Color(0xFF119C8B)],
-                height: 132,
+                imageAssetPath: 'assets/images/support_first_aid_card.png',
               ),
             ),
           ],
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 0),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _SupportActionCard(
-                title: 'Symptom\nChecker',
-                icon: Icons.health_and_safety_rounded,
-                colors: [Color(0xFF77B8FF), Color(0xFF3E85E2)],
-                height: 132,
+                imageAssetPath:
+                    'assets/images/support_symptom_checker_card.png',
               ),
             ),
-            SizedBox(width: 16),
+            SizedBox(width: 5),
             Expanded(
               child: _SupportActionCard(
-                title: 'Health\nAwareness',
-                icon: Icons.ondemand_video_rounded,
-                colors: [Color(0xFF5AD8D0), Color(0xFF18A8A0)],
-                height: 132,
+                imageAssetPath:
+                    'assets/images/support_health_awareness_card.png',
               ),
             ),
           ],
@@ -244,54 +182,27 @@ class _SupportActionGrid extends StatelessWidget {
 }
 
 class _SupportActionCard extends StatelessWidget {
-  const _SupportActionCard({
-    required this.title,
-    required this.icon,
-    required this.colors,
-    required this.height,
-  });
+  const _SupportActionCard({required this.imageAssetPath});
 
-  final String title;
-  final IconData icon;
-  final List<Color> colors;
-  final double height;
+  final String imageAssetPath;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      height: 160,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 2),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset(
+              imageAssetPath,
+              width: 182,
+              height: 182,
+              fit: BoxFit.contain,
+            ),
           ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x22000000),
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 46, color: Colors.white),
-            const Spacer(),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                height: 1.12,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -317,14 +228,14 @@ class _SupportTopicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x24000000),
-            blurRadius: 10,
+            color: Color(0x33000000),
+            blurRadius: 8,
             offset: Offset(0, 4),
           ),
         ],
@@ -336,7 +247,7 @@ class _SupportTopicCard extends StatelessWidget {
             height: 58,
             decoration: BoxDecoration(
               color: iconBackground,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(icon, color: iconColor, size: 32),
           ),
@@ -347,17 +258,21 @@ class _SupportTopicCard extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF222222),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 13.5,
+                    fontSize: 13,
                     color: Color(0xFF6D7380),
                     fontWeight: FontWeight.w500,
                   ),
