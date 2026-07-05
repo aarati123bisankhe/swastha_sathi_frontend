@@ -40,7 +40,7 @@ class RecordScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               const _RecentActivityCard(),
-              const SizedBox(height: 15),
+              const SizedBox(height: 13),
               const Row(
                 children: [
                   Expanded(
@@ -427,7 +427,7 @@ class _RecentActivityCard extends StatelessWidget {
           Text(
             'Recent Health Activity',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               color: Color(0xFF24229A),
             ),
@@ -529,10 +529,10 @@ class _RecordActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 64,
+      height: 48,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
