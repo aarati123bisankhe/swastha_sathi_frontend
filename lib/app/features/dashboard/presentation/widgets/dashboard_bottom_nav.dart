@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_screen.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/support_screen.dart';
 
 enum DashboardNavTab { home, emergency, support, record, profile }
 
 class DashboardBottomNav extends StatelessWidget {
-  const DashboardBottomNav({
-    super.key,
-    required this.activeTab,
-    this.user,
-  });
+  const DashboardBottomNav({super.key, required this.activeTab, this.user});
 
   final DashboardNavTab activeTab;
   final AuthUser? user;
@@ -21,9 +18,7 @@ class DashboardBottomNav extends StatelessWidget {
       height: 79,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(22),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       child: Transform.translate(
         offset: const Offset(0, -7),
@@ -84,6 +79,15 @@ class DashboardBottomNav extends StatelessWidget {
           builder: (context) => EmergencyScreen(user: user),
         ),
       );
+      return;
+    }
+
+    if (tab == DashboardNavTab.support) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          builder: (context) => SupportScreen(user: user),
+        ),
+      );
     }
   }
 }
@@ -111,11 +115,7 @@ class _BottomNavItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 30,
-            color: color,
-          ),
+          Icon(icon, size: 30, color: color),
           const SizedBox(height: 3),
           Text(
             label,
