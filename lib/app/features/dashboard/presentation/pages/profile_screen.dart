@@ -37,9 +37,9 @@ class ProfileScreen extends StatelessWidget {
                   color: Color(0xFF24229A),
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
               const _ProfileAvatar(),
-              const SizedBox(height: 18),
+              const SizedBox(height: 15),
               Text(
                 fullName,
                 textAlign: TextAlign.center,
@@ -101,8 +101,8 @@ class _ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 166,
-      height: 166,
+      width: 150,
+      height: 150,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
@@ -113,7 +113,7 @@ class _ProfileAvatar extends StatelessWidget {
       ),
       child: const Icon(
         Icons.person_rounded,
-        size: 104,
+        size: 92,
         color: Color(0xFF4B2C22),
       ),
     );
