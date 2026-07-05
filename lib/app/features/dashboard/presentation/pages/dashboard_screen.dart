@@ -638,9 +638,9 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -690,13 +690,22 @@ class DashboardScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 0),
-                    padding: const EdgeInsets.all(4),
-                    child: const Icon(
-                      Icons.notifications,
-                      color: Color(0xFF15396B),
-                      size: 26,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) => NotificationScreen(user: user),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 0),
+                      padding: const EdgeInsets.all(4),
+                      child: const Icon(
+                        Icons.notifications,
+                        color: Color(0xFF15396B),
+                        size: 26,
+                      ),
                     ),
                   ),
                 ],
@@ -735,33 +744,31 @@ class DashboardScreen extends StatelessWidget {
                     return Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: const [
-                        _ActionTile(
-                          title: 'Call\nAmbulance',
-                          icon: Icons.emergency_outlined,
-                          colors: [Color(0xFFFF6B6B), Color(0xFFF64545)],
-                        ),
-                        _ActionTile(
-                          title: 'Blood\nRequest',
-                          icon: Icons.water_drop,
-                          colors: [Color(0xFFFF3838), Color(0xFFE1142D)],
-                        ),
-                        _ActionTile(
-                          title: 'Emergency\nSMS',
-                          icon: Icons.sms_outlined,
-                          colors: [Color(0xFF58B4FF), Color(0xFF1F6FD7)],
-                        ),
-                        _ActionTile(
-                          title: 'Share\nLocation',
-                          icon: Icons.location_on,
-                          colors: [Color(0xFF5BCC5C), Color(0xFF1BA64A)],
-                        ),
-                      ].map((tile) {
-                        return SizedBox(
-                          width: tileWidth,
-                          child: tile,
-                        );
-                      }).toList(),
+                      children:
+                          const [
+                            _ActionTile(
+                              title: 'Call\nAmbulance',
+                              icon: Icons.emergency_outlined,
+                              colors: [Color(0xFFFF6B6B), Color(0xFFF64545)],
+                            ),
+                            _ActionTile(
+                              title: 'Blood\nRequest',
+                              icon: Icons.water_drop,
+                              colors: [Color(0xFFFF3838), Color(0xFFE1142D)],
+                            ),
+                            _ActionTile(
+                              title: 'Emergency\nSMS',
+                              icon: Icons.sms_outlined,
+                              colors: [Color(0xFF58B4FF), Color(0xFF1F6FD7)],
+                            ),
+                            _ActionTile(
+                              title: 'Share\nLocation',
+                              icon: Icons.location_on,
+                              colors: [Color(0xFF5BCC5C), Color(0xFF1BA64A)],
+                            ),
+                          ].map((tile) {
+                            return SizedBox(width: tileWidth, child: tile);
+                          }).toList(),
                     );
                   },
                 ),
@@ -797,38 +804,41 @@ class DashboardScreen extends StatelessWidget {
                         return Column(
                           children: [
                             Row(
-                              children: const [
-                                _FeatureTile(
-                                  title: 'Symptom\nChecker',
-                                  icon: Icons.health_and_safety,
-                                  iconColor: Color(0xFF1E88E5),
-                                ),
-                                _FeatureTile(
-                                  title: 'First Aid\nGuide',
-                                  icon: Icons.medical_services,
-                                  iconColor: Color(0xFFFF2D55),
-                                ),
-                                _FeatureTile(
-                                  title: 'Hospital',
-                                  icon: Icons.local_hospital,
-                                  iconColor: Color(0xFF1E88E5),
-                                ),
-                                _FeatureTile(
-                                  title: 'Doctor',
-                                  icon: Icons.person,
-                                  iconColor: Color(0xFF12B886),
-                                ),
-                              ].asMap().entries.map((entry) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    right: entry.key == 3 ? 0 : firstRowSpacing,
-                                  ),
-                                  child: SizedBox(
-                                    width: firstRowWidth,
-                                    child: entry.value,
-                                  ),
-                                );
-                              }).toList(),
+                              children:
+                                  const [
+                                    _FeatureTile(
+                                      title: 'Symptom\nChecker',
+                                      icon: Icons.health_and_safety,
+                                      iconColor: Color(0xFF1E88E5),
+                                    ),
+                                    _FeatureTile(
+                                      title: 'First Aid\nGuide',
+                                      icon: Icons.medical_services,
+                                      iconColor: Color(0xFFFF2D55),
+                                    ),
+                                    _FeatureTile(
+                                      title: 'Hospital',
+                                      icon: Icons.local_hospital,
+                                      iconColor: Color(0xFF1E88E5),
+                                    ),
+                                    _FeatureTile(
+                                      title: 'Doctor',
+                                      icon: Icons.person,
+                                      iconColor: Color(0xFF12B886),
+                                    ),
+                                  ].asMap().entries.map((entry) {
+                                    return Padding(
+                                      padding: EdgeInsets.only(
+                                        right: entry.key == 3
+                                            ? 0
+                                            : firstRowSpacing,
+                                      ),
+                                      child: SizedBox(
+                                        width: firstRowWidth,
+                                        child: entry.value,
+                                      ),
+                                    );
+                                  }).toList(),
                             ),
 
                             const SizedBox(height: 10),
@@ -1003,11 +1013,7 @@ class _ActionTile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 28,
-            color: Colors.white,
-          ),
+          Icon(icon, size: 28, color: Colors.white),
 
           const SizedBox(height: 6),
 
@@ -1061,11 +1067,7 @@ class _FeatureTile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 26,
-            color: iconColor,
-          ),
+          Icon(icon, size: 26, color: iconColor),
 
           const SizedBox(height: 6),
 
@@ -1127,7 +1129,6 @@ class _HealthTipCardState extends State<_HealthTipCard> {
             },
           ),
         ),
-
       ],
     );
   }

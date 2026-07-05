@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class EmergencyScreen extends StatelessWidget {
@@ -44,12 +45,21 @@ class EmergencyScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Icon(
-                      Icons.notifications,
-                      color: Color(0xFF193767),
-                      size: 30,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) => NotificationScreen(user: user),
+                        ),
+                      );
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Icon(
+                        Icons.notifications,
+                        color: Color(0xFF193767),
+                        size: 30,
+                      ),
                     ),
                   ),
                 ],
@@ -307,11 +317,7 @@ class _EmergencyActionCard extends StatelessWidget {
                 fit: BoxFit.contain,
               )
             else
-              Icon(
-                icon,
-                size: iconSize,
-                color: Colors.white,
-              ),
+              Icon(icon, size: iconSize, color: Colors.white),
 
             const Spacer(),
 
@@ -338,10 +344,7 @@ class _EmergencyActionCard extends StatelessWidget {
 }
 
 class _EmergencyContactCard extends StatelessWidget {
-  const _EmergencyContactCard({
-    required this.title,
-    required this.avatar,
-  });
+  const _EmergencyContactCard({required this.title, required this.avatar});
 
   final String title;
   final Widget avatar;
@@ -398,11 +401,7 @@ class _EmergencyContactCard extends StatelessWidget {
                   color: Color(0xFF166EF3),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.call,
-                  color: Colors.white,
-                  size: 15.5,
-                ),
+                child: const Icon(Icons.call, color: Colors.white, size: 15.5),
               ),
             ],
           ),

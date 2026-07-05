@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class SupportScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class SupportScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _SupportHeader(),
+              _SupportHeader(user: user),
 
               const SizedBox(height: 0),
 
@@ -102,14 +103,16 @@ class SupportScreen extends StatelessWidget {
 }
 
 class _SupportHeader extends StatelessWidget {
-  const _SupportHeader();
+  const _SupportHeader({this.user});
+
+  final AuthUser? user;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Expanded(
+      children: [
+        const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -133,9 +136,22 @@ class _SupportHeader extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 4),
-          child: Icon(Icons.notifications, color: Color(0xFF193767), size: 30),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => NotificationScreen(user: user),
+              ),
+            );
+          },
+          child: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(
+              Icons.notifications,
+              color: Color(0xFF193767),
+              size: 30,
+            ),
+          ),
         ),
       ],
     );
