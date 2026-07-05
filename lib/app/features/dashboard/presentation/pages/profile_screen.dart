@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                   color: Color(0xFF24229A),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
               const _ProfileAvatar(),
               const SizedBox(height: 15),
               Text(
@@ -49,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
                   color: Color(0xFF2E3338),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 1),
               const Text(
                 'HealthCare Campanion users',
                 textAlign: TextAlign.center,
@@ -227,18 +227,18 @@ class _ProfileInfoItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 54,
-          height: 54,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: iconBackground,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: iconColor, size: 30),
+          child: Icon(icon, color: iconColor, size: 21),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: 2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -250,7 +250,7 @@ class _ProfileInfoItem extends StatelessWidget {
                     color: Color(0xFF4A5056),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   subtitle,
                   style: const TextStyle(
