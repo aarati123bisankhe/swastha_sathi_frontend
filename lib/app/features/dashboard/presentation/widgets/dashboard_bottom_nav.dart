@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/dashboard_screen.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/support_screen.dart';
 
@@ -87,6 +88,13 @@ class DashboardBottomNav extends StatelessWidget {
         MaterialPageRoute<void>(
           builder: (context) => SupportScreen(user: user),
         ),
+      );
+      return;
+    }
+
+    if (tab == DashboardNavTab.record) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (context) => RecordScreen(user: user)),
       );
     }
   }
