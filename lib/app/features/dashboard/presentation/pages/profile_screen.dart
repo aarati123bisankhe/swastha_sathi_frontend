@@ -397,10 +397,10 @@ class _LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 72,
+      height: 50,
       decoration: BoxDecoration(
         color: const Color(0xFF2287EE),
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(25),
       ),
       alignment: Alignment.center,
       child: const Text(
