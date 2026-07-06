@@ -670,25 +670,49 @@ class BloodRequestScreen extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
-                    child: Column(
+                  Expanded(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Blood Request',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF152984),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Transform.translate(
+                            offset: const Offset(-8, 0),
+                            child: const Padding(
+                              padding: EdgeInsets.only(top: 8, right: 10),
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                color: Color(0xFF193767),
+                                size: 18,
+                              ),
+                            ),
                           ),
                         ),
-                        SizedBox(height: 1),
-                        Text(
-                          'Find and request blood donors quickly',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w400,
+                        Expanded(
+                          child: Transform.translate(
+                            offset: const Offset(-8, 0),
+                            child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Blood Request',
+                                  style: TextStyle(
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF152984),
+                                  ),
+                                ),
+                                SizedBox(height: 1),
+                                Text(
+                                  'Find and request blood donors quickly',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -735,7 +759,7 @@ class BloodRequestScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 10),
 
               // ---------- Blood Request Form ----------
               Container(
@@ -848,12 +872,12 @@ class BloodRequestScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 10),
 
               // ---------- Nearby Donors ----------
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+                padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF9F3F3),
                   borderRadius: BorderRadius.circular(24),
@@ -870,13 +894,13 @@ class BloodRequestScreen extends StatelessWidget {
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.opacity, color: Color(0xFFE2121B), size: 21),
-                        SizedBox(width: 6),
+                        Icon(Icons.opacity, color: Color(0xFFE2121B), size: 15),
+                        SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             'Nearby Donors',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF231A77),
                             ),
@@ -885,14 +909,14 @@ class BloodRequestScreen extends StatelessWidget {
                         Text(
                           'View All',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF5B59FF),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     _buildDonorTile(
                       name: 'Sushant Shrestha',
                       bloodGroup: 'O+',
@@ -900,9 +924,9 @@ class BloodRequestScreen extends StatelessWidget {
                       availability: 'Available Now',
                       avatarAsset: 'assets/images/ambulance_avatar_1.png',
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
                     _buildDonorTile(
-                      name: 'Anjali karku',
+                      name: 'Anjali karki',
                       bloodGroup: 'A+',
                       location: 'Lalitpur, Nepal',
                       availability: 'Available Now',
@@ -911,16 +935,16 @@ class BloodRequestScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 16),
 
               // ---------- Send Blood Request button ----------
               Center(
                 child: Container(
                   width: 290,
-                  height: 78,
+                  height: 60,
                   decoration: BoxDecoration(
                     color: const Color(0xFFFF1026),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: const [
                       BoxShadow(
                         color: Color(0x26000000),
@@ -933,19 +957,19 @@ class BloodRequestScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 22,
+                        radius: 18,
                         backgroundColor: Colors.white,
                         child: Icon(
                           Icons.opacity,
                           color: Color(0xFFE70D22),
-                          size: 28,
+                          size: 22,
                         ),
                       ),
-                      SizedBox(width: 12),
+                      SizedBox(width: 10),
                       Text(
                         'Send Blood Request',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                         ),
@@ -1029,16 +1053,16 @@ class BloodRequestScreen extends StatelessWidget {
     required String avatarAsset,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.76),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFB5A9E1), width: 1.3),
       ),
       child: Row(
         children: [
-          CircleAvatar(radius: 24, backgroundImage: AssetImage(avatarAsset)),
-          const SizedBox(width: 10),
+          CircleAvatar(radius: 18, backgroundImage: AssetImage(avatarAsset)),
+          const SizedBox(width: 6),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1050,26 +1074,26 @@ class BloodRequestScreen extends StatelessWidget {
                         name,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: Colors.black,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+                        horizontal: 6,
+                        vertical: 1,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF9C4C9),
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         bloodGroup,
                         style: const TextStyle(
-                          fontSize: 11,
+                          fontSize: 9,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFFF33434),
                         ),
@@ -1077,21 +1101,21 @@ class BloodRequestScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 3),
                 Row(
                   children: [
                     const Icon(
                       Icons.location_on,
                       color: Color(0xFF21345A),
-                      size: 14,
+                      size: 11,
                     ),
-                    const SizedBox(width: 3),
+                    const SizedBox(width: 1),
                     Expanded(
                       child: Text(
                         location,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 11,
+                          fontSize: 9,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF616161),
                         ),
@@ -1102,30 +1126,30 @@ class BloodRequestScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE5F9E8),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      width: 8,
-                      height: 8,
+                      width: 6,
+                      height: 6,
                       decoration: const BoxDecoration(
                         color: Color(0xFF0CB451),
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 3),
                     Text(
                       availability,
                       style: const TextStyle(
-                        fontSize: 10,
+                        fontSize: 8,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF0BAA4A),
                       ),
@@ -1135,15 +1159,15 @@ class BloodRequestScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
           Container(
-            width: 36,
-            height: 36,
+            width: 28,
+            height: 28,
             decoration: const BoxDecoration(
               color: Color(0xFFFF1021),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.call, color: Colors.white, size: 18),
+            child: const Icon(Icons.call, color: Colors.white, size: 14),
           ),
         ],
       ),
