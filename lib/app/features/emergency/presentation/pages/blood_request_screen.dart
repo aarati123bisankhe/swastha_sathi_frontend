@@ -645,6 +645,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/nearby_donors_screen.dart';
 
 class BloodRequestScreen extends StatefulWidget {
   const BloodRequestScreen({super.key, this.user});
@@ -1023,26 +1024,40 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.opacity, color: Color(0xFFE2121B), size: 15),
-                        SizedBox(width: 4),
-                        Expanded(
+                        const Icon(
+                          Icons.opacity,
+                          color: Color(0xFFE2121B),
+                          size: 15,
+                        ),
+                        const SizedBox(width: 4),
+                        const Expanded(
                           child: Text(
                             'Nearby Donors',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF231A77),
                             ),
                           ),
                         ),
-                        Text(
-                          'View All',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF5B59FF),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (context) =>
+                                    NearbyDonorsScreen(user: widget.user),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'View All',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF5B59FF),
+                            ),
                           ),
                         ),
                       ],
