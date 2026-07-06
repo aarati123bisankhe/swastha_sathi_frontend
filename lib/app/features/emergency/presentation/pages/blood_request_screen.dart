@@ -646,15 +646,54 @@ import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
-/// Everything for this page — header, hero banner, form, donor list, and
-/// the submit button — now lives inside a single StatelessWidget's build
-/// method. No separate widget classes; helper methods are used instead
-/// where repetition would otherwise cause duplication (form fields, donor
-/// tiles).
-class BloodRequestScreen extends StatelessWidget {
+class BloodRequestScreen extends StatefulWidget {
   const BloodRequestScreen({super.key, this.user});
 
   final AuthUser? user;
+
+  @override
+  State<BloodRequestScreen> createState() => _BloodRequestScreenState();
+}
+
+class _BloodRequestScreenState extends State<BloodRequestScreen> {
+  static const double _formFieldHeight = 39;
+
+  final _formKey = GlobalKey<FormState>();
+  final _patientNameController = TextEditingController();
+  final _hospitalNameController = TextEditingController();
+  final _contactNumberController = TextEditingController();
+  final _messageController = TextEditingController();
+
+  String? _selectedBloodGroup;
+  String? _selectedLocation;
+  String? _selectedUrgency;
+
+  static const _bloodGroups = [
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'AB+',
+    'AB-',
+    'O+',
+    'O-',
+  ];
+  static const _locations = [
+    'Kathmandu, Nepal',
+    'Lalitpur, Nepal',
+    'Bhaktapur, Nepal',
+    'Pokhara, Nepal',
+  ];
+  static const _urgencyLevels = ['Low', 'Medium', 'Urgent', 'Critical'];
+
+  @override
+  void dispose() {
+    _patientNameController.dispose();
+    _hospitalNameController.dispose();
+    _contactNumberController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -722,7 +761,8 @@ class BloodRequestScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (context) => NotificationScreen(user: user),
+                          builder: (context) =>
+                              NotificationScreen(user: widget.user),
                         ),
                       );
                     },
@@ -751,7 +791,7 @@ class BloodRequestScreen extends StatelessWidget {
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(27),
                   child: Image.asset(
                     'assets/images/blood_request_banner.png',
                     width: double.infinity,
@@ -764,7 +804,7 @@ class BloodRequestScreen extends StatelessWidget {
               // ---------- Blood Request Form ----------
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+                padding: const EdgeInsets.fromLTRB(11, 11, 11, 11),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF9F3F3),
                   borderRadius: BorderRadius.circular(24),
@@ -776,100 +816,191 @@ class BloodRequestScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(
-                          Icons.note_alt_outlined,
-                          color: Color(0xFFFF403B),
-                          size: 21,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          'Blood Request Form',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF171717),
+                child: Form(
+                  key: _formKey,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      const fieldGap = 8.0;
+                      final fieldWidth = (constraints.maxWidth - fieldGap) / 2;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(
+                                Icons.note_alt_outlined,
+                                color: Color(0xFFFF403B),
+                                size: 20,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                'Blood Request Form',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF171717),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField(
-                            label: 'Patient Name',
-                            hint: 'Enter Patient Name',
-                            icon: Icons.person_outline,
+                          const SizedBox(height: 9),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: fieldWidth,
+                                child: _buildTextField(
+                                  controller: _patientNameController,
+                                  label: 'Patient Name',
+                                  hint: 'Enter Patient Name',
+                                  icon: Icons.person_outline,
+                                  customFontSize: 11.5,
+                                  customIconSize: 17,
+                                  customHorizontalPadding: 0,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Enter patient name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: fieldGap),
+                              SizedBox(
+                                width: fieldWidth,
+                                child: _buildDropdownField<String>(
+                                  label: 'Blood Group',
+                                  hint: 'Select blood',
+                                  icon: Icons.opacity,
+                                  iconColor: const Color(0xFFE51620),
+                                  customFontSize: 11.5,
+                                  customIconSize: 17,
+                                  customHorizontalPadding: 0,
+                                  value: _selectedBloodGroup,
+                                  items: _bloodGroups,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedBloodGroup = value;
+                                    });
+                                  },
+                                  validator: (value) => value == null
+                                      ? 'Select blood group'
+                                      : null,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildField(
-                            label: 'Blood Group',
-                            hint: 'Enter blood group',
-                            icon: Icons.opacity,
-                            trailingIcon: Icons.keyboard_arrow_down,
-                            iconColor: const Color(0xFFE51620),
+                          const SizedBox(height: 7),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: fieldWidth,
+                                child: _buildTextField(
+                                  controller: _hospitalNameController,
+                                  label: 'Hospital Name',
+                                  hint: 'Enter Hospital Name',
+                                  icon: Icons.local_hospital_outlined,
+                                  customFontSize: 11.5,
+                                  customIconSize: 17,
+                                  customHorizontalPadding: 0,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Enter hospital name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: fieldGap),
+                              SizedBox(
+                                width: fieldWidth,
+                                child: _buildDropdownField<String>(
+                                  label: 'Location',
+                                  hint: 'Select Location',
+                                  icon: Icons.location_on,
+                                  customFontSize: 11.5,
+                                  customIconSize: 17,
+                                  customHorizontalPadding: 0,
+                                  value: _selectedLocation,
+                                  items: _locations,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedLocation = value;
+                                    });
+                                  },
+                                  validator: (value) =>
+                                      value == null ? 'Select location' : null,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField(
-                            label: 'Hospital Name',
-                            hint: 'Enter Hospital Name',
-                            icon: Icons.local_hospital_outlined,
+                          const SizedBox(height: 7),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: fieldWidth,
+                                child: _buildTextField(
+                                  controller: _contactNumberController,
+                                  label: 'Contact Number',
+                                  hint: 'Enter Contact Number',
+                                  icon: Icons.phone,
+                                  customFontSize: 11.5,
+                                  customIconSize: 17,
+                                  customHorizontalPadding: 0,
+                                  keyboardType: TextInputType.phone,
+                                  validator: (value) {
+                                    final trimmed = value?.trim() ?? '';
+                                    if (trimmed.isEmpty) {
+                                      return 'Enter contact number';
+                                    }
+                                    if (trimmed.length < 7) {
+                                      return 'Invalid number';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: fieldGap),
+                              SizedBox(
+                                width: fieldWidth,
+                                child: _buildDropdownField<String>(
+                                  label: 'Urgency',
+                                  hint: 'Select urgency',
+                                  icon: Icons.warning_amber_rounded,
+                                  customFontSize: 11.5,
+                                  customIconSize: 17,
+                                  customHorizontalPadding: 0,
+                                  value: _selectedUrgency,
+                                  items: _urgencyLevels,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedUrgency = value;
+                                    });
+                                  },
+                                  validator: (value) =>
+                                      value == null ? 'Select urgency' : null,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildField(
-                            label: 'Location',
-                            hint: 'Select Location',
-                            icon: Icons.location_on,
+                          const SizedBox(height: 7),
+                          SizedBox(
+                            width: fieldWidth * 1.35,
+                            child: _buildTextField(
+                              controller: _messageController,
+                              label: 'Message (Optional)',
+                              hint: 'Enter additional message',
+                              icon: Icons.chat_bubble_outline,
+                              customFontSize: 11.5,
+                              customIconSize: 17,
+                              customHorizontalPadding: 0,
+                              validator: (_) => null,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField(
-                            label: 'Contact Number',
-                            hint: 'Enter Contact Number',
-                            icon: Icons.phone,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildField(
-                            label: 'Urgency',
-                            hint: 'Select urgency',
-                            icon: Icons.warning_amber_rounded,
-                            trailingIcon: Icons.keyboard_arrow_down,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: 260,
-                      child: _buildField(
-                        label: 'Message (Optional)',
-                        hint: 'Enter additional message........',
-                        icon: Icons.chat_bubble_outline,
-                      ),
-                    ),
-                  ],
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -939,42 +1070,45 @@ class BloodRequestScreen extends StatelessWidget {
 
               // ---------- Send Blood Request button ----------
               Center(
-                child: Container(
-                  width: 290,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF1026),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x26000000),
-                        blurRadius: 12,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.opacity,
-                          color: Color(0xFFE70D22),
-                          size: 22,
+                child: GestureDetector(
+                  onTap: _submitForm,
+                  child: Container(
+                    width: 290,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF1026),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x26000000),
+                          blurRadius: 12,
+                          offset: Offset(0, 6),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Send Blood Request',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                      ],
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.opacity,
+                            color: Color(0xFFE70D22),
+                            size: 22,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 10),
+                        Text(
+                          'Send Blood Request',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -984,19 +1118,22 @@ class BloodRequestScreen extends StatelessWidget {
       ),
       bottomNavigationBar: DashboardBottomNav(
         activeTab: DashboardNavTab.home,
-        user: user,
+        user: widget.user,
       ),
     );
   }
 
-  /// Replaces the old `_FieldBlock` widget class — same visual output,
-  /// now just a helper method on this single class.
-  Widget _buildField({
+  Widget _buildTextField({
+    required TextEditingController controller,
     required String label,
     required String hint,
     required IconData icon,
-    IconData? trailingIcon,
+    required String? Function(String?) validator,
     Color? iconColor,
+    TextInputType? keyboardType,
+    double? customFontSize,
+    double? customIconSize,
+    double? customHorizontalPadding,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1004,47 +1141,285 @@ class BloodRequestScreen extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 10,
+            fontSize: 10.5,
             fontWeight: FontWeight.w500,
             color: Colors.black,
           ),
         ),
         const SizedBox(height: 5),
-        Container(
-          height: 38,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.45),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFACA7A7), width: 1.2),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 15, color: iconColor ?? const Color(0xFF4E4E4E)),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  hint,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Color(0xFF6F6F6F),
-                    fontWeight: FontWeight.w500,
-                  ),
+        SizedBox(
+          height: _formFieldHeight,
+          child: TextFormField(
+            controller: controller,
+            validator: validator,
+            keyboardType: keyboardType,
+            textAlignVertical: TextAlignVertical.center,
+            style: const TextStyle(
+              fontSize: 10.5,
+              color: Color(0xFF2E2E2E),
+              fontWeight: FontWeight.w500,
+            ).copyWith(fontSize: customFontSize ?? 10.5),
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: hint,
+              hintStyle: const TextStyle(
+                fontSize: 10.5,
+                color: Color(0xFF6F6F6F),
+                fontWeight: FontWeight.w500,
+              ).copyWith(fontSize: customFontSize ?? 10.5),
+              prefixIcon: Icon(
+                icon,
+                size: customIconSize ?? 15,
+                color: iconColor ?? const Color(0xFF4E4E4E),
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 34,
+                minHeight: 39,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: customHorizontalPadding ?? 6,
+                vertical: 9,
+              ),
+              filled: true,
+              fillColor: Colors.white.withValues(alpha: 0.45),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFACA7A7),
+                  width: 1.2,
                 ),
               ),
-              if (trailingIcon != null)
-                Icon(trailingIcon, color: const Color(0xFF1E1E1E), size: 16),
-            ],
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFACA7A7),
+                  width: 1.2,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFF193767),
+                  width: 1.3,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFACA7A7),
+                  width: 1.2,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFF193767),
+                  width: 1.3,
+                ),
+              ),
+              errorStyle: const TextStyle(fontSize: 0.01, height: 0.01),
+            ),
           ),
         ),
       ],
     );
   }
 
-  /// Replaces the old `_DonorTile` widget class — same visual output,
-  /// now just a helper method on this single class.
+  Widget _buildDropdownField<T>({
+    required String label,
+    required String hint,
+    required IconData icon,
+    required T? value,
+    required List<T> items,
+    required void Function(T?) onChanged,
+    required String? Function(T?) validator,
+    Color? iconColor,
+    double? customFontSize,
+    double? customIconSize,
+    double? customHorizontalPadding,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 5),
+        SizedBox(
+          height: _formFieldHeight,
+          child: DropdownButtonFormField<T>(
+            initialValue: value,
+            isExpanded: true,
+            alignment: Alignment.centerLeft,
+            validator: validator,
+            icon: const Icon(
+              Icons.keyboard_arrow_down,
+              size: 15,
+              color: Color(0xFF1E1E1E),
+            ),
+            style: const TextStyle(
+              fontSize: 10.5,
+              color: Color(0xFF2E2E2E),
+              fontWeight: FontWeight.w500,
+            ).copyWith(fontSize: customFontSize ?? 10.5),
+            dropdownColor: Colors.white,
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: hint,
+              hintStyle: const TextStyle(
+                fontSize: 10.5,
+                color: Color(0xFF6F6F6F),
+                fontWeight: FontWeight.w500,
+              ).copyWith(fontSize: customFontSize ?? 10.5),
+              prefixIcon: Icon(
+                icon,
+                size: customIconSize ?? 15,
+                color: iconColor ?? const Color(0xFF4E4E4E),
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 34,
+                minHeight: 34,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: customHorizontalPadding ?? 3,
+                vertical: 8,
+              ),
+              filled: true,
+              fillColor: Colors.white.withValues(alpha: 0.45),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFACA7A7),
+                  width: 1.2,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFACA7A7),
+                  width: 1.2,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFF193767),
+                  width: 1.3,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFACA7A7),
+                  width: 1.2,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFF193767),
+                  width: 1.3,
+                ),
+              ),
+              errorStyle: const TextStyle(fontSize: 0.01, height: 0.01),
+            ),
+            items: items
+                .map(
+                  (item) => DropdownMenuItem<T>(
+                    value: item,
+                    child: Text(
+                      item.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                )
+                .toList(),
+            selectedItemBuilder: (context) {
+              return items
+                  .map(
+                    (item) => SizedBox(
+                      height: _formFieldHeight,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          item.toString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 10.5,
+                            color: Color(0xFF2E2E2E),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList();
+            },
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _submitForm() {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all required fields.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Success',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF152984),
+            ),
+          ),
+          content: const Text(
+            'Your blood request form submitted successfully.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    _patientNameController.clear();
+    _hospitalNameController.clear();
+    _contactNumberController.clear();
+    _messageController.clear();
+
+    setState(() {
+      _selectedBloodGroup = null;
+      _selectedLocation = null;
+      _selectedUrgency = null;
+    });
+  }
+
   Widget _buildDonorTile({
     required String name,
     required String bloodGroup,
