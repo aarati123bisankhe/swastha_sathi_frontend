@@ -642,6 +642,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key, this.user});
@@ -745,23 +746,27 @@ class DashboardScreen extends StatelessWidget {
                       spacing: 12,
                       runSpacing: 12,
                       children:
-                          const [
+                          [
                             _ActionTile(
                               title: 'Call\nAmbulance',
                               icon: Icons.emergency_outlined,
-                              colors: [Color(0xFFFF6B6B), Color(0xFFF64545)],
+                              colors: const [
+                                Color(0xFFFF6B6B),
+                                Color(0xFFF64545),
+                              ],
+                              onTap: () => _openAmbulanceScreen(context),
                             ),
-                            _ActionTile(
+                            const _ActionTile(
                               title: 'Blood\nRequest',
                               icon: Icons.water_drop,
                               colors: [Color(0xFFFF3838), Color(0xFFE1142D)],
                             ),
-                            _ActionTile(
+                            const _ActionTile(
                               title: 'Emergency\nSMS',
                               icon: Icons.sms_outlined,
                               colors: [Color(0xFF58B4FF), Color(0xFF1F6FD7)],
                             ),
-                            _ActionTile(
+                            const _ActionTile(
                               title: 'Share\nLocation',
                               icon: Icons.location_on,
                               colors: [Color(0xFF5BCC5C), Color(0xFF1BA64A)],
@@ -898,6 +903,14 @@ class DashboardScreen extends StatelessWidget {
 
     return trimmed.split(RegExp(r'\s+')).first;
   }
+
+  void _openAmbulanceScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => CallAmbulanceScreen(user: user),
+      ),
+    );
+  }
 }
 
 class _StatusCard extends StatelessWidget {
@@ -984,54 +997,60 @@ class _ActionTile extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.colors,
+    this.onTap,
   });
 
   final String title;
   final IconData icon;
   final List<Color> colors;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 96,
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x22000000),
-            blurRadius: 12,
-            offset: Offset(0, 4),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        height: 96,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 28, color: Colors.white),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x22000000),
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 28, color: Colors.white),
 
-          const SizedBox(height: 6),
+            const SizedBox(height: 6),
 
-          Flexible(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 11,
-                height: 1.1,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+            Flexible(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 11,
+                  height: 1.1,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

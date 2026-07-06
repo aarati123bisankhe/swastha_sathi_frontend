@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 
 class EmergencyScreen extends StatelessWidget {
   const EmergencyScreen({super.key, this.user});
@@ -73,7 +74,7 @@ class EmergencyScreen extends StatelessWidget {
 
               Transform.translate(
                 offset: const Offset(0, -65),
-                child: const _EmergencyActionGrid(),
+                child: _EmergencyActionGrid(user: user),
               ),
 
               Transform.translate(
@@ -163,11 +164,13 @@ class _EmergencyHero extends StatelessWidget {
 }
 
 class _EmergencyActionGrid extends StatelessWidget {
-  const _EmergencyActionGrid();
+  const _EmergencyActionGrid({this.user});
+
+  final AuthUser? user;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,19 +180,26 @@ class _EmergencyActionGrid extends StatelessWidget {
               child: _EmergencyActionCard(
                 title: 'Call\nAmbulance',
                 icon: Icons.emergency,
-                colors: [Color(0xFFFF0505), Color(0xFFE60000)],
+                colors: const [Color(0xFFFF0505), Color(0xFFE60000)],
                 imageAsset: 'assets/images/ambulance_icon.png',
                 height: 130,
                 fontSize: 21,
                 iconSize: 54,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => CallAmbulanceScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
 
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
 
             Expanded(
               flex: 3,
-              child: _EmergencyActionCard(
+              child: const _EmergencyActionCard(
                 title: 'Call\nDoctor',
                 icon: Icons.person_search_rounded,
                 colors: [Color(0xFF159AF2), Color(0xFF0878D8)],
@@ -199,11 +209,11 @@ class _EmergencyActionGrid extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
 
             Expanded(
               flex: 3,
-              child: _EmergencyActionCard(
+              child: const _EmergencyActionCard(
                 title: 'Blood\nRequest',
                 icon: Icons.water_drop,
                 colors: [Color(0xFFC40000), Color(0xFF990000)],
@@ -215,14 +225,14 @@ class _EmergencyActionGrid extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
 
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 3,
-              child: _EmergencyActionCard(
+              child: const _EmergencyActionCard(
                 title: 'Emergency\nSMS',
                 icon: Icons.mail_outline,
                 colors: [Color(0xFFFF8A00), Color(0xFFFF7600)],
@@ -232,11 +242,11 @@ class _EmergencyActionGrid extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
 
             Expanded(
               flex: 3,
-              child: _EmergencyActionCard(
+              child: const _EmergencyActionCard(
                 title: 'Share\nLocation',
                 icon: Icons.navigation,
                 colors: [Color(0xFF10B84D), Color(0xFF069B3E)],
@@ -246,11 +256,11 @@ class _EmergencyActionGrid extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
 
             Expanded(
               flex: 3,
-              child: _EmergencyActionCard(
+              child: const _EmergencyActionCard(
                 title: 'Police\nHelp',
                 icon: Icons.local_police_outlined,
                 colors: [Color(0xFF104DB2), Color(0xFF073681)],
@@ -275,6 +285,7 @@ class _EmergencyActionCard extends StatelessWidget {
     required this.fontSize,
     required this.iconSize,
     this.imageAsset,
+    this.onTap,
   });
 
   final String title;
@@ -284,59 +295,64 @@ class _EmergencyActionCard extends StatelessWidget {
   final double fontSize;
   final double iconSize;
   final String? imageAsset;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x22000000),
-              blurRadius: 10,
-              offset: Offset(0, 4),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: height,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            gradient: LinearGradient(
+              colors: colors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (imageAsset != null)
-              Image.asset(
-                imageAsset!,
-                width: iconSize,
-                height: iconSize - 8,
-                fit: BoxFit.contain,
-              )
-            else
-              Icon(icon, size: iconSize, color: Colors.white),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x22000000),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (imageAsset != null)
+                Image.asset(
+                  imageAsset!,
+                  width: iconSize,
+                  height: iconSize - 8,
+                  fit: BoxFit.contain,
+                )
+              else
+                Icon(icon, size: iconSize, color: Colors.white),
 
-            const Spacer(),
+              const Spacer(),
 
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                title,
-                maxLines: 2,
-                softWrap: true,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  height: 1.12,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    height: 1.12,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
