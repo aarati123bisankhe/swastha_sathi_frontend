@@ -15,7 +15,7 @@ class CallAmbulanceScreen extends StatelessWidget {
       location: 'Kathmandu, Bagmati Province',
       distance: '2.2 km away',
       accentColor: Color(0xFFE65100),
-      avatarLabel: 'KA',
+      imageUrl: 'assets/images/ambulance_avatar_1.png',
     ),
     _AmbulanceService(
       name: 'Lalitpur Health Service',
@@ -23,7 +23,7 @@ class CallAmbulanceScreen extends StatelessWidget {
       location: 'Lalitpur, Bagmati Province',
       distance: '4.1 km away',
       accentColor: Color(0xFF1565C0),
-      avatarLabel: 'LH',
+      imageUrl: 'assets/images/ambulance_avatar_2.png',
     ),
     _AmbulanceService(
       name: 'Bhaktapur Rapid Ambulance',
@@ -31,7 +31,7 @@ class CallAmbulanceScreen extends StatelessWidget {
       location: 'Bhaktapur, Bagmati Province',
       distance: '3.3 km away',
       accentColor: Color(0xFF2E7D32),
-      avatarLabel: 'BR',
+      imageUrl: 'assets/images/ambulance_avatar_3.png',
     ),
     _AmbulanceService(
       name: 'Rural Rescue Response',
@@ -39,7 +39,7 @@ class CallAmbulanceScreen extends StatelessWidget {
       location: 'Kavrepalanchok, Bagmati Province',
       distance: '5.8 km away',
       accentColor: Color(0xFFAD1457),
-      avatarLabel: 'RR',
+      imageUrl: 'assets/images/ambulance_avatar_4.png',
     ),
   ];
 
@@ -89,11 +89,11 @@ class CallAmbulanceScreen extends StatelessWidget {
                       );
                     },
                     child: const Padding(
-                      padding: EdgeInsets.only(top: 4),
+                      padding: EdgeInsets.only(top: 2),
                       child: Icon(
-                        Icons.notifications,
-                        color: Color(0xFF193767),
-                        size: 30,
+                        Icons.notifications_none_rounded,
+                        color: Color(0xFF1B2A6B),
+                        size: 29,
                       ),
                     ),
                   ),
@@ -149,78 +149,10 @@ class _AmbulanceHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/images/call_ambulance_banner.png',
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(26),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFF3A58), Color(0xFFFF6C7A)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x25000000),
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: const Row(
-        children: [
-          _HeroShield(),
-          SizedBox(width: 18),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Fast Emergency Response',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'For rural and urban communities.',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    height: 1.35,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 12),
-          Icon(Icons.local_shipping_rounded, color: Colors.white, size: 78),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeroShield extends StatelessWidget {
-  const _HeroShield();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 66,
-      height: 66,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.18),
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(
-        Icons.health_and_safety_rounded,
-        color: Colors.white,
-        size: 38,
-      ),
+      fit: BoxFit.cover,
     );
   }
 }
@@ -233,15 +165,15 @@ class _AmbulanceServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBFB),
-        borderRadius: BorderRadius.circular(22),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x22000000),
-            blurRadius: 16,
-            offset: Offset(0, 6),
+            color: Color(0x14000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -249,63 +181,56 @@ class _AmbulanceServiceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _ServiceAvatar(service: service),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        service.name,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          height: 1.25,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const _AvailabilityBadge(),
-                  ],
+                Text(
+                  service.name,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                    height: 1.2,
+                  ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 3),
                 _InfoRow(
-                  icon: Icons.call_outlined,
+                  icon: Icons.phone,
                   child: Text(
                     service.phone,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 11.5,
                       color: Color(0xFFE53935),
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 2),
                 _InfoRow(
                   icon: Icons.location_on_outlined,
                   child: Text(
                     service.location,
                     style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF5A5A5A),
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _DistancePill(label: service.distance),
-                    const Spacer(),
-                    const _CallNowButton(),
-                  ],
-                ),
+                const SizedBox(height: 4),
+                _DistancePill(label: service.distance),
               ],
             ),
+          ),
+          const SizedBox(width: 8),
+          const Column(
+            children: [
+              _AvailabilityBadge(),
+              SizedBox(height: 6),
+              _CallNowButton(),
+            ],
           ),
         ],
       ),
@@ -318,45 +243,70 @@ class _ServiceAvatar extends StatelessWidget {
 
   final _AmbulanceService service;
 
+  bool get _isAssetImage => service.imageUrl.startsWith('assets/');
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 76,
-          height: 76,
+          width: 52,
+          height: 52,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [
-                service.accentColor,
-                service.accentColor.withValues(alpha: 0.65),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: const Color(0xFFF1F3F8),
           ),
-          alignment: Alignment.center,
-          child: Text(
-            service.avatarLabel,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          clipBehavior: Clip.antiAlias,
+          child: _isAssetImage
+              ? Image.asset(
+                  service.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _AvatarFallback(service: service),
+                )
+              : Image.network(
+                  service.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _AvatarFallback(service: service),
+                ),
         ),
         const Positioned(
-          right: -1,
-          bottom: -1,
+          right: 2,
+          bottom: 2,
           child: CircleAvatar(
-            radius: 7,
+            radius: 6,
             backgroundColor: Colors.white,
-            child: CircleAvatar(radius: 5, backgroundColor: Color(0xFF1BC442)),
+            child: CircleAvatar(radius: 4, backgroundColor: Color(0xFF1BC442)),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _AvatarFallback extends StatelessWidget {
+  const _AvatarFallback({required this.service});
+
+  final _AmbulanceService service;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [
+            service.accentColor,
+            service.accentColor.withValues(alpha: 0.65),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: const Icon(Icons.person, color: Colors.white, size: 24),
     );
   }
 }
@@ -366,27 +316,20 @@ class _AvailabilityBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9F8EC),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.circle, size: 10, color: Color(0xFF11B441)),
-          SizedBox(width: 6),
-          Text(
-            'Available Now',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF0B9C33),
-            ),
+    return const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.circle, size: 7, color: Color(0xFF11B441)),
+        SizedBox(width: 3),
+        Text(
+          'Available Now',
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF0B9C33),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -402,8 +345,8 @@ class _InfoRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF2D2D2D)),
-        const SizedBox(width: 7),
+        Icon(icon, size: 12, color: const Color(0xFF2D2D2D)),
+        const SizedBox(width: 3),
         Expanded(child: child),
       ],
     );
@@ -418,26 +361,22 @@ class _DistancePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFDCEEFF),
-        borderRadius: BorderRadius.circular(999),
+        color: const Color(0xFFE9F1FF),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.schedule_outlined,
-            size: 15,
-            color: Color(0xFF35577D),
-          ),
-          const SizedBox(width: 6),
+          const Icon(Icons.access_time, size: 10, color: Color(0xFF1B2A6B)),
+          const SizedBox(width: 3),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF35577D),
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF1B2A6B),
             ),
           ),
         ],
@@ -454,15 +393,15 @@ class _CallNowButton extends StatelessWidget {
     return const Column(
       children: [
         CircleAvatar(
-          radius: 31,
+          radius: 16,
           backgroundColor: Color(0xFF12C64B),
-          child: Icon(Icons.call, color: Colors.white, size: 28),
+          child: Icon(Icons.call, color: Colors.white, size: 15),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 2),
         Text(
           'Call Now',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: Color(0xFF129E3D),
           ),
@@ -489,31 +428,46 @@ class _ActionFooterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 78,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: borderColor, width: 1.8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: textColor, size: 24),
-          const SizedBox(width: 10),
-          Flexible(
-            child: Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: textColor,
+    return SizedBox(
+      height: 56,
+      child: label == 'Share Location'
+          ? OutlinedButton.icon(
+              onPressed: () {},
+              icon: Icon(icon, color: textColor, size: 22),
+              label: Text(
+                label,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: borderColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            )
+          : ElevatedButton.icon(
+              onPressed: () {},
+              icon: Icon(icon, color: textColor, size: 22),
+              label: Text(
+                label,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -525,7 +479,7 @@ class _AmbulanceService {
     required this.location,
     required this.distance,
     required this.accentColor,
-    required this.avatarLabel,
+    required this.imageUrl,
   });
 
   final String name;
@@ -533,5 +487,5 @@ class _AmbulanceService {
   final String location;
   final String distance;
   final Color accentColor;
-  final String avatarLabel;
+  final String imageUrl;
 }
