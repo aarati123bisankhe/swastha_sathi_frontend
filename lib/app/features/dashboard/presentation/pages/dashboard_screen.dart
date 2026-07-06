@@ -643,6 +643,7 @@ import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key, this.user});
@@ -756,10 +757,14 @@ class DashboardScreen extends StatelessWidget {
                               ],
                               onTap: () => _openAmbulanceScreen(context),
                             ),
-                            const _ActionTile(
+                            _ActionTile(
                               title: 'Blood\nRequest',
                               icon: Icons.water_drop,
-                              colors: [Color(0xFFFF3838), Color(0xFFE1142D)],
+                              colors: const [
+                                Color(0xFFFF3838),
+                                Color(0xFFE1142D),
+                              ],
+                              onTap: () => _openBloodRequestScreen(context),
                             ),
                             const _ActionTile(
                               title: 'Emergency\nSMS',
@@ -908,6 +913,14 @@ class DashboardScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => CallAmbulanceScreen(user: user),
+      ),
+    );
+  }
+
+  void _openBloodRequestScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => BloodRequestScreen(user: user),
       ),
     );
   }

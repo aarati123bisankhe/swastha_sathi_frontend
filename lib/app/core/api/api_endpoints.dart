@@ -28,7 +28,7 @@ class ApiEndpoints {
   );
   static const String apiHostIos = String.fromEnvironment('API_HOST_IOS');
 
-  static const String computerIpAddress = "192.168.31.108";
+  static const String computerIpAddress = "192.168.18.41";
 
   // static String get baseUrl {
   //   if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {

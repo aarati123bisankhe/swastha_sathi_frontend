@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 
 class EmergencyScreen extends StatelessWidget {
@@ -213,13 +214,20 @@ class _EmergencyActionGrid extends StatelessWidget {
 
             Expanded(
               flex: 3,
-              child: const _EmergencyActionCard(
+              child: _EmergencyActionCard(
                 title: 'Blood\nRequest',
                 icon: Icons.water_drop,
-                colors: [Color(0xFFC40000), Color(0xFF990000)],
+                colors: const [Color(0xFFC40000), Color(0xFF990000)],
                 height: 126,
                 fontSize: 18,
                 iconSize: 46,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => BloodRequestScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
           ],
