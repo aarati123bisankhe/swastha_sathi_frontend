@@ -62,7 +62,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                               Text(
                                 'Find blood donor near you who are available help.',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   color: Colors.black87,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -100,7 +100,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 3 month ago',
                 avatarAsset: 'assets/images/ambulance_avatar_1.png',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 11),
               const _DonorListTile(
                 name: 'Aanjali Thapa',
                 bloodGroup: 'A+',
@@ -108,7 +108,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 1 month ago',
                 avatarAsset: 'assets/images/ambulance_avatar_2.png',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 11),
               const _DonorListTile(
                 name: 'Yamsung Rai',
                 bloodGroup: 'B+',
@@ -116,7 +116,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 1 month ago',
                 avatarAsset: 'assets/images/ambulance_avatar_3.png',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 11),
               const _DonorListTile(
                 name: 'Aryan Jung Rana',
                 bloodGroup: 'A+',
@@ -124,7 +124,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 5 month ago',
                 avatarAsset: 'assets/images/ambulance_avatar_4.png',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 11),
               const _DonorListTile(
                 name: 'Pratina Karki',
                 bloodGroup: 'B+',
@@ -132,7 +132,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 1 month ago',
                 avatarAsset: 'assets/images/ambulance_avatar_2.png',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 11),
               const _DonorListTile(
                 name: 'Renuka Sharma',
                 bloodGroup: 'A+',
@@ -140,15 +140,15 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 3 month ago',
                 avatarAsset: 'assets/images/ambulance_avatar_1.png',
               ),
-              const SizedBox(height: 16),
-              const _DonorListTile(
-                name: 'Kayan Rau',
-                bloodGroup: 'O+',
-                location: 'Kathamndu, Nepal',
-                lastDonated: 'Last donated 1 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_4.png',
-              ),
-              const SizedBox(height: 28),
+              // const SizedBox(height: 16),
+              // const _DonorListTile(
+              //   name: 'Kayan Rau',
+              //   bloodGroup: 'O+',
+              //   location: 'Kathamndu, Nepal',
+              //   lastDonated: 'Last donated 1 month ago',
+              //   avatarAsset: 'assets/images/ambulance_avatar_4.png',
+              // ),
+              const SizedBox(height: 20),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(24, 24, 20, 24),
@@ -235,7 +235,7 @@ class _DonorListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.34),
         borderRadius: BorderRadius.circular(18),
@@ -243,8 +243,8 @@ class _DonorListTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(radius: 32, backgroundImage: AssetImage(avatarAsset)),
-          const SizedBox(width: 16),
+          CircleAvatar(radius: 24, backgroundImage: AssetImage(avatarAsset)),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,26 +256,26 @@ class _DonorListTile extends StatelessWidget {
                         name,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: Colors.black,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
+                        horizontal: 8,
+                        vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5B4BC),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: Text(
                         bloodGroup,
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFFFF4040),
                         ),
@@ -283,19 +283,19 @@ class _DonorListTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     const Icon(
                       Icons.location_on,
                       color: Color(0xFF17345F),
-                      size: 16,
+                      size: 14,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 3),
                     Text(
                       location,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 10,
                         color: Color(0xFF555555),
                         fontWeight: FontWeight.w500,
                       ),
@@ -314,7 +314,7 @@ class _DonorListTile extends StatelessWidget {
                     Text(
                       lastDonated,
                       style: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 9,
                         color: Color(0xFF6B6B6B),
                         fontWeight: FontWeight.w500,
                       ),
@@ -324,28 +324,28 @@ class _DonorListTile extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFFE7FAEA),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 9,
-                  height: 9,
+                  width: 7,
+                  height: 7,
                   decoration: const BoxDecoration(
                     color: Color(0xFF09B84E),
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 5),
                 const Text(
                   'Available Now',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 9,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF00B04A),
                   ),
@@ -353,15 +353,15 @@ class _DonorListTile extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Container(
-            width: 42,
-            height: 42,
+            width: 34,
+            height: 34,
             decoration: const BoxDecoration(
               color: Color(0xFFFF1026),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.call, color: Colors.white, size: 20),
+            child: const Icon(Icons.call, color: Colors.white, size: 16),
           ),
         ],
       ),
