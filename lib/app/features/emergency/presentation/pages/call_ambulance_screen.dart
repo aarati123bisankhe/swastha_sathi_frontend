@@ -56,6 +56,20 @@ class CallAmbulanceScreen extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Transform.translate(
+                      offset: const Offset(-8, 0),
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 8, right: 10),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Color(0xFF193767),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,16 +77,16 @@ class CallAmbulanceScreen extends StatelessWidget {
                         Text(
                           'Call Ambulance',
                           style: TextStyle(
-                            fontSize: 26,
+                            fontSize: 24,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF112A87),
                           ),
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: 1),
                         Text(
                           'Quick emergency support anytime',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             color: Colors.black87,
                             fontWeight: FontWeight.w400,
                           ),
@@ -89,11 +103,11 @@ class CallAmbulanceScreen extends StatelessWidget {
                       );
                     },
                     child: const Padding(
-                      padding: EdgeInsets.only(top: 2),
+                      padding: EdgeInsets.only(top: 4),
                       child: Icon(
-                        Icons.notifications_none_rounded,
-                        color: Color(0xFF1B2A6B),
-                        size: 29,
+                        Icons.notifications,
+                        color: Color(0xFF193767),
+                        size: 30,
                       ),
                     ),
                   ),
@@ -101,14 +115,14 @@ class CallAmbulanceScreen extends StatelessWidget {
               ),
               const SizedBox(height: 26),
               const _AmbulanceHeroCard(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               ..._services.map(
                 (service) => Padding(
-                  padding: const EdgeInsets.only(bottom: 18),
+                  padding: const EdgeInsets.only(bottom: 15),
                   child: _AmbulanceServiceCard(service: service),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 10),
               const Row(
                 children: [
                   Expanded(
@@ -149,10 +163,15 @@ class _AmbulanceHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/images/call_ambulance_banner.png',
-      width: double.infinity,
-      fit: BoxFit.cover,
+    return ClipRect(
+      child: Transform.translate(
+        offset: const Offset(0, -2), // Move the image up by 0.5 pixels
+        child: Image.asset(
+          'assets/images/call_ambulance_banner.png',
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }
@@ -429,34 +448,34 @@ class _ActionFooterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 48,
       child: label == 'Share Location'
           ? OutlinedButton.icon(
               onPressed: () {},
-              icon: Icon(icon, color: textColor, size: 22),
+              icon: Icon(icon, color: textColor, size: 18),
               label: Text(
                 label,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: borderColor),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(22),
                 ),
               ),
             )
           : ElevatedButton.icon(
               onPressed: () {},
-              icon: Icon(icon, color: textColor, size: 22),
+              icon: Icon(icon, color: textColor, size: 18),
               label: Text(
                 label,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -464,7 +483,7 @@ class _ActionFooterButton extends StatelessWidget {
                 backgroundColor: backgroundColor,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(22),
                 ),
               ),
             ),
