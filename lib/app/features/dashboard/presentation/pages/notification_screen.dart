@@ -86,15 +86,18 @@ class _NotificationHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: const Padding(
-            padding: EdgeInsets.only(top: 8, right: 10),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF193767),
-              size: 24,
-            ),
-          ),
+  onTap: () => Navigator.of(context).pop(),
+  child: Transform.translate(
+    offset: const Offset(-8, 0), // move left
+    child: const Padding(
+      padding: EdgeInsets.only(top: 8, right: 10),
+      child: Icon(
+        Icons.arrow_back_ios_new_rounded,
+        color: Color(0xFF193767),
+        size: 20,
+      ),
+    ),
+  ),
         ),
         const Expanded(
           child: Column(
