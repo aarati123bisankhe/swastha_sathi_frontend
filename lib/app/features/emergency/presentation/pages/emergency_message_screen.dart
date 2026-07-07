@@ -95,36 +95,36 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               const _EmergencyHelpBanner(),
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
               const _SectionLabel('To (Emergency Contacts)'),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               const _SelectorCard(
                 leading: Icons.people_outline_rounded,
                 leadingColor: Color(0xFFFF2F2F),
                 title: '3 Contacts Selected',
                 trailing: Icons.chevron_right_rounded,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               const _SectionLabel('Message'),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               _MessageComposer(
                 controller: _messageController,
                 messageLength: messageLength,
                 onChanged: (_) => setState(() {}),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               const _SectionLabel('Your Location'),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               const _SelectorCard(
                 leading: Icons.location_on,
                 leadingColor: Color(0xFF193767),
                 title: 'Select Location',
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 22),
               const _SectionLabel('Emergency Type'),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
               Row(
                 children: _EmergencyType.values
                     .map(
@@ -156,24 +156,22 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFFFF1212),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 22),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    icon: const Icon(Icons.send_rounded, size: 23),
+                    icon: const Icon(Icons.send_rounded, size: 20),
                     label: const Text(
                       'Send Emergency Message',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14.5,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
-              const _ConfirmationCard(),
             ],
           ),
         ),
@@ -250,11 +248,11 @@ class _EmergencyHelpBanner extends StatelessWidget {
                     color: Color(0xFFFF2323),
                   ),
                 ),
-                SizedBox(height: 6),
+                SizedBox(height: 2),
                 Text(
                   'Send your emergency message to your contacts instantly.',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     height: 1.45,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF5A6C84),
@@ -295,7 +293,8 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: const TextStyle(
-        fontSize: 15,
+        fontSize: 14,
+        height: 1.0,
         fontWeight: FontWeight.w700,
         color: Colors.black,
       ),
@@ -319,7 +318,7 @@ class _SelectorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: const Color(0xFFF2F7FC),
         borderRadius: BorderRadius.circular(16),
@@ -327,20 +326,20 @@ class _SelectorCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(leading, color: leadingColor, size: 24),
-          const SizedBox(width: 12),
+          Icon(leading, color: leadingColor, size: 22),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               title,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF1B1F28),
               ),
             ),
           ),
           if (trailing != null)
-            Icon(trailing, color: const Color(0xFF1B1F28), size: 28),
+            Icon(trailing, color: const Color(0xFF1B1F28), size: 24),
         ],
       ),
     );
@@ -361,8 +360,8 @@ class _MessageComposer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 145,
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+      height: 118,
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
       decoration: BoxDecoration(
         color: const Color(0xFFF2F7FC),
         borderRadius: BorderRadius.circular(16),
@@ -380,10 +379,10 @@ class _MessageComposer extends StatelessWidget {
               decoration: const InputDecoration(
                 counterText: '',
                 hintText: 'Type your emergency message........',
-                hintStyle: TextStyle(color: Color(0xFF6D7684), fontSize: 15),
+                hintStyle: TextStyle(color: Color(0xFF6D7684), fontSize: 14),
                 prefixIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 80),
-                  child: Icon(Icons.chat, color: Color(0xFF223B63), size: 18),
+                  padding: EdgeInsets.only(bottom: 54),
+                  child: Icon(Icons.chat, color: Color(0xFF223B63), size: 17),
                 ),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -452,7 +451,7 @@ class _EmergencyTypeCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        height: 118,
+        height: 82,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -470,62 +469,19 @@ class _EmergencyTypeCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(type.icon, color: const Color(0xFFFF1111), size: 38),
-            const SizedBox(height: 12),
+            Icon(type.icon, color: const Color(0xFFFF1111), size: 25),
+            const SizedBox(height: 5),
             Text(
               type.label,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 15,
+                fontSize: 12.5,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF3B4352),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ConfirmationCard extends StatelessWidget {
-  const _ConfirmationCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF1FFF3), Color(0xFFE6F9E9)],
-        ),
-        border: Border.all(color: const Color(0xFFB7E0B8)),
-      ),
-      child: const Row(
-        children: [
-          CircleAvatar(
-            radius: 23,
-            backgroundColor: Color(0xFFE0F8E5),
-            child: Icon(
-              Icons.verified_rounded,
-              color: Color(0xFF13B14B),
-              size: 30,
-            ),
-          ),
-          SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              'Your message will be sent to all selected contacts with your location.',
-              style: TextStyle(
-                fontSize: 15,
-                height: 1.45,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF416250),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
