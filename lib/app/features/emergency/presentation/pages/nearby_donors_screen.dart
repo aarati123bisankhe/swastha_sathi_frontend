@@ -98,7 +98,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 bloodGroup: 'O+',
                 location: 'Kathmandu, Nepal',
                 lastDonated: 'Last donated 3 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_1.png',
+                avatarAsset: 'assets/images/donor_avatar_1.png',
               ),
               const SizedBox(height: 11),
               const _DonorListTile(
@@ -106,7 +106,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 bloodGroup: 'A+',
                 location: 'Lalitpur, Nepal',
                 lastDonated: 'Last donated 1 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_2.png',
+                avatarAsset: 'assets/images/donor_avatar_2.png',
               ),
               const SizedBox(height: 11),
               const _DonorListTile(
@@ -114,7 +114,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 bloodGroup: 'B+',
                 location: 'Bhaktapur, Nepal',
                 lastDonated: 'Last donated 1 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_3.png',
+                avatarAsset: 'assets/images/donor_avatar_3.png',
               ),
               const SizedBox(height: 11),
               const _DonorListTile(
@@ -122,7 +122,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 bloodGroup: 'A+',
                 location: 'Lalitpur, Nepal',
                 lastDonated: 'Last donated 5 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_4.png',
+                avatarAsset: 'assets/images/donor_avatar_4.png',
               ),
               const SizedBox(height: 11),
               const _DonorListTile(
@@ -130,7 +130,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 bloodGroup: 'B+',
                 location: 'Lalitpur, Nepal',
                 lastDonated: 'Last donated 1 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_2.png',
+                avatarAsset: 'assets/images/donor_avatar_5.png',
               ),
               const SizedBox(height: 11),
               const _DonorListTile(
@@ -138,7 +138,7 @@ class NearbyDonorsScreen extends StatelessWidget {
                 bloodGroup: 'A+',
                 location: 'Kathmandu, Nepal',
                 lastDonated: 'Last donated 3 month ago',
-                avatarAsset: 'assets/images/ambulance_avatar_1.png',
+                avatarAsset: 'assets/images/donor_avatar_6.png',
               ),
               // const SizedBox(height: 16),
               // const _DonorListTile(

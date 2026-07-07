@@ -644,6 +644,7 @@ import 'package:swasthasathi/app/features/dashboard/presentation/pages/notificat
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key, this.user});
@@ -766,10 +767,14 @@ class DashboardScreen extends StatelessWidget {
                               ],
                               onTap: () => _openBloodRequestScreen(context),
                             ),
-                            const _ActionTile(
+                            _ActionTile(
                               title: 'Emergency\nSMS',
                               icon: Icons.sms_outlined,
-                              colors: [Color(0xFF58B4FF), Color(0xFF1F6FD7)],
+                              colors: const [
+                                Color(0xFF58B4FF),
+                                Color(0xFF1F6FD7),
+                              ],
+                              onTap: () => _openEmergencyMessageScreen(context),
                             ),
                             const _ActionTile(
                               title: 'Share\nLocation',
@@ -921,6 +926,14 @@ class DashboardScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => BloodRequestScreen(user: user),
+      ),
+    );
+  }
+
+  void _openEmergencyMessageScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => EmergencyMessageScreen(user: user),
       ),
     );
   }

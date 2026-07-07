@@ -4,6 +4,7 @@ import 'package:swasthasathi/app/features/dashboard/presentation/pages/notificat
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
 
 class EmergencyScreen extends StatelessWidget {
   const EmergencyScreen({super.key, this.user});
@@ -240,13 +241,20 @@ class _EmergencyActionGrid extends StatelessWidget {
           children: [
             Expanded(
               flex: 3,
-              child: const _EmergencyActionCard(
+              child: _EmergencyActionCard(
                 title: 'Emergency\nSMS',
                 icon: Icons.mail_outline,
-                colors: [Color(0xFFFF8A00), Color(0xFFFF7600)],
+                colors: const [Color(0xFFFF8A00), Color(0xFFFF7600)],
                 height: 132,
                 fontSize: 18,
                 iconSize: 49,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => EmergencyMessageScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
 
