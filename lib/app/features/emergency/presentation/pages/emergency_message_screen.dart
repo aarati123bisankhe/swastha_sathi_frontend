@@ -14,7 +14,30 @@ class EmergencyMessageScreen extends StatefulWidget {
 
 class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
   final TextEditingController _messageController = TextEditingController();
+  List<_EmergencyContact> _contacts = const [];
+  Set<String> _selectedContactIds = <String>{};
   _EmergencyType _selectedType = _EmergencyType.medical;
+  String? _selectedLocation;
+
+  static const List<String> _locationOptions = [
+    'Kathmandu, Nepal',
+    'Lalitpur, Nepal',
+    'Bhaktapur, Nepal',
+    'Kirtipur, Nepal',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _contacts = _buildContacts();
+    _selectedContactIds = _contacts
+        .take(3)
+        .map((contact) => contact.id)
+        .toSet();
+    _selectedLocation = widget.user?.district.trim().isNotEmpty == true
+        ? '${widget.user!.district.trim()}, Nepal'
+        : null;
+  }
 
   @override
   void dispose() {
@@ -25,6 +48,12 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
   @override
   Widget build(BuildContext context) {
     final messageLength = _messageController.text.length;
+    final selectedContacts = _contacts
+        .where((contact) => _selectedContactIds.contains(contact.id))
+        .toList();
+    final contactsLabel = selectedContacts.isEmpty
+        ? 'Select contacts'
+        : selectedContacts.map((contact) => contact.phoneNumber).join(', ');
 
     return Scaffold(
       backgroundColor: const Color(0xFFDCEAF5),
@@ -100,11 +129,12 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
               const SizedBox(height: 20),
               const _SectionLabel('To (Emergency Contacts)'),
               const SizedBox(height: 10),
-              const _SelectorCard(
+              _SelectorCard(
                 leading: Icons.people_outline_rounded,
                 leadingColor: Color(0xFFFF2F2F),
-                title: '3 Contacts Selected',
+                title: contactsLabel,
                 trailing: Icons.chevron_right_rounded,
+                onTap: _selectContacts,
               ),
               const SizedBox(height: 18),
               const _SectionLabel('Message'),
@@ -117,10 +147,11 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
               const SizedBox(height: 18),
               const _SectionLabel('Your Location'),
               const SizedBox(height: 10),
-              const _SelectorCard(
+              _SelectorCard(
                 leading: Icons.location_on,
                 leadingColor: Color(0xFF193767),
-                title: 'Select Location',
+                title: _selectedLocation ?? 'Select Location',
+                onTap: _selectLocation,
               ),
               const SizedBox(height: 22),
               const _SectionLabel('Emergency Type'),
@@ -152,7 +183,7 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
                 child: SizedBox(
                   width: 290,
                   child: FilledButton.icon(
-                    onPressed: () {},
+                    onPressed: _sendEmergencyMessage,
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFFFF1212),
                       foregroundColor: Colors.white,
@@ -181,6 +212,225 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
         user: widget.user,
       ),
     );
+  }
+
+  List<_EmergencyContact> _buildContacts() {
+    final userPhone = widget.user?.phoneNumber.trim();
+
+    return [
+      _EmergencyContact(
+        id: 'family',
+        name: 'Family Contact',
+        phoneNumber: userPhone?.isNotEmpty == true ? userPhone! : '98XXXXXXXX',
+      ),
+      const _EmergencyContact(
+        id: 'doctor',
+        name: 'Family Doctor',
+        phoneNumber: '9800000001',
+      ),
+      const _EmergencyContact(
+        id: 'neighbor',
+        name: 'Nearby Neighbor',
+        phoneNumber: '9800000002',
+      ),
+      const _EmergencyContact(
+        id: 'friend',
+        name: 'Trusted Friend',
+        phoneNumber: '9800000003',
+      ),
+    ];
+  }
+
+  Future<void> _selectContacts() async {
+    final tempSelected = Set<String>.from(_selectedContactIds);
+
+    final result = await showModalBottomSheet<Set<String>>(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Select emergency contacts',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1B1F28),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    ..._contacts.map((contact) {
+                      final selected = tempSelected.contains(contact.id);
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: selected
+                                ? const Color(0xFFFFCACA)
+                                : const Color(0xFFD9E2EC),
+                          ),
+                          color: selected
+                              ? const Color(0xFFFFF6F6)
+                              : Colors.white,
+                        ),
+                        child: CheckboxListTile(
+                          value: selected,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          activeColor: const Color(0xFFFF1212),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: Text(
+                            contact.name,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Text(contact.phoneNumber),
+                          onChanged: (value) {
+                            setModalState(() {
+                              if (value ?? false) {
+                                tempSelected.add(contact.id);
+                              } else {
+                                tempSelected.remove(contact.id);
+                              }
+                            });
+                          },
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(tempSelected);
+                        },
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF1212),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text('Save Selection'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedContactIds
+          ..clear()
+          ..addAll(result);
+      });
+      _showFeedback(
+        result.isEmpty
+            ? 'No emergency contacts selected.'
+            : '${result.length} emergency contact(s) selected.',
+      );
+    }
+  }
+
+  Future<void> _selectLocation() async {
+    final location = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select location',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1B1F28),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                ..._locationOptions.map(
+                  (location) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      _selectedLocation == location
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_off,
+                      color: const Color(0xFF193767),
+                    ),
+                    title: Text(location),
+                    onTap: () => Navigator.of(context).pop(location),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (location != null) {
+      setState(() {
+        _selectedLocation = location;
+      });
+    }
+  }
+
+  void _sendEmergencyMessage() {
+    if (_selectedContactIds.isEmpty) {
+      _showFeedback('Please select at least one emergency contact.');
+      return;
+    }
+
+    if (_messageController.text.trim().isEmpty) {
+      _showFeedback('Please type your emergency message.');
+      return;
+    }
+
+    if (_selectedLocation == null) {
+      _showFeedback('Please select your location.');
+      return;
+    }
+
+    setState(() {
+      _messageController.clear();
+      _selectedContactIds.clear();
+      _selectedLocation = null;
+      _selectedType = _EmergencyType.medical;
+    });
+
+    _showFeedback('Emergency message sent successfully.', isSuccess: true);
+  }
+
+  void _showFeedback(String message, {bool isSuccess = false}) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
@@ -308,39 +558,45 @@ class _SelectorCard extends StatelessWidget {
     required this.leadingColor,
     required this.title,
     this.trailing,
+    this.onTap,
   });
 
   final IconData leading;
   final Color leadingColor;
   final String title;
   final IconData? trailing;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF2F7FC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFA4B1C0)),
-      ),
-      child: Row(
-        children: [
-          Icon(leading, color: leadingColor, size: 22),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1B1F28),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF2F7FC),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFA4B1C0)),
+        ),
+        child: Row(
+          children: [
+            Icon(leading, color: leadingColor, size: 22),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1B1F28),
+                ),
               ),
             ),
-          ),
-          if (trailing != null)
-            Icon(trailing, color: const Color(0xFF1B1F28), size: 24),
-        ],
+            if (trailing != null)
+              Icon(trailing, color: const Color(0xFF1B1F28), size: 24),
+          ],
+        ),
       ),
     );
   }
@@ -485,4 +741,16 @@ class _EmergencyTypeCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _EmergencyContact {
+  const _EmergencyContact({
+    required this.id,
+    required this.name,
+    required this.phoneNumber,
+  });
+
+  final String id;
+  final String name;
+  final String phoneNumber;
 }
