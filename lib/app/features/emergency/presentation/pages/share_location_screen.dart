@@ -98,7 +98,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
               const Text(
                 'Share with',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
@@ -149,7 +149,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
               ),
               const SizedBox(height: 18),
               const _SecureShareInfoCard(),
-              const SizedBox(height: 22),
+              const SizedBox(height: 15),
               Center(
                 child: SizedBox(
                   width: 300,
@@ -158,29 +158,32 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF0EAF4C),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(22),
                       ),
                     ),
-                    icon: const Icon(Icons.send_rounded, size: 21),
-                    label: const Column(
+                    icon: const Icon(Icons.send_rounded, size: 18),
+                    label: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        const Text(
                           'Share Live Location',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14.5,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        SizedBox(height: 2),
-                        Text(
-                          'Share my location in real-time',
-                          style: TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFFF1FFF5),
+                        const SizedBox(height: 0),
+                        Transform.translate(
+                          offset: const Offset(0, -2),
+                          child: const Text(
+                            'Share my location in real-time',
+                            style: TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFF1FFF5),
+                            ),
                           ),
                         ),
                       ],
@@ -188,7 +191,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 13),
               Center(
                 child: SizedBox(
                   width: 300,
@@ -197,16 +200,16 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFFF1212),
                       side: const BorderSide(color: Color(0xFFFF2D2D)),
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(22),
                       ),
                     ),
-                    icon: const Icon(Icons.stop_rounded, size: 20),
+                    icon: const Icon(Icons.stop_rounded, size: 17),
                     label: const Text(
                       'Stop Sharing Location',
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -254,7 +257,7 @@ class _LocationStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
@@ -272,8 +275,8 @@ class _LocationStatusCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 50,
+            height: 50,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
@@ -285,10 +288,10 @@ class _LocationStatusCard extends StatelessWidget {
             child: const Icon(
               Icons.location_on_rounded,
               color: Colors.white,
-              size: 32,
+              size: 26,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,7 +299,7 @@ class _LocationStatusCard extends StatelessWidget {
                 const Text(
                   'Your Location',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF10BF5A),
                   ),
@@ -305,7 +308,7 @@ class _LocationStatusCard extends StatelessWidget {
                 Text(
                   '$district, Bagmati Province',
                   style: const TextStyle(
-                    fontSize: 12.5,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF293255),
                   ),
@@ -314,7 +317,7 @@ class _LocationStatusCard extends StatelessWidget {
                 const Text(
                   'Accuracy: High (10 m)',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 10,
                     color: Color(0xFF79849B),
                     fontWeight: FontWeight.w600,
                   ),
@@ -327,8 +330,8 @@ class _LocationStatusCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
+                  horizontal: 12,
+                  vertical: 5,
                 ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE6FBEA),
@@ -347,14 +350,14 @@ class _LocationStatusCard extends StatelessWidget {
                       isSharing ? 'Live' : 'Ready',
                       style: const TextStyle(
                         color: Color(0xFF13B954),
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -368,7 +371,7 @@ class _LocationStatusCard extends StatelessWidget {
                     isSharing ? 'GPS Active' : 'GPS Ready',
                     style: const TextStyle(
                       color: Color(0xFF14B95B),
-                      fontSize: 11.5,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -392,7 +395,7 @@ class _MapPreviewCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        height: 370,
+        height: 220,
         decoration: BoxDecoration(
           color: const Color(0xFFF6F4F3),
           border: Border.all(color: const Color(0xFFC8D2DD)),
@@ -402,12 +405,12 @@ class _MapPreviewCard extends StatelessWidget {
           children: [
             Positioned.fill(child: CustomPaint(painter: _MapPatternPainter())),
             const Positioned(
-              top: 46,
+              top: 18,
               left: 34,
               child: _MapLabel(label: 'Thamel'),
             ),
             const Positioned(
-              top: 78,
+              top: 28,
               right: 42,
               child: _MapPlaceMarker(
                 label: 'Kathmandu\nDurbar Square',
@@ -416,7 +419,7 @@ class _MapPreviewCard extends StatelessWidget {
               ),
             ),
             const Positioned(
-              top: 178,
+              top: 94,
               left: 22,
               child: _MapPlaceMarker(
                 label: 'Garden of Dreams',
@@ -425,30 +428,30 @@ class _MapPreviewCard extends StatelessWidget {
               ),
             ),
             const Positioned(
-              top: 192,
+              top: 106,
               right: 28,
               child: _MapLabel(label: 'Pashupatinath Temple'),
             ),
             const Positioned(
-              bottom: 86,
+              bottom: 34,
               left: 56,
               child: _MapLabel(label: 'Lazimpat'),
             ),
             const Positioned(
-              bottom: 18,
+              bottom: 6,
               left: 126,
               child: _MapLabel(label: 'Jawalakhel'),
             ),
             Positioned(
               left: 0,
               right: 0,
-              top: 104,
+              top: 48,
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 7,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -466,16 +469,16 @@ class _MapPreviewCard extends StatelessWidget {
                         const Text(
                           'You are here',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 11,
                             fontWeight: FontWeight.w800,
                             color: Color(0xFF293255),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Text(
                           '$district, Nepal',
                           style: const TextStyle(
-                            fontSize: 12.5,
+                            fontSize: 9.5,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF647089),
                           ),
@@ -483,17 +486,17 @@ class _MapPreviewCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 4),
                   const _LocationPulse(),
                 ],
               ),
             ),
             Positioned(
-              top: 20,
+              top: 10,
               left: 174,
               child: Container(
-                width: 28,
-                height: 28,
+                width: 24,
+                height: 24,
                 decoration: const BoxDecoration(
                   color: Color(0xFFF56767),
                   shape: BoxShape.circle,
@@ -501,16 +504,16 @@ class _MapPreviewCard extends StatelessWidget {
                 child: const Icon(
                   Icons.local_hospital,
                   color: Colors.white,
-                  size: 18,
+                  size: 14,
                 ),
               ),
             ),
             Positioned(
-              bottom: 22,
+              bottom: 10,
               right: 18,
               child: Container(
-                width: 50,
-                height: 50,
+                width: 36,
+                height: 36,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -525,7 +528,7 @@ class _MapPreviewCard extends StatelessWidget {
                 child: const Icon(
                   Icons.gps_fixed_rounded,
                   color: Color(0xFF5F6880),
-                  size: 26,
+                  size: 18,
                 ),
               ),
             ),
@@ -550,8 +553,8 @@ class _ShareOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 118,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      height: 96,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -560,13 +563,13 @@ class _ShareOptionCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: iconColor, size: 34),
-          const SizedBox(height: 10),
+          Icon(icon, color: iconColor, size: 28),
+          const SizedBox(height: 7),
           Text(
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 10.5,
+              fontSize: 9.5,
               height: 1.3,
               fontWeight: FontWeight.w700,
               color: Color(0xFF263143),
@@ -584,7 +587,7 @@ class _SecureShareInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
@@ -595,8 +598,8 @@ class _SecureShareInfoCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 38,
+            height: 38,
             decoration: const BoxDecoration(
               color: Color(0xFFE7F2FF),
               shape: BoxShape.circle,
@@ -604,23 +607,23 @@ class _SecureShareInfoCard extends StatelessWidget {
             child: const Icon(
               Icons.shield_rounded,
               color: Color(0xFF2086F3),
-              size: 30,
+              size: 20,
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 8),
           const Expanded(
             child: Text(
               'Your location will be shared securely and will help responders reach you faster.',
               style: TextStyle(
-                fontSize: 12.5,
-                height: 1.45,
+                fontSize: 9.5,
+                height: 1.2,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF4D5E79),
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          const Icon(Icons.location_on, color: Color(0xFFFF2B48), size: 34),
+          const SizedBox(width: 6),
+          const Icon(Icons.location_on, color: Color(0xFFFF2B48), size: 24),
         ],
       ),
     );
