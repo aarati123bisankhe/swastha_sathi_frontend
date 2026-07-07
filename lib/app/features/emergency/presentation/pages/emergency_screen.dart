@@ -5,6 +5,7 @@ import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboa
 import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
 
 class EmergencyScreen extends StatelessWidget {
   const EmergencyScreen({super.key, this.user});
@@ -262,13 +263,20 @@ class _EmergencyActionGrid extends StatelessWidget {
 
             Expanded(
               flex: 3,
-              child: const _EmergencyActionCard(
+              child: _EmergencyActionCard(
                 title: 'Share\nLocation',
                 icon: Icons.navigation,
-                colors: [Color(0xFF10B84D), Color(0xFF069B3E)],
+                colors: const [Color(0xFF10B84D), Color(0xFF069B3E)],
                 height: 132,
                 fontSize: 18,
                 iconSize: 46,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => ShareLocationScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
 

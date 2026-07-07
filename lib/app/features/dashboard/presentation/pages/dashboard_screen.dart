@@ -645,6 +645,7 @@ import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboa
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key, this.user});
@@ -776,10 +777,14 @@ class DashboardScreen extends StatelessWidget {
                               ],
                               onTap: () => _openEmergencyMessageScreen(context),
                             ),
-                            const _ActionTile(
+                            _ActionTile(
                               title: 'Share\nLocation',
                               icon: Icons.location_on,
-                              colors: [Color(0xFF5BCC5C), Color(0xFF1BA64A)],
+                              colors: const [
+                                Color(0xFF5BCC5C),
+                                Color(0xFF1BA64A),
+                              ],
+                              onTap: () => _openShareLocationScreen(context),
                             ),
                           ].map((tile) {
                             return SizedBox(width: tileWidth, child: tile);
@@ -934,6 +939,14 @@ class DashboardScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => EmergencyMessageScreen(user: user),
+      ),
+    );
+  }
+
+  void _openShareLocationScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => ShareLocationScreen(user: user),
       ),
     );
   }
