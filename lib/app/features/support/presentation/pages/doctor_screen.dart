@@ -194,12 +194,15 @@ class _DoctorHeader extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
-          child: const Padding(
-            padding: EdgeInsets.only(top: 8, right: 12),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF7C828C),
-              size: 19,
+          child: Transform.translate(
+            offset: const Offset(-6, 0),
+            child: const Padding(
+              padding: EdgeInsets.only(top: 8, right: 8),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color(0xFF7C828C),
+                size: 19,
+              ),
             ),
           ),
         ),
@@ -210,12 +213,12 @@ class _DoctorHeader extends StatelessWidget {
               Text(
                 'Doctor',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 25,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF251E7E),
                 ),
               ),
-              SizedBox(height: 3),
+              SizedBox(height: 1),
               Text(
                 'Connect with nearby healthcare professionals',
                 style: TextStyle(
@@ -265,7 +268,7 @@ class _DoctorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -283,7 +286,7 @@ class _DoctorCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               avatarBuilder(context),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,38 +298,38 @@ class _DoctorCard extends StatelessWidget {
                           child: Text(
                             doctor.name,
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 17,
                               fontWeight: FontWeight.w700,
                               color: Colors.black,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         Text(
                           doctor.experience,
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Color(0xFF6B707A),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 2),
                     Text(
                       doctor.specialization,
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 13,
                         color: Color(0xFF666C76),
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
                         RichText(
                           text: TextSpan(
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: Color(0xFF535B66),
                             ),
                             children: [
@@ -348,8 +351,8 @@ class _DoctorCard extends StatelessWidget {
                         const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFE6F8EB),
@@ -366,11 +369,11 @@ class _DoctorCard extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 5),
                               Text(
                                 doctor.status,
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   color: Color(0xFF0AA54C),
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -385,32 +388,32 @@ class _DoctorCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Padding(
-                padding: EdgeInsets.only(top: 2),
+                padding: EdgeInsets.only(top: 1),
                 child: Icon(
                   Icons.location_on,
-                  size: 19,
+                  size: 18,
                   color: Color(0xFF1C355E),
                 ),
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 4),
               Expanded(
                 child: Text(
                   'Hospital: ${doctor.hospitalName}',
                   style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.35,
+                    fontSize: 13,
+                    height: 1.25,
                     color: Color(0xFF5D6470),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -422,19 +425,19 @@ class _DoctorCard extends StatelessWidget {
                       color: Color(0xFF0B73E8),
                       width: 1.4,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  icon: const Icon(Icons.call_rounded, size: 22),
+                  icon: const Icon(Icons.call_rounded, size: 18),
                   label: const Text(
                     'Call',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: onMessage,
@@ -444,15 +447,15 @@ class _DoctorCard extends StatelessWidget {
                       color: Color(0xFF12B886),
                       width: 1.4,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  icon: const Icon(Icons.message_rounded, size: 22),
+                  icon: const Icon(Icons.message_rounded, size: 18),
                   label: const Text(
                     'Message',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -465,7 +468,7 @@ class _DoctorCard extends StatelessWidget {
 }
 
 class _DoctorReferenceAvatar extends StatelessWidget {
-  const _DoctorReferenceAvatar({required this.topOffset, this.size = 92});
+  const _DoctorReferenceAvatar({required this.topOffset, this.size = 76});
 
   final double topOffset;
   final double size;
