@@ -15,9 +15,7 @@ class PoliceHelpScreen extends StatelessWidget {
       location: 'Kathmandu',
       status: 'Available Now',
       phone: '100',
-      avatarBackground: Color(0xFFE6F2FF),
-      avatarAccent: Color(0xFF2D75D7),
-      initials: 'KP',
+      imageAssetPath: 'assets/images/police_kathmandu.png',
     ),
     _PoliceStation(
       name: 'Lalitpur Police Station',
@@ -25,9 +23,7 @@ class PoliceHelpScreen extends StatelessWidget {
       location: 'Lalitpur',
       status: 'Available Now',
       phone: '01-5521200',
-      avatarBackground: Color(0xFFEAF7FF),
-      avatarAccent: Color(0xFF0D74CC),
-      initials: 'LP',
+      imageAssetPath: 'assets/images/police_lalitpur.png',
     ),
   ];
 
@@ -181,7 +177,7 @@ class _PoliceStationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -199,7 +195,7 @@ class _PoliceStationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _PoliceAvatar(station: station),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +206,7 @@ class _PoliceStationCard extends StatelessWidget {
                           child: Text(
                             station.name,
                             style: const TextStyle(
-                              fontSize: 17,
+                              fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: Colors.black,
                             ),
@@ -219,8 +215,8 @@ class _PoliceStationCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFE6F8EB),
@@ -237,11 +233,11 @@ class _PoliceStationCard extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 5),
+                              const SizedBox(width: 4),
                               Text(
                                 station.status,
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFF0AA54C),
                                 ),
@@ -251,27 +247,27 @@ class _PoliceStationCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 2),
                     Text(
                       station.officer,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         color: Color(0xFF666C76),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
                         const Icon(
                           Icons.location_on,
-                          size: 16,
+                          size: 14,
                           color: Color(0xFF1C355E),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           station.location,
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             color: Color(0xFF5D6470),
                           ),
                         ),
@@ -282,25 +278,25 @@ class _PoliceStationCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           Align(
             alignment: Alignment.centerLeft,
             child: SizedBox(
-              width: 94,
+              width: 84,
               child: FilledButton.icon(
                 onPressed: onCall,
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF1467D4),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                icon: const Icon(Icons.call_rounded, size: 18),
+                icon: const Icon(Icons.call_rounded, size: 16),
                 label: const Text(
                   'Call',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -318,61 +314,11 @@ class _PoliceAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        color: station.avatarBackground,
-        shape: BoxShape.circle,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            top: 14,
-            child: Container(
-              width: 34,
-              height: 34,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFD7BF),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 10,
-            child: Container(
-              width: 40,
-              height: 16,
-              decoration: BoxDecoration(
-                color: station.avatarAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 42,
-            child: Container(
-              width: 52,
-              height: 24,
-              decoration: BoxDecoration(
-                color: station.avatarAccent,
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 8,
-            child: Text(
-              station.initials,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: station.avatarAccent,
-              ),
-            ),
-          ),
-        ],
+    return ClipOval(
+      child: SizedBox(
+        width: 58,
+        height: 58,
+        child: Image.asset(station.imageAssetPath, fit: BoxFit.cover),
       ),
     );
   }
@@ -385,9 +331,7 @@ class _PoliceStation {
     required this.location,
     required this.status,
     required this.phone,
-    required this.avatarBackground,
-    required this.avatarAccent,
-    required this.initials,
+    required this.imageAssetPath,
   });
 
   final String name;
@@ -395,7 +339,5 @@ class _PoliceStation {
   final String location;
   final String status;
   final String phone;
-  final Color avatarBackground;
-  final Color avatarAccent;
-  final String initials;
+  final String imageAssetPath;
 }
