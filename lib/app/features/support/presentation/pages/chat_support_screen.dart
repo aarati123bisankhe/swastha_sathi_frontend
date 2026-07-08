@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
-import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class ChatSupportScreen extends StatefulWidget {
   const ChatSupportScreen({super.key, this.user});
@@ -80,6 +79,7 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Expanded(
@@ -143,10 +143,6 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: DashboardBottomNav(
-        activeTab: DashboardNavTab.support,
-        user: widget.user,
       ),
     );
   }
@@ -652,7 +648,7 @@ class _SupportComposer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+      margin: const EdgeInsets.fromLTRB(18, 0, 18, 26),
       padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
       decoration: BoxDecoration(
         color: Colors.white,

@@ -257,12 +257,15 @@ class _Header extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
-          child: const Padding(
-            padding: EdgeInsets.only(top: 8, right: 12),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF7B828B),
-              size: 19,
+          child: Transform.translate(
+            offset: const Offset(-8, 0),
+            child: const Padding(
+              padding: EdgeInsets.only(top: 8, right: 8),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color(0xFF7B828B),
+                size: 19,
+              ),
             ),
           ),
         ),
