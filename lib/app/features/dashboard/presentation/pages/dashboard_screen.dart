@@ -646,6 +646,7 @@ import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_req
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/first_aid_box_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/symptom_checker_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -838,6 +839,8 @@ class DashboardScreen extends StatelessWidget {
                                       title: 'First Aid\nGuide',
                                       icon: Icons.medical_services,
                                       iconColor: Color(0xFFFF2D55),
+                                      onTap: () =>
+                                          _openFirstAidBoxScreen(context),
                                     ),
                                     _FeatureTile(
                                       title: 'Hospital',
@@ -958,6 +961,14 @@ class DashboardScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => SymptomCheckerScreen(user: user),
+      ),
+    );
+  }
+
+  void _openFirstAidBoxScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => FirstAidBoxScreen(user: user),
       ),
     );
   }
