@@ -1,224 +1,219 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/personal_information_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.user});
 
   final AuthUser? user;
 
   @override
-  Widget build(BuildContext context) {
-    final fullName = user?.fullName.trim().isNotEmpty == true
-        ? user!.fullName.trim()
-        : 'Anisha Sharma';
-    final district = user?.district.trim().isNotEmpty == true
-        ? user!.district.trim()
-        : 'Kathmandu, Nepal';
-    final bloodGroup = user?.bloodGroup?.trim().isNotEmpty == true
-        ? user!.bloodGroup!.trim()
-        : 'O+ Positive';
-    final phoneNumber = user?.phoneNumber.trim().isNotEmpty == true
-        ? user!.phoneNumber.trim()
-        : '+977 9865432369';
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(22, 12, 22, 120),
-          child: Column(
-            children: [
-              const Text(
-                'Profile',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF24229A),
-                ),
-              ),
-              const SizedBox(height: 12),
-              const _ProfileAvatar(),
-              const SizedBox(height: 15),
-              Text(
-                fullName,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF2E3338),
-                ),
-              ),
-              const SizedBox(height: 1),
-              const Text(
-                'HealthCare Campanion users',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Color(0xFF434A51)),
-              ),
-              const SizedBox(height: 9),
-              _ProfileStatsCard(
-                bloodGroup: bloodGroup,
-                district: district,
-                phoneNumber: phoneNumber,
-              ),
-              const SizedBox(height: 20),
-              const _ProfileMenuCard(
-                icon: Icons.person_rounded,
-                iconBackground: Color(0xFF1E88F7),
-                title: 'Personal Information',
-              ),
-              const SizedBox(height: 14),
-              const _ProfileMenuCard(
-                icon: Icons.medical_services_rounded,
-                iconBackground: Color(0xFF16BF70),
-                title: 'Health Record',
-              ),
-              const SizedBox(height: 14),
-              const _ProfileMenuCard(
-                icon: Icons.language_rounded,
-                iconBackground: Color(0xFFFF8A00),
-                title: 'Language Setting',
-              ),
-              const SizedBox(height: 14),
-              const _ProfileToggleCard(),
-              const SizedBox(height: 16),
-              const _LogoutButton(),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: DashboardBottomNav(
-        activeTab: DashboardNavTab.profile,
-        user: user,
-      ),
-    );
-  }
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileAvatar extends StatefulWidget {
-  const _ProfileAvatar();
+class _ProfileScreenState extends State<ProfileScreen> {
+  static const String _storageKey = 'personal_information_data';
+
+  late PersonalInformationData _personalInfo;
+  bool _loading = true;
 
   @override
-  State<_ProfileAvatar> createState() => _ProfileAvatarState();
-}
-
-class _ProfileAvatarState extends State<_ProfileAvatar> {
-  final ImagePicker _picker = ImagePicker();
-  XFile? _selectedImage;
-
-  Future<void> _pickImage(ImageSource source) async {
-    final image = await _picker.pickImage(source: source);
-    if (image == null || !mounted) return;
-
-    setState(() {
-      _selectedImage = image;
-    });
+  void initState() {
+    super.initState();
+    _personalInfo = PersonalInformationData(
+      fullName: widget.user?.fullName.trim().isNotEmpty == true
+          ? widget.user!.fullName.trim()
+          : 'Anisha Sharma',
+      birthDate: '12 May 2002',
+      gender: 'Female',
+      bloodGroup: widget.user?.bloodGroup?.trim().isNotEmpty == true
+          ? widget.user!.bloodGroup!.trim()
+          : 'O+ Positive',
+      phoneNumber: widget.user?.phoneNumber.trim().isNotEmpty == true
+          ? widget.user!.phoneNumber.trim()
+          : '9862573376',
+      email: widget.user?.email.trim().isNotEmpty == true
+          ? widget.user!.email.trim()
+          : 'anisha@gmail.com',
+      address: widget.user?.district.trim().isNotEmpty == true
+          ? widget.user!.district.trim()
+          : 'Kathmandu, Nepal',
+      profileImageUrl: widget.user?.profileUrl,
+    );
+    _loadPersonalInformation();
   }
 
-  Future<void> _showImageOptions() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Choose Profile Photo',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF24229A),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                ListTile(
-                  leading: const Icon(Icons.photo_camera_rounded),
-                  title: const Text('Take Photo'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _pickImage(ImageSource.camera);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library_rounded),
-                  title: const Text('Choose from Gallery'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _pickImage(ImageSource.gallery);
-                  },
-                ),
-              ],
+  Future<void> _openPersonalInformation() async {
+    final updatedInfo = await Navigator.of(context)
+        .push<PersonalInformationData>(
+          MaterialPageRoute<PersonalInformationData>(
+            builder: (context) => PersonalInformationScreen(
+              initialData: _personalInfo,
+              user: widget.user,
             ),
           ),
         );
-      },
-    );
+
+    if (updatedInfo == null || !mounted) return;
+
+    setState(() {
+      _personalInfo = updatedInfo;
+    });
+
+    await _persistPersonalInformation(updatedInfo);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Personal information updated successfully.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _loadPersonalInformation() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_storageKey);
+
+    if (!mounted) return;
+
+    setState(() {
+      if (raw != null && raw.isNotEmpty) {
+        _personalInfo = PersonalInformationData.fromJson(
+          jsonDecode(raw) as Map<String, dynamic>,
+        );
+      }
+      _loading = false;
+    });
+  }
+
+  Future<void> _persistPersonalInformation(PersonalInformationData data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_storageKey, jsonEncode(data.toJson()));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        GestureDetector(
-          onTap: _showImageOptions,
-          child: Container(
-            width: 134,
-            height: 134,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [Color(0xFF9EC0F2), Color(0xFF87A6D9)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: ClipOval(
-              child: _selectedImage != null
-                  ? Image.file(File(_selectedImage!.path), fit: BoxFit.cover)
-                  : const Icon(
-                      Icons.person_rounded,
-                      size: 82,
-                      color: Color(0xFF4B2C22),
+    return Scaffold(
+      backgroundColor: const Color(0xFFDCEAF5),
+      body: SafeArea(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(22, 12, 22, 120),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Profile',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF24229A),
+                      ),
                     ),
-            ),
-          ),
-        ),
-        Positioned(
-          right: -2,
-          bottom: -2,
-          child: GestureDetector(
-            onTap: _showImageOptions,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2287EE),
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 3),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x22000000),
-                    blurRadius: 8,
-                    offset: Offset(0, 3),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    _ProfilePhotoView(
+                      profileImagePath: _personalInfo.profileImagePath,
+                      profileImageUrl: _personalInfo.profileImageUrl,
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      _personalInfo.fullName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF2E3338),
+                      ),
+                    ),
+                    const SizedBox(height: 1),
+                    const Text(
+                      'HealthCare Companion users',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Color(0xFF434A51)),
+                    ),
+                    const SizedBox(height: 9),
+                    _ProfileStatsCard(
+                      bloodGroup: _personalInfo.bloodGroup,
+                      district: _personalInfo.address,
+                      phoneNumber: _personalInfo.phoneNumber,
+                    ),
+                    const SizedBox(height: 20),
+                    _ProfileMenuCard(
+                      icon: Icons.person_rounded,
+                      iconBackground: const Color(0xFF1E88F7),
+                      title: 'Personal Information',
+                      onTap: _openPersonalInformation,
+                    ),
+                    const SizedBox(height: 14),
+                    const _ProfileMenuCard(
+                      icon: Icons.medical_services_rounded,
+                      iconBackground: Color(0xFF16BF70),
+                      title: 'Health Record',
+                    ),
+                    const SizedBox(height: 14),
+                    const _ProfileMenuCard(
+                      icon: Icons.language_rounded,
+                      iconBackground: Color(0xFFFF8A00),
+                      title: 'Language Setting',
+                    ),
+                    const SizedBox(height: 14),
+                    const _ProfileToggleCard(),
+                    const SizedBox(height: 16),
+                    const _LogoutButton(),
+                  ],
+                ),
               ),
-              child: const Icon(
-                Icons.photo_camera_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
-          ),
+      ),
+      bottomNavigationBar: DashboardBottomNav(
+        activeTab: DashboardNavTab.profile,
+        user: widget.user,
+      ),
+    );
+  }
+}
+
+class _ProfilePhotoView extends StatelessWidget {
+  const _ProfilePhotoView({this.profileImagePath, this.profileImageUrl});
+
+  final String? profileImagePath;
+  final String? profileImageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    ImageProvider<Object>? imageProvider;
+    if (profileImagePath != null && profileImagePath!.isNotEmpty) {
+      imageProvider = FileImage(File(profileImagePath!));
+    } else if (profileImageUrl != null && profileImageUrl!.isNotEmpty) {
+      imageProvider = NetworkImage(profileImageUrl!);
+    }
+
+    return Container(
+      width: 134,
+      height: 134,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [Color(0xFF9EC0F2), Color(0xFF87A6D9)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-      ],
+      ),
+      child: ClipOval(
+        child: imageProvider != null
+            ? Image(image: imageProvider, fit: BoxFit.cover)
+            : const Image(
+                image: AssetImage('assets/images/family_contact_avatar.png'),
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 }
@@ -261,8 +256,8 @@ class _ProfileStatsCard extends StatelessWidget {
               Expanded(
                 child: _ProfileInfoItem(
                   icon: Icons.bloodtype,
-                  iconBackground: Color(0xFFE8B2B2),
-                  iconColor: Color(0xFFE11B1B),
+                  iconBackground: const Color(0xFFE8B2B2),
+                  iconColor: const Color(0xFFE11B1B),
                   title: 'Blood Group',
                   subtitle: bloodGroup,
                 ),
@@ -285,8 +280,8 @@ class _ProfileStatsCard extends StatelessWidget {
               Expanded(
                 child: _ProfileInfoItem(
                   icon: Icons.location_on_rounded,
-                  iconBackground: Color(0xFFC9B8E9),
-                  iconColor: Color(0xFF1F3F6B),
+                  iconBackground: const Color(0xFFC9B8E9),
+                  iconColor: const Color(0xFF1F3F6B),
                   title: 'Location',
                   subtitle: district,
                 ),
@@ -376,56 +371,65 @@ class _ProfileMenuCard extends StatelessWidget {
     required this.icon,
     required this.iconBackground,
     required this.title,
+    this.onTap,
   });
 
   final IconData icon;
   final Color iconBackground;
   final String title;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x22000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: iconBackground,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: Colors.white, size: 19),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
+        child: Ink(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x22000000),
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
-            ),
+            ],
           ),
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: Color(0xFF7C7F86),
-            size: 34,
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: iconBackground,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: Colors.white, size: 19),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Color(0xFF7C7F86),
+                size: 34,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
