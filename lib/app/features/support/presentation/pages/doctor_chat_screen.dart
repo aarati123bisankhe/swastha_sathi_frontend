@@ -72,10 +72,6 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
               subtitle: _headerSubtitle,
               avatarBuilder: widget.avatarBuilder,
               onBack: () => Navigator.of(context).pop(),
-              onCall: () =>
-                  _showActionMessage('Starting voice call with $_headerTitle'),
-              onVideoCall: () =>
-                  _showActionMessage('Starting video call with $_headerTitle'),
             ),
             Expanded(
               child: Container(
@@ -203,16 +199,12 @@ class _ChatHeader extends StatelessWidget {
     required this.subtitle,
     required this.avatarBuilder,
     required this.onBack,
-    required this.onCall,
-    required this.onVideoCall,
   });
 
   final String title;
   final String subtitle;
   final WidgetBuilder avatarBuilder;
   final VoidCallback onBack;
-  final VoidCallback onCall;
-  final VoidCallback onVideoCall;
 
   @override
   Widget build(BuildContext context) {
@@ -231,12 +223,15 @@ class _ChatHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: onBack,
-            child: const Padding(
-              padding: EdgeInsets.only(right: 6),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.black87,
-                size: 22,
+            child: Transform.translate(
+              offset: const Offset(-8, 0),
+              child: const Padding(
+                padding: EdgeInsets.only(right: 2),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                  size: 19,
+                ),
               ),
             ),
           ),
@@ -266,24 +261,6 @@ class _ChatHeader extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: onCall,
-            child: const Icon(
-              Icons.call_rounded,
-              color: Colors.white,
-              size: 33,
-            ),
-          ),
-          const SizedBox(width: 18),
-          GestureDetector(
-            onTap: onVideoCall,
-            child: const Icon(
-              Icons.videocam_rounded,
-              color: Colors.white,
-              size: 33,
-            ),
-          ),
         ],
       ),
     );
@@ -301,7 +278,11 @@ class _HeaderAvatar extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         ClipOval(
-          child: SizedBox(width: 62, height: 62, child: avatarBuilder(context)),
+          child: SizedBox(
+            width: 62,
+            height: 62,
+            child: Center(child: avatarBuilder(context)),
+          ),
         ),
         Positioned(
           right: -1,

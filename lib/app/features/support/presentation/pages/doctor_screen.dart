@@ -19,7 +19,7 @@ class DoctorScreen extends StatelessWidget {
       status: 'Available Now',
       doctorPhone: '+977 9811111101',
       hospitalPhone: '01-5970032',
-      cropTop: 127,
+      imageAssetPath: 'assets/images/doctor_aryan_new.png',
     ),
     _DoctorInfo(
       name: 'Dr. Min Bahadur Thapa',
@@ -30,7 +30,7 @@ class DoctorScreen extends StatelessWidget {
       status: 'Available Now',
       doctorPhone: '+977 9811111102',
       hospitalPhone: '01-4533395',
-      cropTop: 364,
+      imageAssetPath: 'assets/images/doctor_aarav.png',
     ),
     _DoctorInfo(
       name: 'Dr. Aanaya Sharma',
@@ -41,7 +41,7 @@ class DoctorScreen extends StatelessWidget {
       status: 'Available Now',
       doctorPhone: '+977 9811111103',
       hospitalPhone: '01-5970032',
-      cropTop: 595,
+      imageAssetPath: 'assets/images/doctor_aanaya_new.png',
     ),
     _DoctorInfo(
       name: 'Dr. Pradip Rana',
@@ -52,7 +52,7 @@ class DoctorScreen extends StatelessWidget {
       status: 'Available Now',
       doctorPhone: '+977 9811111104',
       hospitalPhone: '01-5970032',
-      cropTop: 844,
+      imageAssetPath: 'assets/images/doctor_pradip_new.png',
     ),
   ];
 
@@ -73,8 +73,9 @@ class DoctorScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: _DoctorCard(
                     doctor: doctor,
-                    avatarBuilder: (context) =>
-                        _DoctorReferenceAvatar(topOffset: doctor.cropTop),
+                    avatarBuilder: (context) => _DoctorAssetAvatar(
+                      imageAssetPath: doctor.imageAssetPath,
+                    ),
                     onCall: () => _showCallSheet(context, doctor),
                     onMessage: () {
                       Navigator.of(context).push(
@@ -84,8 +85,8 @@ class DoctorScreen extends StatelessWidget {
                             doctorName: doctor.name,
                             specialization: doctor.specialization,
                             hospitalName: doctor.hospitalName,
-                            avatarBuilder: (_) => _DoctorReferenceAvatar(
-                              topOffset: doctor.cropTop,
+                            avatarBuilder: (_) => _DoctorAssetAvatar(
+                              imageAssetPath: doctor.imageAssetPath,
                               size: 48,
                             ),
                           ),
@@ -467,15 +468,11 @@ class _DoctorCard extends StatelessWidget {
   }
 }
 
-class _DoctorReferenceAvatar extends StatelessWidget {
-  const _DoctorReferenceAvatar({required this.topOffset, this.size = 76});
+class _DoctorAssetAvatar extends StatelessWidget {
+  const _DoctorAssetAvatar({required this.imageAssetPath, this.size = 76});
 
-  final double topOffset;
+  final String imageAssetPath;
   final double size;
-
-  static const double _sourceWidth = 588;
-  static const double _sourceHeight = 1202;
-  static const double _cropLeft = 43;
 
   @override
   Widget build(BuildContext context) {
@@ -483,20 +480,7 @@ class _DoctorReferenceAvatar extends StatelessWidget {
       child: SizedBox(
         width: size,
         height: size,
-        child: OverflowBox(
-          maxWidth: _sourceWidth,
-          maxHeight: _sourceHeight,
-          alignment: Alignment.topLeft,
-          child: Transform.translate(
-            offset: Offset(-_cropLeft, -topOffset),
-            child: Image.asset(
-              'assets/images/doctor_reference.png',
-              width: _sourceWidth,
-              height: _sourceHeight,
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
+        child: Image.asset(imageAssetPath, fit: BoxFit.cover),
       ),
     );
   }
@@ -582,7 +566,7 @@ class _DoctorInfo {
     required this.status,
     required this.doctorPhone,
     required this.hospitalPhone,
-    required this.cropTop,
+    required this.imageAssetPath,
   });
 
   final String name;
@@ -593,5 +577,5 @@ class _DoctorInfo {
   final String status;
   final String doctorPhone;
   final String hospitalPhone;
-  final double cropTop;
+  final String imageAssetPath;
 }
