@@ -648,6 +648,7 @@ import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency
 import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/doctor_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/first_aid_box_screen.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/health_awareness_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/hospital_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/symptom_checker_screen.dart';
 
@@ -886,10 +887,12 @@ class DashboardScreen extends StatelessWidget {
                                 const SizedBox(width: secondRowSpacing),
                                 SizedBox(
                                   width: secondRowWidth,
-                                  child: const _FeatureTile(
+                                  child: _FeatureTile(
                                     title: 'Awareness\nVideo',
                                     icon: Icons.videocam,
                                     iconColor: Color(0xFF7C4DFF),
+                                    onTap: () =>
+                                        _openHealthAwarenessScreen(context),
                                   ),
                                 ),
                               ],
@@ -986,6 +989,14 @@ class DashboardScreen extends StatelessWidget {
   void _openDoctorScreen(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (context) => DoctorScreen(user: user)),
+    );
+  }
+
+  void _openHealthAwarenessScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => HealthAwarenessScreen(user: user),
+      ),
     );
   }
 }
