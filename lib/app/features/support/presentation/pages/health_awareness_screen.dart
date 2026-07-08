@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class HealthAwarenessScreen extends StatefulWidget {
@@ -13,7 +14,6 @@ class HealthAwarenessScreen extends StatefulWidget {
 
 class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
   String _selectedCategory = 'Pregnancy Care';
-  final Set<String> _savedOfflineTitles = <String>{};
 
   static const List<String> _categories = [
     'All',
@@ -72,44 +72,52 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _AwarenessHeader(),
-              const SizedBox(height: 24),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: _categories
-                    .map(
-                      (category) => _CategoryChip(
-                        label: category,
-                        selected: _selectedCategory == category,
-                        onTap: () {
-                          setState(() {
-                            _selectedCategory = category;
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 28),
-              ...visibleVideos.map(
-                (video) => Padding(
-                  padding: const EdgeInsets.only(bottom: 18),
-                  child: _AwarenessVideoCard(
-                    video: video,
-                    savedOffline: _savedOfflineTitles.contains(video.title),
-                    onSaveOffline: () => _saveOffline(video),
-                    onWatchNow: () => _watchNow(video),
+        child: ValueListenableBuilder<Set<String>>(
+          valueListenable: AwarenessSavedStore.savedTitles,
+          builder: (context, savedTitles, _) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _AwarenessHeader(
+                    user: widget.user,
+                    onOpenSaved: _openSavedVideos,
                   ),
-                ),
+                  const SizedBox(height: 24),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _categories
+                        .map(
+                          (category) => _CategoryChip(
+                            label: category,
+                            selected: _selectedCategory == category,
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = category;
+                              });
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 28),
+                  ...visibleVideos.map(
+                    (video) => Padding(
+                      padding: const EdgeInsets.only(bottom: 18),
+                      child: _AwarenessVideoCard(
+                        video: video,
+                        savedOffline: savedTitles.contains(video.title),
+                        onSaveOffline: () => _saveOffline(video),
+                        onWatchNow: () => _watchNow(video),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
       bottomNavigationBar: DashboardBottomNav(
@@ -120,9 +128,9 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
   }
 
   void _saveOffline(AwarenessVideo video) {
-    setState(() {
-      _savedOfflineTitles.add(video.title);
-    });
+    final updated = Set<String>.from(AwarenessSavedStore.savedTitles.value)
+      ..add(video.title);
+    AwarenessSavedStore.savedTitles.value = updated;
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -141,10 +149,25 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
       ),
     );
   }
+
+  void _openSavedVideos() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => SavedAwarenessVideosScreen(
+          user: widget.user,
+          allVideos: _videos,
+          onWatchNow: _watchNow,
+        ),
+      ),
+    );
+  }
 }
 
 class _AwarenessHeader extends StatelessWidget {
-  const _AwarenessHeader();
+  const _AwarenessHeader({this.user, required this.onOpenSaved});
+
+  final AuthUser? user;
+  final VoidCallback onOpenSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -177,12 +200,42 @@ class _AwarenessHeader extends StatelessWidget {
                   color: Color(0xFF251E7E),
                 ),
               ),
-              SizedBox(height: 2),
+              SizedBox(height: 1),
               Text(
                 'Learn healthcare tips and stay informed',
                 style: TextStyle(fontSize: 13, color: Color(0xFF555D69)),
               ),
             ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        GestureDetector(
+          onTap: onOpenSaved,
+          child: const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(
+              Icons.bookmark_outline_rounded,
+              color: Color(0xFF193767),
+              size: 29,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => NotificationScreen(user: user),
+              ),
+            );
+          },
+          child: const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(
+              Icons.notifications,
+              color: Color(0xFF193767),
+              size: 30,
+            ),
           ),
         ),
       ],
@@ -435,6 +488,165 @@ class _AwarenessVideoCard extends StatelessWidget {
   }
 }
 
+class SavedAwarenessVideosScreen extends StatelessWidget {
+  const SavedAwarenessVideosScreen({
+    super.key,
+    required this.user,
+    required this.allVideos,
+    required this.onWatchNow,
+  });
+
+  final AuthUser? user;
+  final List<AwarenessVideo> allVideos;
+  final ValueChanged<AwarenessVideo> onWatchNow;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFDCEAF5),
+      body: SafeArea(
+        child: ValueListenableBuilder<Set<String>>(
+          valueListenable: AwarenessSavedStore.savedTitles,
+          builder: (context, savedTitles, _) {
+            final savedVideos = allVideos
+                .where((video) => savedTitles.contains(video.title))
+                .toList();
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _SavedVideosHeader(user: user),
+                  const SizedBox(height: 22),
+                  if (savedVideos.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: const Column(
+                        children: [
+                          Icon(
+                            Icons.bookmark_border_rounded,
+                            color: Color(0xFF0C8599),
+                            size: 42,
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            'No saved videos yet',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1E2A35),
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Videos you save for offline viewing will appear here.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF5A6673),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    ...savedVideos.map(
+                      (video) => Padding(
+                        padding: const EdgeInsets.only(bottom: 18),
+                        child: _AwarenessVideoCard(
+                          video: video,
+                          savedOffline: true,
+                          onSaveOffline: () {},
+                          onWatchNow: () => onWatchNow(video),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      bottomNavigationBar: DashboardBottomNav(
+        activeTab: DashboardNavTab.support,
+        user: user,
+      ),
+    );
+  }
+}
+
+class _SavedVideosHeader extends StatelessWidget {
+  const _SavedVideosHeader({this.user});
+
+  final AuthUser? user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Transform.translate(
+            offset: const Offset(-8, 0),
+            child: const Padding(
+              padding: EdgeInsets.only(top: 9, right: 8),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color(0xFF7C828C),
+                size: 19,
+              ),
+            ),
+          ),
+        ),
+        const Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Saved Videos',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF251E7E),
+                ),
+              ),
+              SizedBox(height: 1),
+              Text(
+                'Videos saved for offline viewing',
+                style: TextStyle(fontSize: 13, color: Color(0xFF555D69)),
+              ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => NotificationScreen(user: user),
+              ),
+            );
+          },
+          child: const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(
+              Icons.notifications,
+              color: Color(0xFF193767),
+              size: 30,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class HealthAwarenessPlayerScreen extends StatelessWidget {
   const HealthAwarenessPlayerScreen({super.key, required this.video});
 
@@ -587,4 +799,9 @@ class AwarenessVideo {
   final String educatorImageAssetPath;
   final String thumbnailDuration;
   final String videoDuration;
+}
+
+class AwarenessSavedStore {
+  static final ValueNotifier<Set<String>> savedTitles =
+      ValueNotifier<Set<String>>(<String>{});
 }

@@ -641,9 +641,11 @@
 import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/doctor_screen.dart';
@@ -738,7 +740,7 @@ class DashboardScreen extends StatelessWidget {
                 child: _SectionHeader(
                   title: 'Quick Emergency Actions',
                   actionLabel: 'View all',
-                  onActionTap: () {},
+                  onActionTap: () => _openEmergencyScreen(context),
                 ),
               ),
 
@@ -878,10 +880,11 @@ class DashboardScreen extends StatelessWidget {
                               children: [
                                 SizedBox(
                                   width: secondRowWidth,
-                                  child: const _FeatureTile(
+                                  child: _FeatureTile(
                                     title: 'Health\nRecord',
                                     icon: Icons.assignment,
                                     iconColor: Color(0xFF7C4DFF),
+                                    onTap: () => _openRecordScreen(context),
                                   ),
                                 ),
                                 const SizedBox(width: secondRowSpacing),
@@ -936,6 +939,14 @@ class DashboardScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => CallAmbulanceScreen(user: user),
+      ),
+    );
+  }
+
+  void _openEmergencyScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => EmergencyScreen(user: user),
       ),
     );
   }
@@ -997,6 +1008,12 @@ class DashboardScreen extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (context) => HealthAwarenessScreen(user: user),
       ),
+    );
+  }
+
+  void _openRecordScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (context) => RecordScreen(user: user)),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_req
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/doctor_screen.dart';
 
 class EmergencyScreen extends StatelessWidget {
   const EmergencyScreen({super.key, this.user});
@@ -202,13 +203,20 @@ class _EmergencyActionGrid extends StatelessWidget {
 
             Expanded(
               flex: 3,
-              child: const _EmergencyActionCard(
+              child: _EmergencyActionCard(
                 title: 'Call\nDoctor',
                 icon: Icons.person_search_rounded,
-                colors: [Color(0xFF159AF2), Color(0xFF0878D8)],
+                colors: const [Color(0xFF159AF2), Color(0xFF0878D8)],
                 height: 126,
                 fontSize: 18,
                 iconSize: 44,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => DoctorScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
 
