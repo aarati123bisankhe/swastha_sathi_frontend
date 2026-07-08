@@ -112,9 +112,9 @@ class FirstAidBoxScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Header(user: user),
-              const SizedBox(height: 24),
+              const SizedBox(height: 8),
               const _BannerCard(),
-              const SizedBox(height: 22),
+              const SizedBox(height: 9),
               const Text(
                 'Choose an Emergency',
                 style: TextStyle(
@@ -134,12 +134,12 @@ class FirstAidBoxScreen extends StatelessWidget {
               const Text(
                 'First Aid Essentials Checklist',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: Color(0xFF111111),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 13),
               const _ChecklistCard(),
               const SizedBox(height: 18),
               const _SafetyMessageCard(),
@@ -317,134 +317,12 @@ class _BannerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFDE6E9), Color(0xFFFBEDEF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 132,
-            height: 132,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF5858), Color(0xFFEF2222)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x33E02C2C),
-                  blurRadius: 18,
-                  offset: Offset(0, 12),
-                ),
-              ],
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  bottom: 10,
-                  left: 8,
-                  child: Container(
-                    width: 30,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 6,
-                  child: Container(
-                    width: 52,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xFF8D9097),
-                        width: 4,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: Color(0xFFF12424),
-                    size: 40,
-                  ),
-                ),
-                Positioned(
-                  right: 2,
-                  bottom: 16,
-                  child: Container(
-                    width: 22,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 10,
-                  bottom: 4,
-                  child: Container(
-                    width: 24,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEFC9A7),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Be Prepared. Save Lives.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    height: 1.25,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFFD81616),
-                  ),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  'Learn simple first aid for everyday emergencies.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.45,
-                    color: Color(0xFF4A586E),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      height: 130,
+      child: Image.asset(
+        'assets/images/first_aid_banner.png',
+        fit: BoxFit.cover,
       ),
     );
   }
@@ -492,8 +370,8 @@ class _EmergencyTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 92,
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
+        height: 70,
+        padding: const EdgeInsets.fromLTRB(7, 6, 7, 5),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(14),
@@ -506,7 +384,7 @@ class _EmergencyTile extends StatelessWidget {
                 child: Text(
                   emergency.emoji,
                   style: TextStyle(
-                    fontSize: emergency.title == 'More' ? 24 : 30,
+                    fontSize: emergency.title == 'More' ? 18 : 22,
                     height: 1,
                   ),
                 ),
@@ -521,8 +399,8 @@ class _EmergencyTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 11,
-                      height: 1.15,
+                      fontSize: 9,
+                      height: 1.05,
                       color: Color(0xFF26364C),
                       fontWeight: FontWeight.w700,
                     ),
@@ -531,7 +409,7 @@ class _EmergencyTile extends StatelessWidget {
                 const Icon(
                   Icons.chevron_right_rounded,
                   color: Color(0xFF6C7590),
-                  size: 18,
+                  size: 14,
                 ),
               ],
             ),
@@ -549,7 +427,7 @@ class _QuickReminderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.88),
         borderRadius: BorderRadius.circular(20),
@@ -558,8 +436,8 @@ class _QuickReminderCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 58,
-            height: 58,
+            width: 42,
+            height: 42,
             decoration: const BoxDecoration(
               color: Color(0xFFFFE0E0),
               shape: BoxShape.circle,
@@ -567,28 +445,29 @@ class _QuickReminderCard extends StatelessWidget {
             child: const Icon(
               Icons.lightbulb_rounded,
               color: Color(0xFFE51A1A),
-              size: 30,
+              size: 22,
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 10),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Quick Reminder',
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFFD81616),
                   ),
                 ),
-                SizedBox(height: 6),
+                SizedBox(height: 2),
                 Text(
                   'In a serious emergency, call emergency services immediately.',
                   style: TextStyle(
-                    fontSize: 13.5,
-                    height: 1.45,
+                    fontSize: 9,
+                    height: 1.3,
                     color: Color(0xFF33445A),
                     fontWeight: FontWeight.w600,
                   ),
@@ -596,10 +475,10 @@ class _QuickReminderCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Container(
-            width: 178,
-            height: 68,
+            width: 138,
+            height: 50,
             decoration: BoxDecoration(
               color: const Color(0xFFFF0E0E),
               borderRadius: BorderRadius.circular(16),
@@ -614,8 +493,8 @@ class _QuickReminderCard extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.call, color: Colors.white, size: 28),
-                SizedBox(width: 12),
+                Icon(Icons.call, color: Colors.white, size: 20),
+                SizedBox(width: 9),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,16 +502,16 @@ class _QuickReminderCard extends StatelessWidget {
                     Text(
                       'Emergency Call',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 11,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    SizedBox(height: 1),
                     Text(
                       '101',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 19,
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                       ),
@@ -663,7 +542,7 @@ class _ChecklistCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(18),
@@ -676,20 +555,20 @@ class _ChecklistCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(top: 1),
+                  padding: EdgeInsets.only(top: 0.5),
                   child: Icon(
                     Icons.check_circle_rounded,
                     color: Color(0xFF10B44B),
-                    size: 24,
+                    size: 18,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 5),
                 Flexible(
                   child: Text(
                     item,
                     style: const TextStyle(
-                      fontSize: 11,
-                      height: 1.2,
+                      fontSize: 9,
+                      height: 1.1,
                       color: Color(0xFF344560),
                       fontWeight: FontWeight.w700,
                     ),
@@ -709,64 +588,11 @@ class _SafetyMessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/images/first_aid_safety_message.png',
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFDDF9E9), Color(0xFFC9F5E0)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2DD475),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 16),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Stay calm and follow the steps carefully.',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF39516A),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  'Your quick action can make a big difference.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF39516A),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(
-            Icons.favorite_outline_rounded,
-            color: Color(0xFF84DFB6),
-            size: 54,
-          ),
-        ],
-      ),
+      fit: BoxFit.contain,
+      alignment: Alignment.centerLeft,
     );
   }
 }
