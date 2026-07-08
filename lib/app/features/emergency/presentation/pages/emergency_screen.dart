@@ -5,6 +5,7 @@ import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboa
 import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_request_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/police_help_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/doctor_screen.dart';
 
@@ -292,13 +293,20 @@ class _EmergencyActionGrid extends StatelessWidget {
 
             Expanded(
               flex: 3,
-              child: const _EmergencyActionCard(
+              child: _EmergencyActionCard(
                 title: 'Police\nHelp',
                 icon: Icons.local_police_outlined,
-                colors: [Color(0xFF104DB2), Color(0xFF073681)],
+                colors: const [Color(0xFF104DB2), Color(0xFF073681)],
                 height: 132,
                 fontSize: 18,
                 iconSize: 46,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => PoliceHelpScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
           ],
