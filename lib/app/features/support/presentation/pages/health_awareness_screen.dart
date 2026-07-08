@@ -13,7 +13,7 @@ class HealthAwarenessScreen extends StatefulWidget {
 
 class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
   String _selectedCategory = 'Pregnancy Care';
-  bool _savedOffline = false;
+  final Set<String> _savedOfflineTitles = <String>{};
 
   static const List<String> _categories = [
     'All',
@@ -22,8 +22,53 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
     'Vaccination',
   ];
 
+  static const List<AwarenessVideo> _videos = [
+    AwarenessVideo(
+      category: 'Pregnancy Care',
+      title: 'Pregnancy Care Tips',
+      description:
+          'Learn important pregnancy care tips and how to stay healthy during pregnancy.',
+      thumbnailAssetPath: 'assets/images/awareness_pregnancy.png',
+      educatorName: 'Doctor / Healthcare Educator',
+      educatorSubtitle: 'Doctor',
+      educatorImageAssetPath: 'assets/images/doctor_aanaya_new.png',
+      thumbnailDuration: '00:30',
+      videoDuration: '00:8m',
+    ),
+    AwarenessVideo(
+      category: 'Menstruation',
+      title: 'Menstruation Hygiene Tips',
+      description:
+          'Learn about period hygiene, pain relief, and healthy menstrual care.',
+      thumbnailAssetPath: 'assets/images/awareness_menstruation.png',
+      educatorName: 'Doctor / Healthcare Educator',
+      educatorSubtitle: 'Doctor',
+      educatorImageAssetPath: 'assets/images/doctor_aryan_new.png',
+      thumbnailDuration: '00:42',
+      videoDuration: '00:7m',
+    ),
+    AwarenessVideo(
+      category: 'Vaccination',
+      title: 'Vaccination Awareness',
+      description:
+          'Learn why vaccination is important and how it protects children and adults from diseases.',
+      thumbnailAssetPath: 'assets/images/awareness_vaccination.png',
+      educatorName: 'Doctor / Healthcare Educator',
+      educatorSubtitle: 'Doctor',
+      educatorImageAssetPath: 'assets/images/doctor_pradip_new.png',
+      thumbnailDuration: '00:36',
+      videoDuration: '00:6m',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final visibleVideos = _selectedCategory == 'All'
+        ? _videos
+        : _videos
+              .where((video) => video.category == _selectedCategory)
+              .toList();
+
     return Scaffold(
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
@@ -52,10 +97,16 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
                     .toList(),
               ),
               const SizedBox(height: 28),
-              _AwarenessVideoCard(
-                savedOffline: _savedOffline,
-                onSaveOffline: _saveOffline,
-                onWatchNow: _watchNow,
+              ...visibleVideos.map(
+                (video) => Padding(
+                  padding: const EdgeInsets.only(bottom: 18),
+                  child: _AwarenessVideoCard(
+                    video: video,
+                    savedOffline: _savedOfflineTitles.contains(video.title),
+                    onSaveOffline: () => _saveOffline(video),
+                    onWatchNow: () => _watchNow(video),
+                  ),
+                ),
               ),
             ],
           ),
@@ -68,25 +119,25 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
     );
   }
 
-  void _saveOffline() {
+  void _saveOffline(AwarenessVideo video) {
     setState(() {
-      _savedOffline = true;
+      _savedOfflineTitles.add(video.title);
     });
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Video saved for offline viewing'),
+        SnackBar(
+          content: Text('${video.title} saved for offline viewing'),
           behavior: SnackBarBehavior.floating,
         ),
       );
   }
 
-  void _watchNow() {
+  void _watchNow(AwarenessVideo video) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (context) => const HealthAwarenessPlayerScreen(),
+        builder: (context) => HealthAwarenessPlayerScreen(video: video),
       ),
     );
   }
@@ -121,12 +172,12 @@ class _AwarenessHeader extends StatelessWidget {
               Text(
                 'Health Awareness',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 25,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF251E7E),
                 ),
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 2),
               Text(
                 'Learn healthcare tips and stay informed',
                 style: TextStyle(fontSize: 13, color: Color(0xFF555D69)),
@@ -179,11 +230,13 @@ class _CategoryChip extends StatelessWidget {
 
 class _AwarenessVideoCard extends StatelessWidget {
   const _AwarenessVideoCard({
+    required this.video,
     required this.savedOffline,
     required this.onSaveOffline,
     required this.onWatchNow,
   });
 
+  final AwarenessVideo video;
   final bool savedOffline;
   final VoidCallback onSaveOffline;
   final VoidCallback onWatchNow;
@@ -192,7 +245,7 @@ class _AwarenessVideoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
@@ -213,9 +266,9 @@ class _AwarenessVideoCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18),
                 child: SizedBox(
                   width: double.infinity,
-                  height: 225,
+                  height: 145,
                   child: Image.asset(
-                    'assets/images/support_health_awareness_card.png',
+                    video.thumbnailAssetPath,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -223,8 +276,8 @@ class _AwarenessVideoCard extends StatelessWidget {
               Positioned.fill(
                 child: Center(
                   child: Container(
-                    width: 86,
-                    height: 86,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
                       color: const Color(0x99000000),
                       shape: BoxShape.circle,
@@ -233,7 +286,7 @@ class _AwarenessVideoCard extends StatelessWidget {
                     child: const Icon(
                       Icons.play_arrow_rounded,
                       color: Colors.white,
-                      size: 54,
+                      size: 34,
                     ),
                   ),
                 ),
@@ -250,8 +303,8 @@ class _AwarenessVideoCard extends StatelessWidget {
                     color: const Color(0xAA314444),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    '00:30',
+                  child: Text(
+                    video.thumbnailDuration,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -262,25 +315,25 @@ class _AwarenessVideoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          const Text(
-            'Pregnancy Care Tips',
+          const SizedBox(height: 8),
+          Text(
+            video.title,
             style: TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.w800,
               color: Color(0xFF161D24),
             ),
           ),
-          const SizedBox(height: 6),
-          const Text(
-            'Learn healthcare tips and stay informed about pregnancy care tips and health.',
+          const SizedBox(height: 3),
+          Text(
+            video.description,
             style: TextStyle(
               fontSize: 13,
               height: 1.3,
               color: Color(0xFF414A54),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           Row(
             children: [
               ClipOval(
@@ -288,18 +341,18 @@ class _AwarenessVideoCard extends StatelessWidget {
                   width: 42,
                   height: 42,
                   child: Image.asset(
-                    'assets/images/doctor_aryan_new.png',
+                    video.educatorImageAssetPath,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Doctor / Healthcare Educator',
+                      video.educatorName,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -308,14 +361,14 @@ class _AwarenessVideoCard extends StatelessWidget {
                     ),
                     SizedBox(height: 1),
                     Text(
-                      'Doctor',
+                      video.educatorSubtitle,
                       style: TextStyle(fontSize: 13, color: Color(0xFF545D68)),
                     ),
                   ],
                 ),
               ),
-              const Text(
-                '00:8m',
+              Text(
+                video.videoDuration,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -324,7 +377,7 @@ class _AwarenessVideoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -336,7 +389,7 @@ class _AwarenessVideoCard extends StatelessWidget {
                       color: Color(0xFF108CA3),
                       width: 1.5,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
@@ -350,7 +403,7 @@ class _AwarenessVideoCard extends StatelessWidget {
                   label: Text(
                     savedOffline ? 'Saved Offline' : 'Save Offline',
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -363,14 +416,14 @@ class _AwarenessVideoCard extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF0C8599),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
                   child: const Text(
                     'Watch Now',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
@@ -383,7 +436,9 @@ class _AwarenessVideoCard extends StatelessWidget {
 }
 
 class HealthAwarenessPlayerScreen extends StatelessWidget {
-  const HealthAwarenessPlayerScreen({super.key});
+  const HealthAwarenessPlayerScreen({super.key, required this.video});
+
+  final AwarenessVideo video;
 
   @override
   Widget build(BuildContext context) {
@@ -426,7 +481,7 @@ class HealthAwarenessPlayerScreen extends StatelessWidget {
                       children: [
                         Positioned.fill(
                           child: Image.asset(
-                            'assets/images/support_health_awareness_card.png',
+                            video.thumbnailAssetPath,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -449,8 +504,8 @@ class HealthAwarenessPlayerScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Pregnancy Care Tips',
+                              Text(
+                                video.title,
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
@@ -471,19 +526,22 @@ class HealthAwarenessPlayerScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              const Row(
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '00:30',
+                                    video.thumbnailDuration,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
                                     ),
                                   ),
                                   Text(
-                                    '08:00',
+                                    video.videoDuration.replaceFirst(
+                                      '00:',
+                                      '0',
+                                    ),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
@@ -505,4 +563,28 @@ class HealthAwarenessPlayerScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class AwarenessVideo {
+  const AwarenessVideo({
+    required this.category,
+    required this.title,
+    required this.description,
+    required this.thumbnailAssetPath,
+    required this.educatorName,
+    required this.educatorSubtitle,
+    required this.educatorImageAssetPath,
+    required this.thumbnailDuration,
+    required this.videoDuration,
+  });
+
+  final String category;
+  final String title;
+  final String description;
+  final String thumbnailAssetPath;
+  final String educatorName;
+  final String educatorSubtitle;
+  final String educatorImageAssetPath;
+  final String thumbnailDuration;
+  final String videoDuration;
 }
