@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -13,6 +14,29 @@ class EmergencyScreen extends StatelessWidget {
   const EmergencyScreen({super.key, this.user});
 
   final AuthUser? user;
+
+  static const List<_EmergencyQuickContact> _quickContacts = [
+    _EmergencyQuickContact(
+      key: 'family',
+      title: 'Family\nContact',
+      dialogTitle: 'Call Family Contact?',
+      dialogMessage: 'Are you sure you want to call your family contact now?',
+    ),
+    _EmergencyQuickContact(
+      key: 'hospital',
+      title: 'Nearby\nHospital',
+      dialogTitle: 'Call Nearby Hospital?',
+      dialogMessage:
+          'This will connect you to the nearest hospital for emergency help.',
+    ),
+    _EmergencyQuickContact(
+      key: 'worker',
+      title: 'Local Health\nWorker',
+      dialogTitle: 'Call Local Health Worker?',
+      dialogMessage:
+          'This will connect you to your local health worker for quick medical support.',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +125,7 @@ class EmergencyScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           _EmergencyContactCard(
-                            title: 'Family\nContact',
+                            title: _quickContacts[0].title,
                             avatar: ClipOval(
                               child: Image.asset(
                                 'assets/images/family_contact_avatar.png',
@@ -110,24 +134,30 @@ class EmergencyScreen extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
+                            onCall: () =>
+                                _confirmAndCall(context, _quickContacts[0]),
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
-                            title: 'Nearby\nHospital',
+                            title: _quickContacts[1].title,
                             avatar: Image.asset(
                               'assets/images/hospital_contact_icon.png',
                               width: 27,
                               height: 27,
                               fit: BoxFit.contain,
                             ),
+                            onCall: () =>
+                                _confirmAndCall(context, _quickContacts[1]),
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
-                            title: 'Local Health\nWorker',
+                            title: _quickContacts[2].title,
                             avatar: Text(
                               '🧑‍⚕️',
                               style: TextStyle(fontSize: 18),
                             ),
+                            onCall: () =>
+                                _confirmAndCall(context, _quickContacts[2]),
                           ),
                         ],
                       ),
@@ -144,6 +174,100 @@ class EmergencyScreen extends StatelessWidget {
         user: user,
       ),
     );
+  }
+
+  Future<void> _confirmAndCall(
+    BuildContext context,
+    _EmergencyQuickContact contact,
+  ) async {
+    final number = _resolveContactNumber(contact.key);
+
+    if (number == null || number.trim().isEmpty) {
+      _showFeedback(
+        context,
+        'No contact number added. Please add an emergency contact first.',
+      );
+      return;
+    }
+
+    final shouldCall = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            contact.dialogTitle,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1B2330),
+            ),
+          ),
+          content: Text(
+            contact.dialogMessage,
+            style: const TextStyle(
+              fontSize: 14,
+              height: 1.4,
+              color: Color(0xFF4E5968),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Call Now'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldCall != true) return;
+
+    final uri = Uri(scheme: 'tel', path: number);
+    final launched = await launchUrl(uri);
+
+    if (!launched && context.mounted) {
+      _showFeedback(context, 'Unable to open the phone dialer right now.');
+    }
+  }
+
+  String? _resolveContactNumber(String key) {
+    if (key == 'family') {
+      final phone = user?.phoneNumber.trim();
+      return phone?.isNotEmpty == true ? phone : null;
+    }
+
+    final district = user?.district.trim().toLowerCase();
+
+    if (key == 'hospital') {
+      if (district == 'kathmandu') return '01-4111111';
+      if (district == 'lalitpur') return '01-5555555';
+      if (district == 'bhaktapur') return '01-6610798';
+      return '01-4111111';
+    }
+
+    if (key == 'worker') {
+      if (district == 'kathmandu') return '9800000002';
+      if (district == 'lalitpur') return '9800000003';
+      if (district == 'bhaktapur') return '9800000004';
+      return '9800000002';
+    }
+
+    return null;
+  }
+
+  void _showFeedback(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+      );
   }
 }
 
@@ -400,10 +524,15 @@ class _EmergencyActionCard extends StatelessWidget {
 }
 
 class _EmergencyContactCard extends StatelessWidget {
-  const _EmergencyContactCard({required this.title, required this.avatar});
+  const _EmergencyContactCard({
+    required this.title,
+    required this.avatar,
+    required this.onCall,
+  });
 
   final String title;
   final Widget avatar;
+  final VoidCallback onCall;
 
   @override
   Widget build(BuildContext context) {
@@ -450,14 +579,21 @@ class _EmergencyContactCard extends StatelessWidget {
                 child: Center(child: avatar),
               ),
 
-              Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF166EF3),
-                  shape: BoxShape.circle,
+              GestureDetector(
+                onTap: onCall,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF166EF3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.call,
+                    color: Colors.white,
+                    size: 15.5,
+                  ),
                 ),
-                child: const Icon(Icons.call, color: Colors.white, size: 15.5),
               ),
             ],
           ),
@@ -465,4 +601,18 @@ class _EmergencyContactCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _EmergencyQuickContact {
+  const _EmergencyQuickContact({
+    required this.key,
+    required this.title,
+    required this.dialogTitle,
+    required this.dialogMessage,
+  });
+
+  final String key;
+  final String title;
+  final String dialogTitle;
+  final String dialogMessage;
 }
