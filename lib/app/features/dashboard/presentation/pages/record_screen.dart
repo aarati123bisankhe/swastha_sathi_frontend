@@ -1,75 +1,148 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
-class RecordScreen extends StatelessWidget {
+class RecordScreen extends StatefulWidget {
   const RecordScreen({super.key, this.user});
 
   final AuthUser? user;
 
   @override
-  Widget build(BuildContext context) {
-    final fullName = user?.fullName.trim().isNotEmpty == true
-        ? user!.fullName.trim()
-        : 'Anisha Sharma';
-    final bloodGroup = user?.bloodGroup?.trim().isNotEmpty == true
-        ? user!.bloodGroup!.trim()
-        : 'O+ Positive';
-    final emergencyNumber = user?.phoneNumber.trim().isNotEmpty == true
-        ? user!.phoneNumber.trim()
-        : '+977 9865432369';
+  State<RecordScreen> createState() => _RecordScreenState();
+}
 
+class _RecordScreenState extends State<RecordScreen> {
+  static const String _storageKey = 'health_record_data';
+
+  late HealthRecordData _record;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _record = HealthRecordData.fromUser(widget.user);
+    _loadRecord();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFDCEAF5),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _RecordHeader(user: user),
-              const SizedBox(height: 18),
-              _ProfileSummaryCard(
-                fullName: fullName,
-                emergencyNumber: emergencyNumber,
-              ),
-              const SizedBox(height: 18),
-              _RecordInfoGrid(
-                bloodGroup: bloodGroup,
-                emergencyNumber: emergencyNumber,
-              ),
-              const SizedBox(height: 15),
-              const _RecentActivityCard(),
-              const SizedBox(height: 13),
-              const Row(
-                children: [
-                  Expanded(
-                    child: _RecordActionButton(
-                      label: 'Save Offline',
-                      icon: Icons.download_rounded,
-                      backgroundColor: Color(0xFF45AA3A),
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _RecordHeader(user: widget.user),
+                    const SizedBox(height: 18),
+                    _ProfileSummaryCard(record: _record),
+                    const SizedBox(height: 18),
+                    _RecordInfoGrid(record: _record),
+                    const SizedBox(height: 15),
+                    _RecentActivityCard(record: _record),
+                    const SizedBox(height: 13),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: _saveOffline,
+                            child: const _RecordActionButton(
+                              label: 'Save Offline',
+                              icon: Icons.download_rounded,
+                              backgroundColor: Color(0xFF45AA3A),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: _editRecord,
+                            child: const _RecordActionButton(
+                              label: 'Edit Records',
+                              icon: Icons.edit_outlined,
+                              backgroundColor: Color(0xFF1E84EA),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: _RecordActionButton(
-                      label: 'Edit Records',
-                      icon: Icons.edit_outlined,
-                      backgroundColor: Color(0xFF1E84EA),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
       ),
       bottomNavigationBar: DashboardBottomNav(
         activeTab: DashboardNavTab.record,
-        user: user,
+        user: widget.user,
       ),
     );
+  }
+
+  Future<void> _loadRecord() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_storageKey);
+
+    if (!mounted) return;
+
+    setState(() {
+      if (raw != null && raw.isNotEmpty) {
+        _record = HealthRecordData.fromJson(
+          jsonDecode(raw) as Map<String, dynamic>,
+        );
+      }
+      _loading = false;
+    });
+  }
+
+  Future<void> _editRecord() async {
+    final updated = await Navigator.of(context).push<HealthRecordData>(
+      MaterialPageRoute<HealthRecordData>(
+        builder: (context) => EditHealthRecordScreen(initialRecord: _record),
+      ),
+    );
+
+    if (updated == null || !mounted) return;
+
+    setState(() {
+      _record = updated;
+    });
+
+    await _persistRecord(updated);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Health record updated successfully.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _saveOffline() async {
+    await _persistRecord(_record);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Health record saved offline successfully.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _persistRecord(HealthRecordData record) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_storageKey, jsonEncode(record.toJson()));
   }
 }
 
@@ -130,13 +203,9 @@ class _RecordHeader extends StatelessWidget {
 }
 
 class _ProfileSummaryCard extends StatelessWidget {
-  const _ProfileSummaryCard({
-    required this.fullName,
-    required this.emergencyNumber,
-  });
+  const _ProfileSummaryCard({required this.record});
 
-  final String fullName;
-  final String emergencyNumber;
+  final HealthRecordData record;
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +254,7 @@ class _ProfileSummaryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  fullName,
+                  record.username,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -193,15 +262,18 @@ class _ProfileSummaryCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Row(
+                Row(
                   children: [
                     Expanded(
-                      child: _ProfileMetaBlock(label: 'Age', value: '22 Years'),
+                      child: _ProfileMetaBlock(
+                        label: 'Age',
+                        value: '${record.age} Years',
+                      ),
                     ),
                     Expanded(
                       child: _ProfileMetaBlock(
                         label: 'Health Status',
-                        value: 'Healthy',
+                        value: record.healthStatus,
                         highlight: true,
                       ),
                     ),
@@ -270,13 +342,9 @@ class _ProfileMetaBlock extends StatelessWidget {
 }
 
 class _RecordInfoGrid extends StatelessWidget {
-  const _RecordInfoGrid({
-    required this.bloodGroup,
-    required this.emergencyNumber,
-  });
+  const _RecordInfoGrid({required this.record});
 
-  final String bloodGroup;
-  final String emergencyNumber;
+  final HealthRecordData record;
 
   @override
   Widget build(BuildContext context) {
@@ -290,18 +358,18 @@ class _RecordInfoGrid extends StatelessWidget {
                 iconBackground: const Color(0xFFEAB6B6),
                 iconColor: const Color(0xFFE21818),
                 title: 'Blood Group',
-                subtitle: bloodGroup,
+                subtitle: record.bloodGroup,
                 cardHeight: 84,
               ),
             ),
             const SizedBox(width: 16),
-            const Expanded(
+            Expanded(
               child: _RecordInfoCard(
                 icon: Icons.warning_amber_rounded,
-                iconBackground: Color(0xFFE3E3A9),
-                iconColor: Color(0xFF121212),
+                iconBackground: const Color(0xFFE3E3A9),
+                iconColor: const Color(0xFF121212),
                 title: 'Allergies',
-                subtitle: 'Dust Mit Allergy',
+                subtitle: record.allergies,
                 cardHeight: 84,
               ),
             ),
@@ -310,13 +378,13 @@ class _RecordInfoGrid extends StatelessWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: _RecordInfoCard(
                 icon: Icons.medication_rounded,
-                iconBackground: Color(0xFFF5DE97),
-                iconColor: Color(0xFFD98317),
+                iconBackground: const Color(0xFFF5DE97),
+                iconColor: const Color(0xFFD98317),
                 title: 'Medications',
-                subtitle: 'Over-the-Counter\n(OTC) Medications',
+                subtitle: record.medications,
               ),
             ),
             const SizedBox(width: 16),
@@ -326,7 +394,7 @@ class _RecordInfoGrid extends StatelessWidget {
                 iconBackground: const Color(0xFFC6E1C7),
                 iconColor: const Color(0xFF4E5750),
                 title: 'Emergency Contacts',
-                subtitle: emergencyNumber,
+                subtitle: record.emergencyContactNumber,
                 compactTitle: true,
               ),
             ),
@@ -390,14 +458,13 @@ class _RecordInfoCard extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF35383D),
+                      color: Color(0xFF35383D),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -414,7 +481,6 @@ class _RecordInfoCard extends StatelessWidget {
                           : FontWeight.w400,
                     ),
                   ),
-                  const Spacer(),
                 ],
               ),
             ),
@@ -426,7 +492,9 @@ class _RecordInfoCard extends StatelessWidget {
 }
 
 class _RecentActivityCard extends StatelessWidget {
-  const _RecentActivityCard();
+  const _RecentActivityCard({required this.record});
+
+  final HealthRecordData record;
 
   @override
   Widget build(BuildContext context) {
@@ -437,10 +505,10 @@ class _RecentActivityCard extends StatelessWidget {
         color: const Color(0xFFF9F4F4),
         borderRadius: BorderRadius.circular(24),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Recent Health Activity',
             style: TextStyle(
               fontSize: 16,
@@ -448,24 +516,24 @@ class _RecentActivityCard extends StatelessWidget {
               color: Color(0xFF24229A),
             ),
           ),
-          SizedBox(height: 14),
+          const SizedBox(height: 14),
           _ActivityItem(
             icon: Icons.work_rounded,
-            iconBackground: Color(0xFFF7B0B0),
+            iconBackground: const Color(0xFFF7B0B0),
             title: 'Last Checkup',
-            subtitle: '12 Oct 2023 - Dr.Verma',
+            subtitle: record.lastCheckup,
           ),
           _ActivityItem(
             icon: Icons.vaccines_rounded,
-            iconBackground: Color(0xFFAED0F8),
+            iconBackground: const Color(0xFFAED0F8),
             title: 'Vaccination Status',
-            subtitle: 'Fully Vaccination (COVID 19)',
+            subtitle: record.vaccinationStatus,
           ),
           _ActivityItem(
             icon: Icons.edit_note_rounded,
-            iconBackground: Color(0xFFF8F19A),
+            iconBackground: const Color(0xFFF8F19A),
             title: 'Medical Notes',
-            subtitle: 'Routine Checkup Complete',
+            subtitle: record.medicalNotes,
           ),
         ],
       ),
@@ -566,5 +634,292 @@ class _RecordActionButton extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class EditHealthRecordScreen extends StatefulWidget {
+  const EditHealthRecordScreen({super.key, required this.initialRecord});
+
+  final HealthRecordData initialRecord;
+
+  @override
+  State<EditHealthRecordScreen> createState() => _EditHealthRecordScreenState();
+}
+
+class _EditHealthRecordScreenState extends State<EditHealthRecordScreen> {
+  late final TextEditingController _usernameController;
+  late final TextEditingController _ageController;
+  late final TextEditingController _healthStatusController;
+  late final TextEditingController _bloodGroupController;
+  late final TextEditingController _allergiesController;
+  late final TextEditingController _medicationsController;
+  late final TextEditingController _emergencyContactController;
+  late final TextEditingController _lastCheckupController;
+  late final TextEditingController _vaccinationStatusController;
+  late final TextEditingController _medicalNotesController;
+
+  @override
+  void initState() {
+    super.initState();
+    final record = widget.initialRecord;
+    _usernameController = TextEditingController(text: record.username);
+    _ageController = TextEditingController(text: record.age.toString());
+    _healthStatusController = TextEditingController(text: record.healthStatus);
+    _bloodGroupController = TextEditingController(text: record.bloodGroup);
+    _allergiesController = TextEditingController(text: record.allergies);
+    _medicationsController = TextEditingController(text: record.medications);
+    _emergencyContactController = TextEditingController(
+      text: record.emergencyContactNumber,
+    );
+    _lastCheckupController = TextEditingController(text: record.lastCheckup);
+    _vaccinationStatusController = TextEditingController(
+      text: record.vaccinationStatus,
+    );
+    _medicalNotesController = TextEditingController(text: record.medicalNotes);
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _ageController.dispose();
+    _healthStatusController.dispose();
+    _bloodGroupController.dispose();
+    _allergiesController.dispose();
+    _medicationsController.dispose();
+    _emergencyContactController.dispose();
+    _lastCheckupController.dispose();
+    _vaccinationStatusController.dispose();
+    _medicalNotesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFDCEAF5),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xFFDCEAF5),
+        foregroundColor: const Color(0xFF24229A),
+        title: const Text(
+          'Edit Health Record',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        child: Column(
+          children: [
+            _EditField(label: 'Username', controller: _usernameController),
+            _EditField(label: 'Age', controller: _ageController),
+            _EditField(
+              label: 'Health Status',
+              controller: _healthStatusController,
+            ),
+            _EditField(label: 'Blood Group', controller: _bloodGroupController),
+            _EditField(label: 'Allergies', controller: _allergiesController),
+            _EditField(
+              label: 'Medications',
+              controller: _medicationsController,
+              maxLines: 2,
+            ),
+            _EditField(
+              label: 'Emergency Contact Number',
+              controller: _emergencyContactController,
+            ),
+            _EditField(
+              label: 'Last Checkup',
+              controller: _lastCheckupController,
+            ),
+            _EditField(
+              label: 'Vaccination Status',
+              controller: _vaccinationStatusController,
+            ),
+            _EditField(
+              label: 'Medical Notes',
+              controller: _medicalNotesController,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _saveChanges,
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E84EA),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                child: const Text(
+                  'Save Changes',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _saveChanges() {
+    final updated = widget.initialRecord.copyWith(
+      username: _usernameController.text.trim(),
+      age: int.tryParse(_ageController.text.trim()) ?? widget.initialRecord.age,
+      healthStatus: _healthStatusController.text.trim(),
+      bloodGroup: _bloodGroupController.text.trim(),
+      allergies: _allergiesController.text.trim(),
+      medications: _medicationsController.text.trim(),
+      emergencyContactNumber: _emergencyContactController.text.trim(),
+      lastCheckup: _lastCheckupController.text.trim(),
+      vaccinationStatus: _vaccinationStatusController.text.trim(),
+      medicalNotes: _medicalNotesController.text.trim(),
+    );
+
+    Navigator.of(context).pop(updated);
+  }
+}
+
+class _EditField extends StatelessWidget {
+  const _EditField({
+    required this.label,
+    required this.controller,
+    this.maxLines = 1,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HealthRecordData {
+  const HealthRecordData({
+    required this.username,
+    required this.age,
+    required this.healthStatus,
+    required this.bloodGroup,
+    required this.allergies,
+    required this.medications,
+    required this.emergencyContactNumber,
+    required this.lastCheckup,
+    required this.vaccinationStatus,
+    required this.medicalNotes,
+  });
+
+  factory HealthRecordData.fromUser(AuthUser? user) {
+    return HealthRecordData(
+      username: user?.fullName.trim().isNotEmpty == true
+          ? user!.fullName.trim()
+          : 'Anisha Sharma',
+      age: 22,
+      healthStatus: 'Healthy',
+      bloodGroup: user?.bloodGroup?.trim().isNotEmpty == true
+          ? user!.bloodGroup!.trim()
+          : 'O+ Positive',
+      allergies: 'Dust Mite Allergy',
+      medications: 'Over-the-Counter (OTC) Medications',
+      emergencyContactNumber: user?.phoneNumber.trim().isNotEmpty == true
+          ? user!.phoneNumber.trim()
+          : '+977 9865432369',
+      lastCheckup: '12 Oct 2023 - Dr.Verma',
+      vaccinationStatus: 'Fully Vaccination (COVID 19)',
+      medicalNotes: 'Routine Checkup Complete',
+    );
+  }
+
+  factory HealthRecordData.fromJson(Map<String, dynamic> json) {
+    return HealthRecordData(
+      username: json['username'] as String? ?? 'Anisha Sharma',
+      age: json['age'] as int? ?? 22,
+      healthStatus: json['healthStatus'] as String? ?? 'Healthy',
+      bloodGroup: json['bloodGroup'] as String? ?? 'O+ Positive',
+      allergies: json['allergies'] as String? ?? 'Dust Mite Allergy',
+      medications:
+          json['medications'] as String? ??
+          'Over-the-Counter (OTC) Medications',
+      emergencyContactNumber:
+          json['emergencyContactNumber'] as String? ?? '+977 9865432369',
+      lastCheckup: json['lastCheckup'] as String? ?? '12 Oct 2023 - Dr.Verma',
+      vaccinationStatus:
+          json['vaccinationStatus'] as String? ??
+          'Fully Vaccination (COVID 19)',
+      medicalNotes:
+          json['medicalNotes'] as String? ?? 'Routine Checkup Complete',
+    );
+  }
+
+  final String username;
+  final int age;
+  final String healthStatus;
+  final String bloodGroup;
+  final String allergies;
+  final String medications;
+  final String emergencyContactNumber;
+  final String lastCheckup;
+  final String vaccinationStatus;
+  final String medicalNotes;
+
+  HealthRecordData copyWith({
+    String? username,
+    int? age,
+    String? healthStatus,
+    String? bloodGroup,
+    String? allergies,
+    String? medications,
+    String? emergencyContactNumber,
+    String? lastCheckup,
+    String? vaccinationStatus,
+    String? medicalNotes,
+  }) {
+    return HealthRecordData(
+      username: username ?? this.username,
+      age: age ?? this.age,
+      healthStatus: healthStatus ?? this.healthStatus,
+      bloodGroup: bloodGroup ?? this.bloodGroup,
+      allergies: allergies ?? this.allergies,
+      medications: medications ?? this.medications,
+      emergencyContactNumber:
+          emergencyContactNumber ?? this.emergencyContactNumber,
+      lastCheckup: lastCheckup ?? this.lastCheckup,
+      vaccinationStatus: vaccinationStatus ?? this.vaccinationStatus,
+      medicalNotes: medicalNotes ?? this.medicalNotes,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'age': age,
+      'healthStatus': healthStatus,
+      'bloodGroup': bloodGroup,
+      'allergies': allergies,
+      'medications': medications,
+      'emergencyContactNumber': emergencyContactNumber,
+      'lastCheckup': lastCheckup,
+      'vaccinationStatus': vaccinationStatus,
+      'medicalNotes': medicalNotes,
+    };
   }
 }
