@@ -90,9 +90,9 @@ class _PoliceHeader extends StatelessWidget {
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Transform.translate(
-            offset: const Offset(-8, 0),
+            offset: const Offset(-4, 0),
             child: const Padding(
-              padding: EdgeInsets.only(top: 9, right: 8),
+              padding: EdgeInsets.only(top: 9, right: 10),
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,
                 color: Color(0xFF7C828C),
@@ -108,12 +108,12 @@ class _PoliceHeader extends StatelessWidget {
               Text(
                 'Police Help',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF251E7E),
                 ),
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 2),
               Text(
                 'Quick police assistance during emergencies',
                 style: TextStyle(fontSize: 13, color: Color(0xFF555D69)),
