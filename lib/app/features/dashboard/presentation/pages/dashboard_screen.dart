@@ -646,6 +646,7 @@ import 'package:swasthasathi/app/features/emergency/presentation/pages/blood_req
 import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_message_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/share_location_screen.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/doctor_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/first_aid_box_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/hospital_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/symptom_checker_screen.dart';
@@ -853,6 +854,7 @@ class DashboardScreen extends StatelessWidget {
                                       title: 'Doctor',
                                       icon: Icons.person,
                                       iconColor: Color(0xFF12B886),
+                                      onTap: () => _openDoctorScreen(context),
                                     ),
                                   ].asMap().entries.map((entry) {
                                     return Padding(
@@ -978,6 +980,12 @@ class DashboardScreen extends StatelessWidget {
   void _openHospitalScreen(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (context) => HospitalScreen(user: user)),
+    );
+  }
+
+  void _openDoctorScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (context) => DoctorScreen(user: user)),
     );
   }
 }
