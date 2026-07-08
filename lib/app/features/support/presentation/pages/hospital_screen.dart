@@ -94,7 +94,7 @@ class HospitalScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Header(user: user),
-              const SizedBox(height: 9),
+              const SizedBox(height: 3),
               const _BannerCard(),
               const SizedBox(height: 0),
               _LocationCard(
@@ -103,7 +103,7 @@ class HospitalScreen extends StatelessWidget {
                   'Change location is ready for hookup to your location selector.',
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               const Text(
                 'Nearby Hospital',
                 style: TextStyle(
@@ -112,10 +112,10 @@ class HospitalScreen extends StatelessWidget {
                   color: Color(0xFF23248E),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
               ..._hospitals.map(
                 (hospital) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: _HospitalCard(
                     hospital: hospital,
                     onCall: () => _showInfo(
@@ -129,16 +129,16 @@ class HospitalScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               const Text(
                 'Quick Access',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: Color(0xFF23248E),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 13),
               _QuickAccessGrid(
                 items: _quickAccessItems,
                 onTap: (item) {
@@ -260,7 +260,7 @@ class _LocationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
@@ -268,8 +268,8 @@ class _LocationCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 34,
+            height: 34,
             decoration: const BoxDecoration(
               color: Color(0xFFEAF4FF),
               shape: BoxShape.circle,
@@ -277,10 +277,10 @@ class _LocationCard extends StatelessWidget {
             child: const Icon(
               Icons.location_on_rounded,
               color: Color(0xFF197BE8),
-              size: 24,
+              size: 20,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +309,7 @@ class _LocationCard extends StatelessWidget {
           GestureDetector(
             onTap: onChangeLocation,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: const Color(0xFFF8FBFF),
                 borderRadius: BorderRadius.circular(12),
@@ -326,7 +326,7 @@ class _LocationCard extends StatelessWidget {
                   Text(
                     'Change Location',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                       color: Color(0xFF234F8C),
                       fontWeight: FontWeight.w700,
                     ),
@@ -397,49 +397,6 @@ class _HospitalCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE6FAED),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.star_rounded,
-                                color: Color(0xFF36BE63),
-                                size: 14,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                hospital.rating,
-                                style: const TextStyle(
-                                  fontSize: 9,
-                                  color: Color(0xFF2BA957),
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '(${hospital.reviews})',
-                          style: const TextStyle(
-                            fontSize: 7,
-                            color: Color(0xFF7B8393),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -463,6 +420,42 @@ class _HospitalCard extends StatelessWidget {
           const SizedBox(width: 7),
           Column(
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE6FAED),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.star_rounded,
+                      color: Color(0xFF36BE63),
+                      size: 14,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      hospital.rating,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        color: Color(0xFF2BA957),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '(${hospital.reviews})',
+                style: const TextStyle(
+                  fontSize: 7,
+                  color: Color(0xFF7B8393),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 5),
               _ActionButton(
                 label: 'Call',
                 icon: Icons.call_rounded,
@@ -650,10 +643,10 @@ class _QuickAccessGrid extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => onTap(item),
                 child: Container(
-                  height: 106,
+                  height: 76,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
-                    vertical: 12,
+                    vertical: 6,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.96),
@@ -664,21 +657,21 @@ class _QuickAccessGrid extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 28,
+                        height: 28,
                         decoration: BoxDecoration(
                           color: item.iconBackground,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(item.icon, size: 26, color: item.iconColor),
+                        child: Icon(item.icon, size: 18, color: item.iconColor),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 5),
                       Text(
                         item.label,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 11,
-                          height: 1.2,
+                          fontSize: 9,
+                          height: 1.0,
                           color: Color(0xFF26364C),
                           fontWeight: FontWeight.w700,
                         ),
