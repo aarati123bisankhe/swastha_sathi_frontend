@@ -329,7 +329,7 @@ class _Header extends StatelessWidget {
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: Color(0xFF7D8189),
-              size: 22,
+              size: 18,
             ),
           ),
         ),
@@ -340,7 +340,7 @@ class _Header extends StatelessWidget {
               Text(
                 'Symptom Checker',
                 style: TextStyle(
-                  fontSize: 27,
+                  fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF251E7E),
                 ),
@@ -349,7 +349,7 @@ class _Header extends StatelessWidget {
               Text(
                 'Answer a few questions to get health guidance',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
                   color: Color(0xFF30343A),
                   fontWeight: FontWeight.w400,
                 ),
@@ -527,7 +527,7 @@ class _OptionPill extends StatelessWidget {
       onTap: onTap,
       child: Container(
         constraints: BoxConstraints(minWidth: minWidth ?? 0),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         decoration: BoxDecoration(
           color: selected ? const Color(0xFF1E88F7) : Colors.white,
           borderRadius: BorderRadius.circular(18),
@@ -774,7 +774,7 @@ class _InputBar extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'Describe your symptoms...',
                 hintStyle: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   color: const Color(0xFF7B8BA4).withValues(alpha: 0.9),
                   fontWeight: FontWeight.w500,
                 ),
