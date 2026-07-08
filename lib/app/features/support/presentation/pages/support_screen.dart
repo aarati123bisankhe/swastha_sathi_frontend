@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/chat_support_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/first_aid_box_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/health_awareness_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/symptom_checker_screen.dart';
@@ -172,9 +173,16 @@ class _SupportActionGrid extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: _SupportActionCard(
                 imageAssetPath: 'assets/images/support_chat_card.png',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => ChatSupportScreen(user: user),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(width: 5),
