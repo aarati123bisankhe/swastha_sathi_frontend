@@ -90,11 +90,11 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _ChatSupportHeader(user: widget.user),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 7),
                     const _SupportBanner(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 13),
                     const _SupportCategoriesTitle(),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 9),
                     _SupportCategoriesRow(
                       categories: _categories,
                       selectedTopic: _selectedCategory,
@@ -283,12 +283,12 @@ class _ChatSupportHeader extends StatelessWidget {
               Text(
                 'Chat Support',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF251E7E),
                 ),
               ),
-              SizedBox(height: 3),
+              SizedBox(height: 1),
               Text(
                 'We are here to help you',
                 style: TextStyle(fontSize: 13, color: Color(0xFF555D69)),
@@ -325,9 +325,7 @@ class _SupportBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(26),
         boxShadow: const [
           BoxShadow(
@@ -337,189 +335,12 @@ class _SupportBanner extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "You're not alone.",
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0F4D8A),
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Our support team is\nready to help you.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: Color(0xFF5F6670),
-                    ),
-                  ),
-                  SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Icon(Icons.circle, size: 11, color: Color(0xFF18B45D)),
-                      SizedBox(width: 10),
-                      Text(
-                        'We typically reply in\n a few minutes',
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.4,
-                          color: Color(0xFF3A414A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: 170,
-            height: 170,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 170,
-                  height: 170,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFEAF4FF), Color(0xFFB8D7FF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                ),
-                Positioned(
-                  top: 54,
-                  left: 24,
-                  child: Container(
-                    width: 52,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF5C9DFF),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Icon(
-                      Icons.more_horiz_rounded,
-                      color: Colors.white,
-                      size: 26,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 8,
-                  child: SizedBox(
-                    width: 132,
-                    height: 158,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Positioned(
-                          top: 18,
-                          child: Container(
-                            width: 58,
-                            height: 58,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFFD8C6),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 8,
-                          child: Container(
-                            width: 84,
-                            height: 56,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF133B73),
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(40),
-                                bottom: Radius.circular(24),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 42,
-                          right: 10,
-                          child: Container(
-                            width: 28,
-                            height: 28,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFDDEBFF),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.headset_mic_rounded,
-                              size: 15,
-                              color: Color(0xFF2A7DF7),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 72,
-                          child: Container(
-                            width: 92,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  top: 12,
-                                  left: 22,
-                                  right: 22,
-                                  child: Container(
-                                    height: 18,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF5A95F4),
-                                      borderRadius: BorderRadius.circular(9),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 10,
-                                  left: 18,
-                                  child: Container(
-                                    width: 18,
-                                    height: 18,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF2E86FF),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.add_rounded,
-                                      size: 14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(26),
+        child: Image.asset(
+          'assets/images/chat_support_banner.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -533,7 +354,7 @@ class _SupportCategoriesTitle extends StatelessWidget {
     return const Text(
       'Support Categories',
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: FontWeight.w800,
         color: Color(0xFF251E7E),
       ),
@@ -601,12 +422,12 @@ class _CategoryButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 62,
+        width: 54,
         child: Column(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
                 color: selected
                     ? category.iconColor.withValues(alpha: 0.16)
@@ -618,14 +439,14 @@ class _CategoryButton extends StatelessWidget {
                       )
                     : null,
               ),
-              child: Icon(category.icon, color: category.iconColor, size: 30),
+              child: Icon(category.icon, color: category.iconColor, size: 22),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Text(
               category.label,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 11,
+                fontSize: 10,
                 height: 1.15,
                 fontWeight: FontWeight.w700,
                 color: Colors.black,
