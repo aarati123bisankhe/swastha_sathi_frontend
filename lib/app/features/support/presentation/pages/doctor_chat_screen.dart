@@ -459,7 +459,7 @@ class _ComposerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 22),
+      margin: const EdgeInsets.fromLTRB(10, 0, 10, 22),
       padding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -473,10 +473,10 @@ class _ComposerBar extends StatelessWidget {
             child: const Icon(
               Icons.attach_file_rounded,
               color: Color(0xFF7B7F86),
-              size: 34,
+              size: 30,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Expanded(
             child: TextField(
               controller: controller,
@@ -499,15 +499,15 @@ class _ComposerBar extends StatelessWidget {
             child: const Icon(
               Icons.mic_none_rounded,
               color: Color(0xFF7B7F86),
-              size: 30,
+              size: 26,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: onSend,
             child: Container(
-              width: 40,
-              height: 40,
+              width: 38,
+              height: 38,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFF1E7CE8), Color(0xFF11C0A6)],
