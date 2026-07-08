@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/symptom_checker_screen.dart';
 
 class SupportScreen extends StatelessWidget {
   const SupportScreen({super.key, this.user});
@@ -22,7 +23,7 @@ class SupportScreen extends StatelessWidget {
 
               const SizedBox(height: 0),
 
-              const _SupportActionGrid(),
+              _SupportActionGrid(user: user),
 
               Transform.translate(
                 offset: const Offset(0, -12),
@@ -159,7 +160,9 @@ class _SupportHeader extends StatelessWidget {
 }
 
 class _SupportActionGrid extends StatelessWidget {
-  const _SupportActionGrid();
+  const _SupportActionGrid({this.user});
+
+  final AuthUser? user;
 
   @override
   Widget build(BuildContext context) {
@@ -185,10 +188,17 @@ class _SupportActionGrid extends StatelessWidget {
           offset: const Offset(0, -21),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: _SupportActionCard(
                   imageAssetPath:
                       'assets/images/support_symptom_checker_card.png',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => SymptomCheckerScreen(user: user),
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 5),
@@ -207,25 +217,29 @@ class _SupportActionGrid extends StatelessWidget {
 }
 
 class _SupportActionCard extends StatelessWidget {
-  const _SupportActionCard({required this.imageAssetPath});
+  const _SupportActionCard({required this.imageAssetPath, this.onTap});
 
   final String imageAssetPath;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 160,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset(
-              imageAssetPath,
-              width: 182,
-              height: 182,
-              fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        height: 160,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                imageAssetPath,
+                width: 182,
+                height: 182,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),
