@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/core/services/emergency_location_service.dart';
 import 'package:swasthasathi/app/core/services/emergency_notification_service.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
@@ -82,12 +83,15 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
                       ),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Call Ambulance',
+                          context.tx(
+                            'Call Ambulance',
+                            'एम्बुलेन्स बोलाउनुहोस्',
+                          ),
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
@@ -96,7 +100,10 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
                         ),
                         SizedBox(height: 1),
                         Text(
-                          'Quick emergency support anytime',
+                          context.tx(
+                            'Quick emergency support anytime',
+                            'जुनसुकै बेला छिटो आपतकालीन सहयोग',
+                          ),
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.black87,
@@ -143,7 +150,10 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
                 children: [
                   Expanded(
                     child: _ActionFooterButton(
-                      label: 'Share Location',
+                      label: context.tx(
+                        'Share Location',
+                        'स्थान साझा गर्नुहोस्',
+                      ),
                       textColor: const Color(0xFF135099),
                       borderColor: const Color(0xFF5AA7FF),
                       backgroundColor: Colors.transparent,
@@ -154,7 +164,7 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
                   const SizedBox(width: 14),
                   Expanded(
                     child: _ActionFooterButton(
-                      label: 'Emergency SoS',
+                      label: context.tx('Emergency SoS', 'आपतकालीन SOS'),
                       textColor: Colors.white,
                       borderColor: const Color(0xFFF71818),
                       backgroundColor: const Color(0xFFF71818),
@@ -177,9 +187,12 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
 
   Future<void> _handleCallNow(_AmbulanceService service) async {
     final shouldCall = await _showConfirmationDialog(
-      title: 'Call Ambulance?',
-      message: 'Are you sure you want to call this ambulance service now?',
-      confirmLabel: 'Call Now',
+      title: context.tx('Call Ambulance?', 'एम्बुलेन्स बोलाउने?'),
+      message: context.tx(
+        'Are you sure you want to call this ambulance service now?',
+        'के तपाईं अहिले यो एम्बुलेन्स सेवामा कल गर्न चाहनुहुन्छ?',
+      ),
+      confirmLabel: context.tx('Call Now', 'अहिले कल गर्नुहोस्'),
     );
 
     if (shouldCall != true) return;
@@ -195,10 +208,14 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
   }
 
   Future<void> _handleShareLocation() async {
+    final permissionMessage = context.tx(
+      'Please allow location permission to share your location.',
+      'कृपया आफ्नो स्थान साझा गर्न स्थान अनुमति दिनुहोस्।',
+    );
     final location = await EmergencyLocationService.getCurrentLocation();
 
     if (location == null) {
-      _showFeedback(EmergencyLocationService.permissionMessage);
+      _showFeedback(permissionMessage);
       return;
     }
 
@@ -209,11 +226,21 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
   }
 
   Future<void> _handleEmergencySos() async {
+    final noContactMessage = context.tx(
+      'No emergency contact found. Please add an emergency contact first.',
+      'कुनै आपतकालीन सम्पर्क फेला परेन। कृपया पहिले आपतकालीन सम्पर्क थप्नुहोस्।',
+    );
+    final permissionMessage = context.tx(
+      'Please allow location permission to share your location.',
+      'कृपया आफ्नो स्थान साझा गर्न स्थान अनुमति दिनुहोस्।',
+    );
     final shouldSend = await _showConfirmationDialog(
-      title: 'Send Emergency SOS?',
-      message:
-          'This will alert your emergency contacts with your current location.',
-      confirmLabel: 'Send SOS',
+      title: context.tx('Send Emergency SOS?', 'आपतकालीन SOS पठाउने?'),
+      message: context.tx(
+        'This will alert your emergency contacts with your current location.',
+        'यसले तपाईंका आपतकालीन सम्पर्कहरूलाई तपाईंको हालको स्थानसहित जानकारी पठाउनेछ।',
+      ),
+      confirmLabel: context.tx('Send SOS', 'SOS पठाउनुहोस्'),
     );
 
     if (shouldSend != true) return;
@@ -221,16 +248,14 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
     final contacts = await _loadSavedEmergencyContacts();
 
     if (contacts.isEmpty) {
-      _showFeedback(
-        'No emergency contact found. Please add an emergency contact first.',
-      );
+      _showFeedback(noContactMessage);
       return;
     }
 
     final location = await EmergencyLocationService.getCurrentLocation();
 
     if (location == null) {
-      _showFeedback(EmergencyLocationService.permissionMessage);
+      _showFeedback(permissionMessage);
       return;
     }
 
@@ -257,7 +282,12 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
     await EmergencyNotificationService.addSosSentNotification();
 
     if (!mounted) return;
-    _showFeedback('Emergency SOS sent successfully.');
+    _showFeedback(
+      context.tx(
+        'Emergency SOS sent successfully.',
+        'आपतकालीन SOS सफलतापूर्वक पठाइयो।',
+      ),
+    );
   }
 
   Future<bool?> _showConfirmationDialog({
@@ -291,7 +321,7 @@ class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(context.tx('Cancel', 'रद्द गर्नुहोस्')),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),

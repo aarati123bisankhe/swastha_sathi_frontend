@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -105,8 +106,8 @@ class HospitalScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 15),
-              const Text(
-                'Nearby Hospital',
+              Text(
+                context.tx('Nearby Hospital', 'नजिकको अस्पताल'),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -128,8 +129,8 @@ class HospitalScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              const Text(
-                'Quick Access',
+              Text(
+                context.tx('Quick Access', 'छिटो पहुँच'),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -176,16 +177,19 @@ class HospitalScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
-            'Call Hospital?',
+          title: Text(
+            context.tx('Call Hospital?', 'अस्पताललाई कल गर्ने?'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: Color(0xFF1B2330),
             ),
           ),
-          content: const Text(
-            'Are you sure you want to call this hospital now?',
+          content: Text(
+            context.tx(
+              'Are you sure you want to call this hospital now?',
+              'के तपाईं अहिले यो अस्पताललाई कल गर्न चाहनुहुन्छ?',
+            ),
             style: TextStyle(
               fontSize: 14,
               height: 1.4,
@@ -195,11 +199,11 @@ class HospitalScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(context.tx('Cancel', 'रद्द गर्नुहोस्')),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Call Now'),
+              child: Text(context.tx('Call Now', 'अहिले कल गर्नुहोस्')),
             ),
           ],
         );
@@ -214,7 +218,13 @@ class HospitalScreen extends StatelessWidget {
     );
 
     if (!launched && context.mounted) {
-      _showInfo(context, 'Unable to open the phone dialer right now.');
+      _showInfo(
+        context,
+        context.tx(
+          'Unable to open the phone dialer right now.',
+          'अहिले फोन डायलर खोल्न सकिएन।',
+        ),
+      );
     }
   }
 }
@@ -243,12 +253,12 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hospital',
+                context.tx('Hospital', 'अस्पताल'),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
@@ -257,7 +267,10 @@ class _Header extends StatelessWidget {
               ),
               SizedBox(height: 2),
               Text(
-                'Find nearby hospitals and healthcare center',
+                context.tx(
+                  'Find nearby hospitals and healthcare center',
+                  'नजिकका अस्पताल र स्वास्थ्य केन्द्र फेला पार्नुहोस्',
+                ),
                 style: TextStyle(
                   fontSize: 12,
                   color: Color(0xFF555D69),

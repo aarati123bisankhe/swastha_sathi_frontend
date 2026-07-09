@@ -639,6 +639,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
@@ -682,7 +683,7 @@ class DashboardScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Namaste, $name 👋',
+                          context.greeting(name),
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -690,8 +691,11 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 0),
-                        const Text(
-                          'Take care, stay healthy!',
+                        Text(
+                          context.tx(
+                            'Take care, stay healthy!',
+                            'ध्यान राख्नुहोस्, स्वस्थ रहनुहोस्!',
+                          ),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.black87,
@@ -738,8 +742,11 @@ class DashboardScreen extends StatelessWidget {
               Transform.translate(
                 offset: const Offset(0, -40),
                 child: _SectionHeader(
-                  title: 'Quick Emergency Actions',
-                  actionLabel: 'View all',
+                  title: context.tx(
+                    'Quick Emergency Actions',
+                    'छिटो आपतकालीन कार्यहरू',
+                  ),
+                  actionLabel: context.tx('View all', 'सबै हेर्नुहोस्'),
                   onActionTap: () => _openEmergencyScreen(context),
                 ),
               ),
@@ -758,7 +765,10 @@ class DashboardScreen extends StatelessWidget {
                       children:
                           [
                             _ActionTile(
-                              title: 'Call\nAmbulance',
+                              title: context.tx(
+                                'Call\nAmbulance',
+                                'एम्बुलेन्स\nबोलाउनुहोस्',
+                              ),
                               emoji: '🚑',
                               colors: const [
                                 Color(0xFFFF6B6B),
@@ -767,7 +777,10 @@ class DashboardScreen extends StatelessWidget {
                               onTap: () => _openAmbulanceScreen(context),
                             ),
                             _ActionTile(
-                              title: 'Blood\nRequest',
+                              title: context.tx(
+                                'Blood\nRequest',
+                                'रगत\nअनुरोध',
+                              ),
                               icon: Icons.water_drop,
                               colors: const [
                                 Color(0xFFFF3838),
@@ -776,7 +789,10 @@ class DashboardScreen extends StatelessWidget {
                               onTap: () => _openBloodRequestScreen(context),
                             ),
                             _ActionTile(
-                              title: 'Emergency\nSMS',
+                              title: context.tx(
+                                'Emergency\nSMS',
+                                'आपतकालीन\nSMS',
+                              ),
                               icon: Icons.sms_outlined,
                               colors: const [
                                 Color(0xFF58B4FF),
@@ -785,7 +801,10 @@ class DashboardScreen extends StatelessWidget {
                               onTap: () => _openEmergencyMessageScreen(context),
                             ),
                             _ActionTile(
-                              title: 'Share\nLocation',
+                              title: context.tx(
+                                'Share\nLocation',
+                                'स्थान\nसाझा गर्नुहोस्',
+                              ),
                               icon: Icons.location_on,
                               colors: const [
                                 Color(0xFF5BCC5C),
@@ -806,8 +825,8 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Health Features',
+                    Text(
+                      context.tx('Health Features', 'स्वास्थ्य सुविधाहरू'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -834,27 +853,33 @@ class DashboardScreen extends StatelessWidget {
                               children:
                                   [
                                     _FeatureTile(
-                                      title: 'Symptom\nChecker',
+                                      title: context.tx(
+                                        'Symptom\nChecker',
+                                        'लक्षण\nजाँच',
+                                      ),
                                       icon: Icons.health_and_safety,
                                       iconColor: Color(0xFF1E88E5),
                                       onTap: () =>
                                           _openSymptomCheckerScreen(context),
                                     ),
                                     _FeatureTile(
-                                      title: 'First Aid\nGuide',
+                                      title: context.tx(
+                                        'First Aid\nGuide',
+                                        'प्राथमिक उपचार\nगाइड',
+                                      ),
                                       icon: Icons.medical_services,
                                       iconColor: Color(0xFFFF2D55),
                                       onTap: () =>
                                           _openFirstAidBoxScreen(context),
                                     ),
                                     _FeatureTile(
-                                      title: 'Hospital',
+                                      title: context.tx('Hospital', 'अस्पताल'),
                                       icon: Icons.local_hospital,
                                       iconColor: Color(0xFF1E88E5),
                                       onTap: () => _openHospitalScreen(context),
                                     ),
                                     _FeatureTile(
-                                      title: 'Doctor',
+                                      title: context.tx('Doctor', 'डाक्टर'),
                                       icon: Icons.person,
                                       iconColor: Color(0xFF12B886),
                                       onTap: () => _openDoctorScreen(context),
@@ -881,7 +906,10 @@ class DashboardScreen extends StatelessWidget {
                                 SizedBox(
                                   width: secondRowWidth,
                                   child: _FeatureTile(
-                                    title: 'Health\nRecord',
+                                    title: context.tx(
+                                      'Health\nRecord',
+                                      'स्वास्थ्य\nरेकर्ड',
+                                    ),
                                     icon: Icons.assignment,
                                     iconColor: Color(0xFF7C4DFF),
                                     onTap: () => _openRecordScreen(context),
@@ -891,7 +919,10 @@ class DashboardScreen extends StatelessWidget {
                                 SizedBox(
                                   width: secondRowWidth,
                                   child: _FeatureTile(
-                                    title: 'Awareness\nVideo',
+                                    title: context.tx(
+                                      'Awareness\nVideo',
+                                      'जनचेतना\nभिडियो',
+                                    ),
                                     icon: Icons.videocam,
                                     iconColor: Color(0xFF7C4DFF),
                                     onTap: () =>

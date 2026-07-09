@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/core/state/app_language_controller.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -60,11 +61,11 @@ class _LanguageSettingScreenState extends ConsumerState<LanguageSettingScreen> {
                   Expanded(
                     child: Transform.translate(
                       offset: const Offset(-24, -2),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Language Setting',
+                            context.tx('Language Setting', 'भाषा सेटिङ'),
                             style: TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.w700,
@@ -73,7 +74,10 @@ class _LanguageSettingScreenState extends ConsumerState<LanguageSettingScreen> {
                           ),
                           SizedBox(height: 0),
                           Text(
-                            'Choose your preferred language',
+                            context.tx(
+                              'Choose your preferred language',
+                              'आफ्नो मनपर्ने भाषा छान्नुहोस्',
+                            ),
                             style: TextStyle(
                               fontSize: 14,
                               color: Color(0xFF414B55),
@@ -90,7 +94,7 @@ class _LanguageSettingScreenState extends ConsumerState<LanguageSettingScreen> {
               const SizedBox(height: 18),
               _LanguageOptionCard(
                 flag: '🇬🇧',
-                title: 'English',
+                title: context.tx('English', 'अंग्रेजी'),
                 selected: _selectedLanguage == AppLanguage.english,
                 onTap: () {
                   setState(() {
@@ -101,7 +105,7 @@ class _LanguageSettingScreenState extends ConsumerState<LanguageSettingScreen> {
               const SizedBox(height: 16),
               _LanguageOptionCard(
                 flag: '🇳🇵',
-                title: 'Nepali',
+                title: context.tx('Nepali', 'नेपाली'),
                 subtitle: '(नेपाली)',
                 selected: _selectedLanguage == AppLanguage.nepali,
                 onTap: () {
@@ -126,8 +130,8 @@ class _LanguageSettingScreenState extends ConsumerState<LanguageSettingScreen> {
                     elevation: 0,
                   ),
                   icon: const Icon(Icons.save_outlined, size: 22),
-                  label: const Text(
-                    'Save Changes',
+                  label: Text(
+                    context.tx('Save Changes', 'परिवर्तन सुरक्षित गर्नुहोस्'),
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -169,9 +173,12 @@ class _LanguageBannerCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
-              'Select your preferred language\nfor a better healthcare\nexperience.',
+              context.tx(
+                'Select your preferred language\nfor a better healthcare\nexperience.',
+                'राम्रो स्वास्थ्य सेवा\nअनुभवका लागि आफ्नो\nमनपर्ने भाषा छान्नुहोस्।',
+              ),
               style: TextStyle(
                 fontSize: 16,
                 height: 1.28,
@@ -304,17 +311,20 @@ class _LanguageInfoCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 18,
             backgroundColor: Color(0xFF0F6DC1),
             child: Icon(Icons.info, color: Colors.white, size: 22),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'You can switch between Nepali and English at any time.',
+              context.tx(
+                'You can switch between Nepali and English at any time.',
+                'तपाईं जुनसुकै बेला नेपाली र अंग्रेजी बीच परिवर्तन गर्न सक्नुहुन्छ।',
+              ),
               style: TextStyle(
                 fontSize: 16,
                 height: 1.35,

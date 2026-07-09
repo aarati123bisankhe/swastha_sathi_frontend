@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -33,8 +34,8 @@ class SupportScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Quick Help Topics',
+                    Text(
+                      context.tx('Quick Help Topics', 'छिटो सहयोग विषयहरू'),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -116,12 +117,12 @@ class _SupportHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Support',
+                context.tx('Support', 'सहयोग'),
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
@@ -130,7 +131,10 @@ class _SupportHeader extends StatelessWidget {
               ),
               SizedBox(height: 4),
               Text(
-                'We are here to help you',
+                context.tx(
+                  'We are here to help you',
+                  'हामी तपाईंलाई सहयोग गर्न यहाँ छौं',
+                ),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black87,

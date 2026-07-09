@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
@@ -282,11 +283,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         Expanded(
                           child: Transform.translate(
                             offset: const Offset(-20, 0),
-                            child: const Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Personal Information',
+                                  context.tx(
+                                    'Personal Information',
+                                    'व्यक्तिगत जानकारी',
+                                  ),
                                   style: TextStyle(
                                     fontSize: 23,
                                     fontWeight: FontWeight.w700,
@@ -295,7 +299,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 ),
                                 SizedBox(height: 0),
                                 Text(
-                                  'Manage your personal details',
+                                  context.tx(
+                                    'Manage your personal details',
+                                    'आफ्नो व्यक्तिगत विवरण व्यवस्थापन गर्नुहोस्',
+                                  ),
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF414B55),
@@ -433,8 +440,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                           elevation: 0,
                         ),
                         icon: const Icon(Icons.save_outlined, size: 22),
-                        label: const Text(
-                          'Save Changes',
+                        label: Text(
+                          context.tx(
+                            'Save Changes',
+                            'परिवर्तन सुरक्षित गर्नुहोस्',
+                          ),
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,

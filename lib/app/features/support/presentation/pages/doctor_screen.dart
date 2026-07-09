@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -119,16 +120,19 @@ class DoctorScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
-            'Call Doctor?',
+          title: Text(
+            context.tx('Call Doctor?', 'डाक्टरलाई कल गर्ने?'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: Color(0xFF1B2330),
             ),
           ),
-          content: const Text(
-            'Are you sure you want to call this doctor now?',
+          content: Text(
+            context.tx(
+              'Are you sure you want to call this doctor now?',
+              'के तपाईं अहिले यो डाक्टरलाई कल गर्न चाहनुहुन्छ?',
+            ),
             style: TextStyle(
               fontSize: 14,
               height: 1.4,
@@ -138,11 +142,11 @@ class DoctorScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(context.tx('Cancel', 'रद्द गर्नुहोस्')),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Call Now'),
+              child: Text(context.tx('Call Now', 'अहिले कल गर्नुहोस्')),
             ),
           ],
         );
@@ -157,7 +161,13 @@ class DoctorScreen extends StatelessWidget {
     );
 
     if (!launched && context.mounted) {
-      _showInfo(context, 'Unable to open the phone dialer right now.');
+      _showInfo(
+        context,
+        context.tx(
+          'Unable to open the phone dialer right now.',
+          'अहिले फोन डायलर खोल्न सकिएन।',
+        ),
+      );
     }
   }
 
@@ -194,12 +204,12 @@ class _DoctorHeader extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Doctor',
+                context.tx('Doctor', 'डाक्टर'),
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.w700,
@@ -208,7 +218,10 @@ class _DoctorHeader extends StatelessWidget {
               ),
               SizedBox(height: 1),
               Text(
-                'Connect with nearby healthcare professionals',
+                context.tx(
+                  'Connect with nearby healthcare professionals',
+                  'नजिकका स्वास्थ्यकर्मीसँग जोडिनुहोस्',
+                ),
                 style: TextStyle(
                   fontSize: 13,
                   color: Color(0xFF555D69),
@@ -419,8 +432,8 @@ class _DoctorCard extends StatelessWidget {
                     ),
                   ),
                   icon: const Icon(Icons.call_rounded, size: 18),
-                  label: const Text(
-                    'Call',
+                  label: Text(
+                    context.tx('Call', 'कल'),
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -441,8 +454,8 @@ class _DoctorCard extends StatelessWidget {
                     ),
                   ),
                   icon: const Icon(Icons.message_rounded, size: 18),
-                  label: const Text(
-                    'Message',
+                  label: Text(
+                    context.tx('Message', 'सन्देश'),
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),

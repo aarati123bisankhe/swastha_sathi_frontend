@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -53,8 +54,11 @@ class _RecordScreenState extends State<RecordScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: _saveOffline,
-                            child: const _RecordActionButton(
-                              label: 'Save Offline',
+                            child: _RecordActionButton(
+                              label: context.tx(
+                                'Save Offline',
+                                'अफलाइन सुरक्षित गर्नुहोस्',
+                              ),
                               icon: Icons.download_rounded,
                               backgroundColor: Color(0xFF45AA3A),
                             ),
@@ -64,8 +68,11 @@ class _RecordScreenState extends State<RecordScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: _editRecord,
-                            child: const _RecordActionButton(
-                              label: 'Edit Records',
+                            child: _RecordActionButton(
+                              label: context.tx(
+                                'Edit Records',
+                                'रेकर्ड सम्पादन गर्नुहोस्',
+                              ),
                               icon: Icons.edit_outlined,
                               backgroundColor: Color(0xFF1E84EA),
                             ),
@@ -119,8 +126,13 @@ class _RecordScreenState extends State<RecordScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Health record updated successfully.'),
+        SnackBar(
+          content: Text(
+            context.tx(
+              'Health record updated successfully.',
+              'स्वास्थ्य रेकर्ड सफलतापूर्वक अद्यावधिक भयो।',
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -133,8 +145,13 @@ class _RecordScreenState extends State<RecordScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Health record saved offline successfully.'),
+        SnackBar(
+          content: Text(
+            context.tx(
+              'Health record saved offline successfully.',
+              'स्वास्थ्य रेकर्ड अफलाइन सफलतापूर्वक सुरक्षित भयो।',
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -156,12 +173,12 @@ class _RecordHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Health Record',
+                context.tx('Health Record', 'स्वास्थ्य रेकर्ड'),
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
@@ -170,7 +187,10 @@ class _RecordHeader extends StatelessWidget {
               ),
               SizedBox(height: 4),
               Text(
-                'Your Personal Medical Information',
+                context.tx(
+                  'Your Personal Medical Information',
+                  'तपाईंको व्यक्तिगत स्वास्थ्य जानकारी',
+                ),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black87,
@@ -701,8 +721,11 @@ class _EditHealthRecordScreenState extends State<EditHealthRecordScreen> {
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: const Color(0xFF24229A),
-        title: const Text(
-          'Edit Health Record',
+        title: Text(
+          context.tx(
+            'Edit Health Record',
+            'स्वास्थ्य रेकर्ड सम्पादन गर्नुहोस्',
+          ),
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
@@ -752,8 +775,8 @@ class _EditHealthRecordScreenState extends State<EditHealthRecordScreen> {
                     borderRadius: BorderRadius.circular(18),
                   ),
                 ),
-                child: const Text(
-                  'Save Changes',
+                child: Text(
+                  context.tx('Save Changes', 'परिवर्तन सुरक्षित गर्नुहोस्'),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
               ),

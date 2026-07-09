@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
@@ -51,12 +52,15 @@ class EmergencyScreen extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Emergency Dashboard',
+                          context.tx(
+                            'Emergency Dashboard',
+                            'आपतकालीन ड्यासबोर्ड',
+                          ),
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
@@ -65,7 +69,10 @@ class EmergencyScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Quick emergency support anytime',
+                          context.tx(
+                            'Quick emergency support anytime',
+                            'जुनसुकै बेला छिटो आपतकालीन सहयोग',
+                          ),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.black87,
@@ -112,7 +119,7 @@ class EmergencyScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Emergency Contacts',
+                      context.tx('Emergency Contacts', 'आपतकालीन सम्पर्कहरू'),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -125,7 +132,10 @@ class EmergencyScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           _EmergencyContactCard(
-                            title: _quickContacts[0].title,
+                            title: _localizedQuickContactTitle(
+                              context,
+                              _quickContacts[0],
+                            ),
                             avatar: ClipOval(
                               child: Image.asset(
                                 'assets/images/family_contact_avatar.png',
@@ -139,7 +149,10 @@ class EmergencyScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
-                            title: _quickContacts[1].title,
+                            title: _localizedQuickContactTitle(
+                              context,
+                              _quickContacts[1],
+                            ),
                             avatar: Image.asset(
                               'assets/images/hospital_contact_icon.png',
                               width: 27,
@@ -151,7 +164,10 @@ class EmergencyScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 12),
                           _EmergencyContactCard(
-                            title: _quickContacts[2].title,
+                            title: _localizedQuickContactTitle(
+                              context,
+                              _quickContacts[2],
+                            ),
                             avatar: Text(
                               '🧑‍⚕️',
                               style: TextStyle(fontSize: 18),
@@ -185,7 +201,10 @@ class EmergencyScreen extends StatelessWidget {
     if (number == null || number.trim().isEmpty) {
       _showFeedback(
         context,
-        'No contact number added. Please add an emergency contact first.',
+        context.tx(
+          'No contact number added. Please add an emergency contact first.',
+          'सम्पर्क नम्बर थपिएको छैन। कृपया पहिले आपतकालीन सम्पर्क थप्नुहोस्।',
+        ),
       );
       return;
     }
@@ -198,7 +217,7 @@ class EmergencyScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            contact.dialogTitle,
+            _localizedDialogTitle(context, contact),
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -206,7 +225,7 @@ class EmergencyScreen extends StatelessWidget {
             ),
           ),
           content: Text(
-            contact.dialogMessage,
+            _localizedDialogMessage(context, contact),
             style: const TextStyle(
               fontSize: 14,
               height: 1.4,
@@ -216,11 +235,11 @@ class EmergencyScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(context.tx('Cancel', 'रद्द गर्नुहोस्')),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Call Now'),
+              child: Text(context.tx('Call Now', 'अहिले कल गर्नुहोस्')),
             ),
           ],
         );
@@ -233,7 +252,79 @@ class EmergencyScreen extends StatelessWidget {
     final launched = await launchUrl(uri);
 
     if (!launched && context.mounted) {
-      _showFeedback(context, 'Unable to open the phone dialer right now.');
+      _showFeedback(
+        context,
+        context.tx(
+          'Unable to open the phone dialer right now.',
+          'अहिले फोन डायलर खोल्न सकिएन।',
+        ),
+      );
+    }
+  }
+
+  String _localizedQuickContactTitle(
+    BuildContext context,
+    _EmergencyQuickContact contact,
+  ) {
+    switch (contact.key) {
+      case 'family':
+        return context.tx('Family\nContact', 'परिवार\nसम्पर्क');
+      case 'hospital':
+        return context.tx('Nearby\nHospital', 'नजिकको\nअस्पताल');
+      case 'worker':
+        return context.tx('Local Health\nWorker', 'स्थानीय स्वास्थ्य\nकर्मी');
+      default:
+        return contact.title;
+    }
+  }
+
+  String _localizedDialogTitle(
+    BuildContext context,
+    _EmergencyQuickContact contact,
+  ) {
+    switch (contact.key) {
+      case 'family':
+        return context.tx(
+          'Call Family Contact?',
+          'परिवार सम्पर्कलाई कल गर्ने?',
+        );
+      case 'hospital':
+        return context.tx(
+          'Call Nearby Hospital?',
+          'नजिकको अस्पताललाई कल गर्ने?',
+        );
+      case 'worker':
+        return context.tx(
+          'Call Local Health Worker?',
+          'स्थानीय स्वास्थ्यकर्मीलाई कल गर्ने?',
+        );
+      default:
+        return contact.dialogTitle;
+    }
+  }
+
+  String _localizedDialogMessage(
+    BuildContext context,
+    _EmergencyQuickContact contact,
+  ) {
+    switch (contact.key) {
+      case 'family':
+        return context.tx(
+          'Are you sure you want to call your family contact now?',
+          'के तपाईं अहिले आफ्नो परिवार सम्पर्कलाई कल गर्न चाहनुहुन्छ?',
+        );
+      case 'hospital':
+        return context.tx(
+          'This will connect you to the nearest hospital for emergency help.',
+          'यसले तपाईंलाई आपतकालीन सहयोगका लागि नजिकको अस्पतालसँग जोड्नेछ।',
+        );
+      case 'worker':
+        return context.tx(
+          'This will connect you to your local health worker for quick medical support.',
+          'यसले तपाईंलाई छिटो स्वास्थ्य सहयोगका लागि स्थानीय स्वास्थ्यकर्मीसँग जोड्नेछ।',
+        );
+      default:
+        return contact.dialogMessage;
     }
   }
 

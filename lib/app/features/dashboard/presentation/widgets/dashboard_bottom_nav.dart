@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/profile_screen.dart';
@@ -32,31 +33,31 @@ class DashboardBottomNav extends StatelessWidget {
           children: [
             _BottomNavItem(
               icon: Icons.home,
-              label: 'Home',
+              label: context.tx('Home', 'गृहपृष्ठ'),
               active: activeTab == DashboardNavTab.home,
               onTap: () => _openTab(context, DashboardNavTab.home),
             ),
             _BottomNavItem(
               icon: Icons.call,
-              label: 'Emergency',
+              label: context.tx('Emergency', 'आपतकालीन'),
               active: activeTab == DashboardNavTab.emergency,
               onTap: () => _openTab(context, DashboardNavTab.emergency),
             ),
             _BottomNavItem(
               icon: Icons.headset_mic,
-              label: 'Support',
+              label: context.tx('Support', 'सहयोग'),
               active: activeTab == DashboardNavTab.support,
               onTap: () => _openTab(context, DashboardNavTab.support),
             ),
             _BottomNavItem(
               icon: Icons.assignment_outlined,
-              label: 'Record',
+              label: context.tx('Record', 'रेकर्ड'),
               active: activeTab == DashboardNavTab.record,
               onTap: () => _openTab(context, DashboardNavTab.record),
             ),
             _BottomNavItem(
               icon: Icons.person,
-              label: 'Profile',
+              label: context.tx('Profile', 'प्रोफाइल'),
               active: activeTab == DashboardNavTab.profile,
               onTap: () => _openTab(context, DashboardNavTab.profile),
             ),
@@ -129,8 +130,7 @@ class _BottomNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appThemeColors;
-    final color =
-        active ? const Color(0xFF0B73E8) : colors.bottomNavInactive;
+    final color = active ? const Color(0xFF0B73E8) : colors.bottomNavInactive;
 
     return GestureDetector(
       onTap: onTap,

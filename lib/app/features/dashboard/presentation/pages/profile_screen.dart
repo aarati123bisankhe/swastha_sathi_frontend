@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/core/state/app_theme_controller.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/language_setting_screen.dart';
@@ -76,8 +77,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Personal information updated successfully.'),
+        SnackBar(
+          content: Text(
+            context.tx(
+              'Personal information updated successfully.',
+              'व्यक्तिगत जानकारी सफलतापूर्वक अद्यावधिक भयो।',
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -95,8 +101,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Language updated successfully.'),
+        SnackBar(
+          content: Text(context.languageUpdatedSuccess),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -144,8 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.fromLTRB(22, 12, 22, 120),
                 child: Column(
                   children: [
-                    const Text(
-                      'Profile',
+                    Text(
+                      context.tx('Profile', 'प्रोफाइल'),
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
@@ -169,7 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      'HealthCare Companion users',
+                      context.tx(
+                        'HealthCare Companion users',
+                        'स्वास्थ्य साथी प्रयोगकर्ता',
+                      ),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -186,21 +195,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _ProfileMenuCard(
                       icon: Icons.person_rounded,
                       iconBackground: const Color(0xFF1E88F7),
-                      title: 'Personal Information',
+                      title: context.tx(
+                        'Personal Information',
+                        'व्यक्तिगत जानकारी',
+                      ),
                       onTap: _openPersonalInformation,
                     ),
                     const SizedBox(height: 14),
                     _ProfileMenuCard(
                       icon: Icons.medical_services_rounded,
                       iconBackground: const Color(0xFF16BF70),
-                      title: 'Health Record',
+                      title: context.tx('Health Record', 'स्वास्थ्य रेकर्ड'),
                       onTap: _openHealthRecord,
                     ),
                     const SizedBox(height: 14),
                     _ProfileMenuCard(
                       icon: Icons.language_rounded,
                       iconBackground: const Color(0xFFFF8A00),
-                      title: 'Language Setting',
+                      title: context.tx('Language Setting', 'भाषा सेटिङ'),
                       onTap: _openLanguageSetting,
                     ),
                     const SizedBox(height: 14),
@@ -312,18 +324,18 @@ class _ProfileStatsCard extends StatelessWidget {
                   icon: Icons.bloodtype,
                   iconBackground: const Color(0xFFE8B2B2),
                   iconColor: const Color(0xFFE11B1B),
-                  title: 'Blood Group',
+                  title: context.tx('Blood Group', 'रक्त समूह'),
                   subtitle: bloodGroup,
                 ),
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: _ProfileInfoItem(
                   icon: Icons.check_box_rounded,
-                  iconBackground: Color(0xFFAEE28E),
-                  iconColor: Color(0xFF10B91D),
-                  title: 'Health Status',
-                  subtitle: 'Excellent',
+                  iconBackground: const Color(0xFFAEE28E),
+                  iconColor: const Color(0xFF10B91D),
+                  title: context.tx('Health Status', 'स्वास्थ्य स्थिति'),
+                  subtitle: context.tx('Excellent', 'उत्कृष्ट'),
                 ),
               ),
             ],
@@ -336,7 +348,7 @@ class _ProfileStatsCard extends StatelessWidget {
                   icon: Icons.location_on_rounded,
                   iconBackground: const Color(0xFFC9B8E9),
                   iconColor: const Color(0xFF1F3F6B),
-                  title: 'Location',
+                  title: context.tx('Location', 'स्थान'),
                   subtitle: district,
                 ),
               ),
@@ -346,7 +358,7 @@ class _ProfileStatsCard extends StatelessWidget {
                   icon: Icons.call_rounded,
                   iconBackground: const Color(0xFFC9DDB7),
                   iconColor: const Color(0xFF4C5650),
-                  title: 'Emergency Contact',
+                  title: context.tx('Emergency Contact', 'आपतकालीन सम्पर्क'),
                   subtitle: phoneNumber,
                 ),
               ),
@@ -528,7 +540,7 @@ class _ProfileToggleCard extends StatelessWidget {
           const SizedBox(width: 14),
           Expanded(
             child: Text(
-              'Dark Mode',
+              context.tx('Dark Mode', 'डार्क मोड'),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -536,10 +548,7 @@ class _ProfileToggleCard extends StatelessWidget {
               ),
             ),
           ),
-          Switch(
-            value: isDarkMode,
-            onChanged: onChanged,
-          ),
+          Switch(value: isDarkMode, onChanged: onChanged),
         ],
       ),
     );
@@ -562,7 +571,7 @@ class _LogoutButton extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: Text(
-        'Logout',
+        context.tx('Logout', 'लगआउट'),
         style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w500,
