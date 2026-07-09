@@ -23,6 +23,9 @@ class ShareLocationScreen extends StatefulWidget {
 }
 
 class _ShareLocationScreenState extends State<ShareLocationScreen> {
+  static const String _previewMapDistrict = 'Lalitpur';
+  static const String _previewMapSubtitle = 'Lalitpur, Bagmati Province, Nepal';
+
   final LiveLocationSharingService _sharingService =
       LiveLocationSharingService.instance;
 
@@ -128,11 +131,8 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
               ),
               const SizedBox(height: 18),
               _MapPreviewCard(
-                district: _currentLocation?.city ?? _fallbackDistrict(),
-                subtitle: _permissionDenied
-                    ? 'Location permission is required'
-                    : _currentLocation?.addressLabel ??
-                          '${_fallbackDistrict()}, Nepal',
+                district: _previewMapDistrict,
+                subtitle: _previewMapSubtitle,
                 onTap: _isWorking ? null : _openMapPreview,
               ),
               const SizedBox(height: 18),
@@ -414,69 +414,18 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
 
   Future<void> _openMapPreview() async {
     await _runBusyAction(() async {
-      var location = _currentLocation;
-      location ??= await EmergencyLocationService.getCurrentLocation(
-        fallbackDistrict: widget.user?.district,
-      );
-
-      if (location == null) {
-        if (mounted) {
-          setState(() {
-            _permissionDenied = true;
-            _isLoadingLocation = false;
-          });
-        }
-        final launched = await _launchFallbackMap();
-        if (!launched) {
-          _showFeedback('Unable to open the map right now.');
-        }
-        return;
-      }
-
-      if (mounted) {
-        setState(() {
-          _currentLocation = location;
-          _permissionDenied = false;
-        });
-      }
-
-      final launched = await _launchMap(location);
+      final launched = await _launchPreviewMap();
       if (!launched) {
         _showFeedback('Unable to open the map right now.');
       }
     });
   }
 
-  Future<bool> _launchFallbackMap() async {
-    final district = _fallbackDistrict();
-    final query = '$district, Nepal';
+  Future<bool> _launchPreviewMap() async {
+    final query = '$_previewMapDistrict, Nepal';
     final googleMapsUri = Uri.https('www.google.com', '/maps/search/', {
       'api': '1',
       'query': query,
-    });
-
-    try {
-      if (await launchUrl(googleMapsUri, mode: LaunchMode.platformDefault)) {
-        return true;
-      }
-    } catch (_) {}
-
-    try {
-      if (await launchUrl(
-        googleMapsUri,
-        mode: LaunchMode.externalApplication,
-      )) {
-        return true;
-      }
-    } catch (_) {}
-
-    return false;
-  }
-
-  Future<bool> _launchMap(EmergencyLocationData location) async {
-    final googleMapsUri = Uri.https('www.google.com', '/maps/search/', {
-      'api': '1',
-      'query': '${location.latitude},${location.longitude}',
     });
 
     try {
