@@ -1,13 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swasthasathi/app/core/services/emergency_location_service.dart';
+import 'package:swasthasathi/app/core/services/emergency_notification_service.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class CallAmbulanceScreen extends StatelessWidget {
+class CallAmbulanceScreen extends StatefulWidget {
   const CallAmbulanceScreen({super.key, this.user});
 
   final AuthUser? user;
 
+  @override
+  State<CallAmbulanceScreen> createState() => _CallAmbulanceScreenState();
+}
+
+class _CallAmbulanceScreenState extends State<CallAmbulanceScreen> {
   static const List<_AmbulanceService> _services = [
     _AmbulanceService(
       name: 'Kathmandu Emergency Ambulance',
@@ -98,7 +110,8 @@ class CallAmbulanceScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (context) => NotificationScreen(user: user),
+                          builder: (context) =>
+                              NotificationScreen(user: widget.user),
                         ),
                       );
                     },
@@ -119,29 +132,34 @@ class CallAmbulanceScreen extends StatelessWidget {
               ..._services.map(
                 (service) => Padding(
                   padding: const EdgeInsets.only(bottom: 15),
-                  child: _AmbulanceServiceCard(service: service),
+                  child: _AmbulanceServiceCard(
+                    service: service,
+                    onCall: () => _handleCallNow(service),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
-              const Row(
+              Row(
                 children: [
                   Expanded(
                     child: _ActionFooterButton(
                       label: 'Share Location',
-                      textColor: Color(0xFF135099),
-                      borderColor: Color(0xFF5AA7FF),
+                      textColor: const Color(0xFF135099),
+                      borderColor: const Color(0xFF5AA7FF),
                       backgroundColor: Colors.transparent,
                       icon: Icons.my_location_outlined,
+                      onPressed: _handleShareLocation,
                     ),
                   ),
-                  SizedBox(width: 14),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: _ActionFooterButton(
                       label: 'Emergency SoS',
                       textColor: Colors.white,
-                      borderColor: Color(0xFFF71818),
-                      backgroundColor: Color(0xFFF71818),
+                      borderColor: const Color(0xFFF71818),
+                      backgroundColor: const Color(0xFFF71818),
                       icon: Icons.warning_rounded,
+                      onPressed: _handleEmergencySos,
                     ),
                   ),
                 ],
@@ -152,9 +170,169 @@ class CallAmbulanceScreen extends StatelessWidget {
       ),
       bottomNavigationBar: DashboardBottomNav(
         activeTab: DashboardNavTab.emergency,
-        user: user,
+        user: widget.user,
       ),
     );
+  }
+
+  Future<void> _handleCallNow(_AmbulanceService service) async {
+    final shouldCall = await _showConfirmationDialog(
+      title: 'Call Ambulance?',
+      message: 'Are you sure you want to call this ambulance service now?',
+      confirmLabel: 'Call Now',
+    );
+
+    if (shouldCall != true) return;
+
+    final launched = await launchUrl(
+      Uri(scheme: 'tel', path: service.phone),
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched && mounted) {
+      _showFeedback('Unable to open the phone dialer right now.');
+    }
+  }
+
+  Future<void> _handleShareLocation() async {
+    final location = await EmergencyLocationService.getCurrentLocation();
+
+    if (location == null) {
+      _showFeedback(EmergencyLocationService.permissionMessage);
+      return;
+    }
+
+    final message =
+        'Emergency! I need ambulance help. This is my current location: ${location.googleMapsLink}';
+
+    await Share.share(message, subject: 'Emergency Location');
+  }
+
+  Future<void> _handleEmergencySos() async {
+    final shouldSend = await _showConfirmationDialog(
+      title: 'Send Emergency SOS?',
+      message:
+          'This will alert your emergency contacts with your current location.',
+      confirmLabel: 'Send SOS',
+    );
+
+    if (shouldSend != true) return;
+
+    final contacts = await _loadSavedEmergencyContacts();
+
+    if (contacts.isEmpty) {
+      _showFeedback(
+        'No emergency contact found. Please add an emergency contact first.',
+      );
+      return;
+    }
+
+    final location = await EmergencyLocationService.getCurrentLocation();
+
+    if (location == null) {
+      _showFeedback(EmergencyLocationService.permissionMessage);
+      return;
+    }
+
+    final message =
+        'Emergency SOS! I need urgent help. Please contact me immediately. My current location is: ${location.googleMapsLink}';
+
+    final smsUri = Uri(
+      scheme: 'sms',
+      path: contacts.join(','),
+      queryParameters: {'body': message},
+    );
+
+    final launched = await launchUrl(
+      smsUri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched) {
+      if (!mounted) return;
+      _showFeedback('Unable to open the messaging app right now.');
+      return;
+    }
+
+    await EmergencyNotificationService.addSosSentNotification();
+
+    if (!mounted) return;
+    _showFeedback('Emergency SOS sent successfully.');
+  }
+
+  Future<bool?> _showConfirmationDialog({
+    required String title,
+    required String message,
+    required String confirmLabel,
+  }) {
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1B2330),
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              fontSize: 14,
+              height: 1.4,
+              color: Color(0xFF4E5968),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(confirmLabel),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<List<String>> _loadSavedEmergencyContacts() async {
+    const storageKey = 'health_record_data';
+
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(storageKey);
+
+    if (raw == null || raw.isEmpty) {
+      return <String>[];
+    }
+
+    final json = jsonDecode(raw) as Map<String, dynamic>;
+    final value = (json['emergencyContactNumber'] as String?)?.trim() ?? '';
+
+    if (value.isEmpty) {
+      return <String>[];
+    }
+
+    return value
+        .split(RegExp(r'[,;\n]+'))
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  void _showFeedback(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+      );
   }
 }
 
@@ -165,7 +343,7 @@ class _AmbulanceHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRect(
       child: Transform.translate(
-        offset: const Offset(0, -2), // Move the image up by 0.5 pixels
+        offset: const Offset(0, -2),
         child: Image.asset(
           'assets/images/call_ambulance_banner.png',
           width: double.infinity,
@@ -177,9 +355,10 @@ class _AmbulanceHeroCard extends StatelessWidget {
 }
 
 class _AmbulanceServiceCard extends StatelessWidget {
-  const _AmbulanceServiceCard({required this.service});
+  const _AmbulanceServiceCard({required this.service, required this.onCall});
 
   final _AmbulanceService service;
+  final VoidCallback onCall;
 
   @override
   Widget build(BuildContext context) {
@@ -244,11 +423,11 @@ class _AmbulanceServiceCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          const Column(
+          Column(
             children: [
-              _AvailabilityBadge(),
-              SizedBox(height: 6),
-              _CallNowButton(),
+              const _AvailabilityBadge(),
+              const SizedBox(height: 6),
+              _CallNowButton(onTap: onCall),
             ],
           ),
         ],
@@ -272,9 +451,9 @@ class _ServiceAvatar extends StatelessWidget {
         Container(
           width: 52,
           height: 52,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFFF1F3F8),
+            color: Color(0xFFF1F3F8),
           ),
           clipBehavior: Clip.antiAlias,
           child: _isAssetImage
@@ -405,27 +584,33 @@ class _DistancePill extends StatelessWidget {
 }
 
 class _CallNowButton extends StatelessWidget {
-  const _CallNowButton();
+  const _CallNowButton({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        CircleAvatar(
-          radius: 16,
-          backgroundColor: Color(0xFF12C64B),
-          child: Icon(Icons.call, color: Colors.white, size: 15),
-        ),
-        SizedBox(height: 2),
-        Text(
-          'Call Now',
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF129E3D),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: const Column(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: Color(0xFF12C64B),
+            child: Icon(Icons.call, color: Colors.white, size: 15),
           ),
-        ),
-      ],
+          SizedBox(height: 2),
+          Text(
+            'Call Now',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF129E3D),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -437,6 +622,7 @@ class _ActionFooterButton extends StatelessWidget {
     required this.borderColor,
     required this.backgroundColor,
     required this.icon,
+    required this.onPressed,
   });
 
   final String label;
@@ -444,6 +630,7 @@ class _ActionFooterButton extends StatelessWidget {
   final Color borderColor;
   final Color backgroundColor;
   final IconData icon;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +638,7 @@ class _ActionFooterButton extends StatelessWidget {
       height: 48,
       child: label == 'Share Location'
           ? OutlinedButton.icon(
-              onPressed: () {},
+              onPressed: onPressed,
               icon: Icon(icon, color: textColor, size: 18),
               label: Text(
                 label,
@@ -469,7 +656,7 @@ class _ActionFooterButton extends StatelessWidget {
               ),
             )
           : ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: onPressed,
               icon: Icon(icon, color: textColor, size: 18),
               label: Text(
                 label,

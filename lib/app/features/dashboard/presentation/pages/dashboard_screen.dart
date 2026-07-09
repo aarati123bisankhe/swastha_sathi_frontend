@@ -759,7 +759,7 @@ class DashboardScreen extends StatelessWidget {
                           [
                             _ActionTile(
                               title: 'Call\nAmbulance',
-                              icon: Icons.emergency_outlined,
+                              emoji: '🚑',
                               colors: const [
                                 Color(0xFFFF6B6B),
                                 Color(0xFFF64545),
@@ -1100,13 +1100,15 @@ class _SectionHeader extends StatelessWidget {
 class _ActionTile extends StatelessWidget {
   const _ActionTile({
     required this.title,
-    required this.icon,
     required this.colors,
+    this.icon,
+    this.emoji,
     this.onTap,
   });
 
   final String title;
-  final IconData icon;
+  final IconData? icon;
+  final String? emoji;
   final List<Color> colors;
   final VoidCallback? onTap;
 
@@ -1136,7 +1138,10 @@ class _ActionTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 28, color: Colors.white),
+            if (emoji != null)
+              Text(emoji!, style: const TextStyle(fontSize: 28))
+            else if (icon != null)
+              Icon(icon, size: 28, color: Colors.white),
 
             const SizedBox(height: 6),
 
