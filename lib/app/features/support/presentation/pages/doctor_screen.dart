@@ -3,6 +3,7 @@ import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/doctor_chat_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DoctorScreen extends StatelessWidget {
   const DoctorScreen({super.key, this.user});
@@ -76,7 +77,7 @@ class DoctorScreen extends StatelessWidget {
                     avatarBuilder: (context) => _DoctorAssetAvatar(
                       imageAssetPath: doctor.imageAssetPath,
                     ),
-                    onCall: () => _showCallSheet(context, doctor),
+                    onCall: () => _confirmAndCallDoctor(context, doctor),
                     onMessage: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
@@ -107,71 +108,57 @@ class DoctorScreen extends StatelessWidget {
     );
   }
 
-  void _showCallSheet(BuildContext context, _DoctorInfo doctor) {
-    showModalBottomSheet<void>(
+  Future<void> _confirmAndCallDoctor(
+    BuildContext context,
+    _DoctorInfo doctor,
+  ) async {
+    final shouldCall = await showDialog<bool>(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Call ${doctor.name}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1D1A66),
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Choose whether you want to contact the doctor directly or call the hospital desk.',
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.45,
-                  color: Color(0xFF5F6773),
-                ),
-              ),
-              const SizedBox(height: 18),
-              _CallOptionTile(
-                icon: Icons.phone_in_talk_rounded,
-                title: 'Call Doctor',
-                subtitle: doctor.doctorPhone,
-                accent: const Color(0xFF0B73E8),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _showInfo(
-                    context,
-                    'Calling ${doctor.name} at ${doctor.doctorPhone}',
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              _CallOptionTile(
-                icon: Icons.local_hospital_rounded,
-                title: 'Call Hospital',
-                subtitle: doctor.hospitalPhone,
-                accent: const Color(0xFF12B886),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _showInfo(
-                    context,
-                    'Calling ${doctor.hospitalName} at ${doctor.hospitalPhone}',
-                  );
-                },
-              ),
-            ],
+          title: const Text(
+            'Call Doctor?',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1B2330),
+            ),
           ),
+          content: const Text(
+            'Are you sure you want to call this doctor now?',
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.4,
+              color: Color(0xFF4E5968),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Call Now'),
+            ),
+          ],
         );
       },
     );
+
+    if (shouldCall != true) return;
+
+    final launched = await launchUrl(
+      Uri(scheme: 'tel', path: doctor.doctorPhone),
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched && context.mounted) {
+      _showInfo(context, 'Unable to open the phone dialer right now.');
+    }
   }
 
   void _showInfo(BuildContext context, String message) {
@@ -481,76 +468,6 @@ class _DoctorAssetAvatar extends StatelessWidget {
         width: size,
         height: size,
         child: Image.asset(imageAssetPath, fit: BoxFit.cover),
-      ),
-    );
-  }
-}
-
-class _CallOptionTile extends StatelessWidget {
-  const _CallOptionTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.accent,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color accent;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: accent.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: accent.withValues(alpha: 0.18)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, color: accent, size: 22),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF28313B),
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF5F6773),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: accent, size: 24),
-          ],
-        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HospitalScreen extends StatelessWidget {
   const HospitalScreen({super.key, this.user});
@@ -118,10 +119,7 @@ class HospitalScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: _HospitalCard(
                     hospital: hospital,
-                    onCall: () => _showInfo(
-                      context,
-                      'Calling ${hospital.name} at ${hospital.phone}',
-                    ),
+                    onCall: () => _confirmAndCall(context, hospital),
                     onDirections: () => _showInfo(
                       context,
                       'Opening directions to ${hospital.mapLabel}',
@@ -165,6 +163,59 @@ class HospitalScreen extends StatelessWidget {
       ..showSnackBar(
         SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );
+  }
+
+  Future<void> _confirmAndCall(
+    BuildContext context,
+    _HospitalInfo hospital,
+  ) async {
+    final shouldCall = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Call Hospital?',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1B2330),
+            ),
+          ),
+          content: const Text(
+            'Are you sure you want to call this hospital now?',
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.4,
+              color: Color(0xFF4E5968),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Call Now'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldCall != true) return;
+
+    final launched = await launchUrl(
+      Uri(scheme: 'tel', path: hospital.phone),
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched && context.mounted) {
+      _showInfo(context, 'Unable to open the phone dialer right now.');
+    }
   }
 }
 
