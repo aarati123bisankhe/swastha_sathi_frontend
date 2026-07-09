@@ -640,7 +640,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
   String _fallbackDistrict() {
     return widget.user?.district.trim().isNotEmpty == true
         ? widget.user!.district.trim()
-        : 'Kathmandu';
+        : 'Lalitpur';
   }
 
   String _trackingMessage(String trackingLink) {
