@@ -12,13 +12,13 @@ class HospitalScreen extends StatelessWidget {
 
   static const List<_HospitalInfo> _hospitals = [
     _HospitalInfo(
-      name: 'B&P Hospital',
-      location: 'Tinkune, Kathmandu',
+      name: 'B&B Hospital',
+      location: 'Gwarko, Lalitpur, Nepal',
       distance: '1.2 km away',
       rating: '4.6',
       reviews: '256 reviews',
       phone: '01-4112200',
-      mapLabel: 'Tinkune, Kathmandu',
+      mapLabel: 'Gwarko, Lalitpur, Nepal',
       tags: ['Emergency', 'ICU', 'Cardiology', 'Pharmacy'],
       badge: '24x7',
       accent: Color(0xFF1EB980),
@@ -26,12 +26,12 @@ class HospitalScreen extends StatelessWidget {
     ),
     _HospitalInfo(
       name: 'Grande International Hospital',
-      location: 'Dhapasi, Kathmandu',
+      location: 'Tokha, Kathmandu',
       distance: '2.8 km away',
       rating: '4.6',
       reviews: '256 reviews',
       phone: '01-5159266',
-      mapLabel: 'Dhapasi, Kathmandu',
+      mapLabel: 'Grande International Hospital, Tokha 44600',
       tags: ['Emergency', 'Surgery', 'ICU', 'Maternity'],
       badge: '24x7',
       accent: Color(0xFF1EB980),
@@ -121,10 +121,8 @@ class HospitalScreen extends StatelessWidget {
                   child: _HospitalCard(
                     hospital: hospital,
                     onCall: () => _confirmAndCall(context, hospital),
-                    onDirections: () => _showInfo(
-                      context,
-                      'Opening directions to ${hospital.mapLabel}',
-                    ),
+                    onDirections: () =>
+                        _openHospitalDirections(context, hospital),
                   ),
                 ),
               ),
@@ -226,6 +224,49 @@ class HospitalScreen extends StatelessWidget {
         ),
       );
     }
+  }
+
+  Future<void> _openHospitalDirections(
+    BuildContext context,
+    _HospitalInfo hospital,
+  ) async {
+    final launched = await _launchMapQuery(hospital.mapLabel);
+
+    if (!launched && context.mounted) {
+      _showInfo(
+        context,
+        context.tx(
+          'Unable to open the map right now.',
+          'अहिले नक्सा खोल्न सकिएन।',
+        ),
+      );
+    }
+  }
+
+  Future<bool> _launchMapQuery(String query) async {
+    final googleMapsUri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': query,
+    });
+    final geoUri = Uri.parse('geo:0,0?q=${Uri.encodeComponent(query)}');
+
+    final candidates = <Uri>[googleMapsUri, geoUri];
+
+    for (final uri in candidates) {
+      try {
+        if (await launchUrl(uri, mode: LaunchMode.platformDefault)) {
+          return true;
+        }
+      } catch (_) {}
+
+      try {
+        if (await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+          return true;
+        }
+      } catch (_) {}
+    }
+
+    return false;
   }
 }
 
