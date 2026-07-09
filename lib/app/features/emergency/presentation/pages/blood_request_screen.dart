@@ -706,7 +706,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ---------- Header ----------
+            
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -802,7 +802,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
               ),
               const SizedBox(height: 10),
 
-              // ---------- Blood Request Form ----------
+             
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(11, 11, 11, 11),
@@ -1083,7 +1083,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ---------- Send Blood Request button ----------
+             
               Center(
                 child: GestureDetector(
                   onTap: _submitForm,
