@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swasthasathi/app/core/localization/app_text.dart';
+import 'package:swasthasathi/app/core/services/profile_sync_service.dart';
 import 'package:swasthasathi/app/core/state/app_theme_controller.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/language_setting_screen.dart';
@@ -23,34 +22,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const String _storageKey = 'personal_information_data';
+  final ProfileSyncService _profileSyncService = ProfileSyncService.instance;
 
-  late PersonalInformationData _personalInfo;
+  PersonalInformationData? _personalInfo;
   bool _loading = true;
+  bool _saving = false;
 
   @override
   void initState() {
     super.initState();
-    _personalInfo = PersonalInformationData(
-      fullName: widget.user?.fullName.trim().isNotEmpty == true
-          ? widget.user!.fullName.trim()
-          : 'Anisha Sharma',
-      birthDate: '12 May 2002',
-      gender: 'Female',
-      bloodGroup: widget.user?.bloodGroup?.trim().isNotEmpty == true
-          ? widget.user!.bloodGroup!.trim()
-          : 'O+ Positive',
-      phoneNumber: widget.user?.phoneNumber.trim().isNotEmpty == true
-          ? widget.user!.phoneNumber.trim()
-          : '9862573376',
-      email: widget.user?.email.trim().isNotEmpty == true
-          ? widget.user!.email.trim()
-          : 'anisha@gmail.com',
-      address: widget.user?.district.trim().isNotEmpty == true
-          ? widget.user!.district.trim()
-          : 'Kathmandu, Nepal',
-      profileImageUrl: widget.user?.profileUrl,
-    );
+    _personalInfo = _buildFallbackPersonalInfo();
     _loadPersonalInformation();
   }
 
@@ -59,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .push<PersonalInformationData>(
           MaterialPageRoute<PersonalInformationData>(
             builder: (context) => PersonalInformationScreen(
-              initialData: _personalInfo,
+              initialData: _personalInfo ?? _buildFallbackPersonalInfo(),
               user: widget.user,
             ),
           ),
@@ -68,25 +49,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (updatedInfo == null || !mounted) return;
 
     setState(() {
-      _personalInfo = updatedInfo;
+      _saving = true;
     });
 
-    await _persistPersonalInformation(updatedInfo);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            context.tx(
-              'Personal information updated successfully.',
-              'व्यक्तिगत जानकारी सफलतापूर्वक अद्यावधिक भयो।',
-            ),
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
+    try {
+      final savedInfo = await _profileSyncService.savePersonalInformation(
+        data: updatedInfo,
+        user: widget.user,
       );
+
+      if (!mounted) return;
+
+      setState(() {
+        _personalInfo = savedInfo;
+      });
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              context.tx(
+                'Personal information updated successfully.',
+                'व्यक्तिगत जानकारी सफलतापूर्वक अद्यावधिक भयो।',
+              ),
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+        });
+      }
+    }
   }
 
   Future<void> _openLanguageSetting() async {
@@ -117,34 +124,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadPersonalInformation() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_storageKey);
+    final personalInfo = await _profileSyncService.loadPersonalInformation(
+      widget.user,
+    );
 
     if (!mounted) return;
 
     setState(() {
-      if (raw != null && raw.isNotEmpty) {
-        _personalInfo = PersonalInformationData.fromJson(
-          jsonDecode(raw) as Map<String, dynamic>,
-        );
-      }
+      _personalInfo = personalInfo;
       _loading = false;
     });
   }
 
-  Future<void> _persistPersonalInformation(PersonalInformationData data) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_storageKey, jsonEncode(data.toJson()));
+  PersonalInformationData _buildFallbackPersonalInfo() {
+    return PersonalInformationData(
+      fullName: widget.user?.fullName.trim().isNotEmpty == true
+          ? widget.user!.fullName.trim()
+          : 'Anisha Sharma',
+      birthDate: '12 May 2002',
+      gender: 'Female',
+      bloodGroup: widget.user?.bloodGroup?.trim().isNotEmpty == true
+          ? widget.user!.bloodGroup!.trim()
+          : 'O+ Positive',
+      phoneNumber: widget.user?.phoneNumber.trim().isNotEmpty == true
+          ? widget.user!.phoneNumber.trim()
+          : '9862573376',
+      email: widget.user?.email.trim().isNotEmpty == true
+          ? widget.user!.email.trim()
+          : 'anisha@gmail.com',
+      address: widget.user?.district.trim().isNotEmpty == true
+          ? widget.user!.district.trim()
+          : 'Kathmandu, Nepal',
+      profileImageUrl: widget.user?.profileUrl,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appThemeColors;
+    final personalInfo = _personalInfo ?? _buildFallbackPersonalInfo();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: _loading
+        child: _loading || _saving
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(22, 12, 22, 120),
@@ -160,12 +183,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 10),
                     _ProfilePhotoView(
-                      profileImagePath: _personalInfo.profileImagePath,
-                      profileImageUrl: _personalInfo.profileImageUrl,
+                      profileImagePath: personalInfo.profileImagePath,
+                      profileImageUrl: personalInfo.profileImageUrl,
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      _personalInfo.fullName,
+                      personalInfo.fullName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 24,
@@ -187,9 +210,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 9),
                     _ProfileStatsCard(
-                      bloodGroup: _personalInfo.bloodGroup,
-                      district: _personalInfo.address,
-                      phoneNumber: _personalInfo.phoneNumber,
+                      bloodGroup: personalInfo.bloodGroup,
+                      district: personalInfo.address,
+                      phoneNumber: personalInfo.phoneNumber,
                     ),
                     const SizedBox(height: 20),
                     _ProfileMenuCard(

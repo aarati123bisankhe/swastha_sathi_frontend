@@ -1,10 +1,11 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swasthasathi/app/core/localization/app_text.dart';
+import 'package:swasthasathi/app/core/services/profile_sync_service.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/personal_information_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -17,20 +18,23 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  static const String _storageKey = 'health_record_data';
+  final ProfileSyncService _profileSyncService = ProfileSyncService.instance;
 
   late HealthRecordData _record;
+  PersonalInformationData? _personalInfo;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _record = HealthRecordData.fromUser(widget.user);
+    _personalInfo = _buildFallbackPersonalInfo();
     _loadRecord();
   }
 
   @override
   Widget build(BuildContext context) {
+    final personalInfo = _personalInfo ?? _buildFallbackPersonalInfo();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -43,7 +47,10 @@ class _RecordScreenState extends State<RecordScreen> {
                   children: [
                     _RecordHeader(user: widget.user),
                     const SizedBox(height: 18),
-                    _ProfileSummaryCard(record: _record),
+                    _ProfileSummaryCard(
+                      record: _record,
+                      personalInfo: personalInfo,
+                    ),
                     const SizedBox(height: 18),
                     _RecordInfoGrid(record: _record),
                     const SizedBox(height: 15),
@@ -92,19 +99,31 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _loadRecord() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_storageKey);
+    final record = await _profileSyncService.loadHealthRecord(widget.user);
+    final personalInfo = await _profileSyncService.loadPersonalInformation(
+      widget.user,
+    );
 
     if (!mounted) return;
 
     setState(() {
-      if (raw != null && raw.isNotEmpty) {
-        _record = HealthRecordData.fromJson(
-          jsonDecode(raw) as Map<String, dynamic>,
-        );
-      }
+      _record = record;
+      _personalInfo = personalInfo;
       _loading = false;
     });
+  }
+
+  PersonalInformationData _buildFallbackPersonalInfo() {
+    return PersonalInformationData(
+      fullName: _record.username,
+      birthDate: '12 May 2002',
+      gender: 'Female',
+      bloodGroup: _record.bloodGroup,
+      phoneNumber: _record.emergencyContactNumber,
+      email: widget.user?.email ?? 'anisha@gmail.com',
+      address: widget.user?.district ?? 'Kathmandu, Nepal',
+      profileImageUrl: widget.user?.profileUrl,
+    );
   }
 
   Future<void> _editRecord() async {
@@ -120,46 +139,90 @@ class _RecordScreenState extends State<RecordScreen> {
       _record = updated;
     });
 
-    await _persistRecord(updated);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            context.tx(
-              'Health record updated successfully.',
-              'स्वास्थ्य रेकर्ड सफलतापूर्वक अद्यावधिक भयो।',
-            ),
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
+    try {
+      final syncedRecord = await _profileSyncService.saveHealthRecord(
+        record: updated,
+        user: widget.user,
       );
+      final personalInfo = await _profileSyncService.loadPersonalInformation(
+        widget.user,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _record = syncedRecord;
+        _personalInfo = personalInfo;
+      });
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              context.tx(
+                'Health record updated successfully.',
+                'स्वास्थ्य रेकर्ड सफलतापूर्वक अद्यावधिक भयो।',
+              ),
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
   }
 
   Future<void> _saveOffline() async {
-    await _persistRecord(_record);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            context.tx(
-              'Health record saved offline successfully.',
-              'स्वास्थ्य रेकर्ड अफलाइन सफलतापूर्वक सुरक्षित भयो।',
-            ),
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
+    try {
+      final savedRecord = await _profileSyncService.saveHealthRecord(
+        record: _record,
+        user: widget.user,
       );
-  }
+      final personalInfo = await _profileSyncService.loadPersonalInformation(
+        widget.user,
+      );
 
-  Future<void> _persistRecord(HealthRecordData record) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_storageKey, jsonEncode(record.toJson()));
+      if (mounted) {
+        setState(() {
+          _record = savedRecord;
+          _personalInfo = personalInfo;
+        });
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              context.tx(
+                'Health record saved offline successfully.',
+                'स्वास्थ्य रेकर्ड अफलाइन सफलतापूर्वक सुरक्षित भयो।',
+              ),
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
   }
 }
 
@@ -223,12 +286,22 @@ class _RecordHeader extends StatelessWidget {
 }
 
 class _ProfileSummaryCard extends StatelessWidget {
-  const _ProfileSummaryCard({required this.record});
+  const _ProfileSummaryCard({required this.record, required this.personalInfo});
 
   final HealthRecordData record;
+  final PersonalInformationData personalInfo;
 
   @override
   Widget build(BuildContext context) {
+    ImageProvider<Object>? imageProvider;
+    if (personalInfo.profileImagePath != null &&
+        personalInfo.profileImagePath!.isNotEmpty) {
+      imageProvider = FileImage(File(personalInfo.profileImagePath!));
+    } else if (personalInfo.profileImageUrl != null &&
+        personalInfo.profileImageUrl!.isNotEmpty) {
+      imageProvider = NetworkImage(personalInfo.profileImageUrl!);
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -253,10 +326,14 @@ class _ProfileSummaryCard extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: const Icon(
-              Icons.person_rounded,
-              size: 78,
-              color: Color(0xFF4A2A1E),
+            child: ClipOval(
+              child: imageProvider != null
+                  ? Image(image: imageProvider, fit: BoxFit.cover)
+                  : const Icon(
+                      Icons.person_rounded,
+                      size: 78,
+                      color: Color(0xFF4A2A1E),
+                    ),
             ),
           ),
           const SizedBox(width: 18),
