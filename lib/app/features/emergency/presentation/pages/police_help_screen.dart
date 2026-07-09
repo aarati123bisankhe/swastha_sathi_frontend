@@ -318,7 +318,49 @@ class _PoliceAvatar extends StatelessWidget {
       child: SizedBox(
         width: 58,
         height: 58,
-        child: Image.asset(station.imageAssetPath, fit: BoxFit.cover),
+        child: Image.asset(
+          station.imageAssetPath,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _PoliceAvatarFallback(station: station);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _PoliceAvatarFallback extends StatelessWidget {
+  const _PoliceAvatarFallback({required this.station});
+
+  final _PoliceStation station;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFFEAF2FF),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.local_police_rounded,
+            color: Color(0xFF1B5FCB),
+            size: 24,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            station.location,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 7,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1C355E),
+            ),
+          ),
+        ],
       ),
     );
   }
