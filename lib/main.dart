@@ -1,3 +1,4 @@
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swasthasathi/app/core/state/app_language_controller.dart';
@@ -25,6 +26,11 @@ class MyApp extends ConsumerWidget {
       themeMode: themeMode,
       locale: appLanguage.locale,
       supportedLocales: const [Locale('en'), Locale('ne')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: const SplashScreen(),
     );
   }
