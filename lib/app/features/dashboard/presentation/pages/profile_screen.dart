@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/language_setting_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/personal_information_screen.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -98,6 +99,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
   }
 
+  void _openHealthRecord() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => RecordScreen(user: widget.user),
+      ),
+    );
+  }
+
   Future<void> _loadPersonalInformation() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_storageKey);
@@ -173,10 +182,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: _openPersonalInformation,
                     ),
                     const SizedBox(height: 14),
-                    const _ProfileMenuCard(
+                    _ProfileMenuCard(
                       icon: Icons.medical_services_rounded,
-                      iconBackground: Color(0xFF16BF70),
+                      iconBackground: const Color(0xFF16BF70),
                       title: 'Health Record',
+                      onTap: _openHealthRecord,
                     ),
                     const SizedBox(height: 14),
                     _ProfileMenuCard(
