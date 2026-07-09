@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyMessageScreen extends StatefulWidget {
   const EmergencyMessageScreen({super.key, this.user});
@@ -401,7 +402,7 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
     }
   }
 
-  void _sendEmergencyMessage() {
+  Future<void> _sendEmergencyMessage() async {
     if (_selectedContactIds.isEmpty) {
       _showFeedback('Please select at least one emergency contact.');
       return;
@@ -414,6 +415,31 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
 
     if (_selectedLocation == null) {
       _showFeedback('Please select your location.');
+      return;
+    }
+
+    final recipients = _contacts
+        .where((contact) => _selectedContactIds.contains(contact.id))
+        .map((contact) => contact.phoneNumber)
+        .join(',');
+    final emergencyType = _selectedType.label;
+    final message =
+        'Emergency ($emergencyType): ${_messageController.text.trim()}\n'
+        'Location: $_selectedLocation';
+
+    final smsUri = Uri(
+      scheme: 'sms',
+      path: recipients,
+      queryParameters: {'body': message},
+    );
+
+    final launched = await launchUrl(
+      smsUri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched) {
+      _showFeedback('Unable to open the messaging app right now.');
       return;
     }
 

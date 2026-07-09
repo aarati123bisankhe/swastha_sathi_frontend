@@ -81,22 +81,7 @@ class DoctorScreen extends StatelessWidget {
                     ),
                     onCall: () => _confirmAndCallDoctor(context, doctor),
                     onDirection: () => _openDoctorLocation(context, doctor),
-                    onMessage: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (context) => DoctorChatScreen(
-                            user: user,
-                            doctorName: doctor.name,
-                            specialization: doctor.specialization,
-                            hospitalName: doctor.hospitalName,
-                            avatarBuilder: (_) => _DoctorAssetAvatar(
-                              imageAssetPath: doctor.imageAssetPath,
-                              size: 48,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    onMessage: () => _sendDoctorMessage(context, doctor),
                   ),
                 ),
               ),
@@ -196,6 +181,45 @@ class DoctorScreen extends StatelessWidget {
         ),
       );
     }
+  }
+
+  Future<void> _sendDoctorMessage(
+    BuildContext context,
+    _DoctorInfo doctor,
+  ) async {
+    final smsUri = Uri(
+      scheme: 'sms',
+      path: doctor.doctorPhone,
+      queryParameters: {
+        'body':
+            'Hello ${doctor.name}, I need medical help. Please contact me when available.',
+      },
+    );
+
+    try {
+      if (await launchUrl(smsUri, mode: LaunchMode.externalApplication)) {
+        return;
+      }
+    } catch (_) {}
+
+    if (!context.mounted) {
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => DoctorChatScreen(
+          user: user,
+          doctorName: doctor.name,
+          specialization: doctor.specialization,
+          hospitalName: doctor.hospitalName,
+          avatarBuilder: (_) => _DoctorAssetAvatar(
+            imageAssetPath: doctor.imageAssetPath,
+            size: 48,
+          ),
+        ),
+      ),
+    );
   }
 
   void _showInfo(BuildContext context, String message) {
