@@ -12,6 +12,7 @@ class DoctorScreen extends StatelessWidget {
   final AuthUser? user;
 
   static const List<_DoctorInfo> _doctors = [
+    //doctor info list
     _DoctorInfo(
       name: 'Dr. Aryan Sharma',
       specialization: 'General Physician',
