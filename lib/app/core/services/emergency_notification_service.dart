@@ -24,11 +24,7 @@ class EmergencyNotificationService {
   }
 
   static Future<void> addSosSentNotification() async {
-    final prefs = await SharedPreferences.getInstance();
-    final existing = await loadSavedNotificationsOnly();
-
-    existing.insert(
-      0,
+    await _addNotification(
       EmergencyNotificationItem(
         title: 'Emergency SOS Sent',
         subtitle:
@@ -37,6 +33,47 @@ class EmergencyNotificationService {
         createdAt: DateTime.now(),
       ),
     );
+  }
+
+  static Future<void> addLiveLocationSharedNotification() async {
+    await _addNotification(
+      EmergencyNotificationItem(
+        title: 'Live Location Shared',
+        subtitle: 'Your live location has been shared for emergency help.',
+        type: EmergencyNotificationType.location,
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  static Future<void> addLocationSharingStoppedNotification() async {
+    await _addNotification(
+      EmergencyNotificationItem(
+        title: 'Location Sharing Stopped',
+        subtitle: 'Your live location is no longer being shared.',
+        type: EmergencyNotificationType.location,
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  static Future<void> addEmergencyContactsNotifiedNotification() async {
+    await _addNotification(
+      EmergencyNotificationItem(
+        title: 'Emergency Contacts Notified',
+        subtitle:
+            'Your live tracking link has been shared with your emergency contacts.',
+        type: EmergencyNotificationType.location,
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  static Future<void> _addNotification(EmergencyNotificationItem item) async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = await loadSavedNotificationsOnly();
+
+    existing.insert(0, item);
 
     await prefs.setString(
       _storageKey,
@@ -105,6 +142,7 @@ enum EmergencyNotificationType {
   vaccine,
   hospital,
   pregnancy,
+  location,
 }
 
 class EmergencyNotificationItem {

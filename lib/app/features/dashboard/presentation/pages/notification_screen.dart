@@ -217,6 +217,16 @@ class _NotificationCard extends StatelessWidget {
           borderColor: const Color(0xFFB329C6),
           emoji: '🤰',
         );
+      case EmergencyNotificationType.location:
+        return _NotificationCard(
+          title: item.title,
+          subtitle: item.subtitle,
+          timeLabel: _timeLabel(item.createdAt),
+          cardColor: const Color(0xFFD7F4E2),
+          borderColor: const Color(0xFF10BF5A),
+          icon: Icons.location_on_rounded,
+          iconColor: const Color(0xFF10BF5A),
+        );
     }
   }
 

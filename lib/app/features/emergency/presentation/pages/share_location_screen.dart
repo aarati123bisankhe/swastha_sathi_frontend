@@ -1,7 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swasthasathi/app/core/services/emergency_location_service.dart';
+import 'package:swasthasathi/app/core/services/emergency_notification_service.dart';
+import 'package:swasthasathi/app/core/services/live_location_sharing_service.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/features/emergency/presentation/pages/call_ambulance_screen.dart';
+import 'package:swasthasathi/app/features/support/presentation/pages/hospital_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ShareLocationScreen extends StatefulWidget {
   const ShareLocationScreen({super.key, this.user});
@@ -13,13 +23,31 @@ class ShareLocationScreen extends StatefulWidget {
 }
 
 class _ShareLocationScreenState extends State<ShareLocationScreen> {
+  final LiveLocationSharingService _sharingService =
+      LiveLocationSharingService.instance;
+
+  EmergencyLocationData? _currentLocation;
+  LiveLocationSession? _session;
   bool _isSharing = false;
+  bool _isLoadingLocation = true;
+  bool _isWorking = false;
+  bool _permissionDenied = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _session = _sharingService.activeSession;
+    _isSharing = _sharingService.isSharing;
+    _loadCurrentLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final district = widget.user?.district.trim().isNotEmpty == true
-        ? widget.user!.district.trim()
-        : 'Kathmandu';
+    final locationLine = _permissionDenied
+        ? 'Location permission is required to share your location.'
+        : _currentLocation?.cityProvinceLabel ??
+              '${_fallbackDistrict()}, Bagmati Province';
+    final accuracyLine = _permissionDenied ? '' : 'Accuracy: High';
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -91,9 +119,21 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              _LocationStatusCard(district: district, isSharing: _isSharing),
+              _LocationStatusCard(
+                locationLine: locationLine,
+                accuracyLine: accuracyLine,
+                isSharing: _isSharing,
+                isPermissionDenied: _permissionDenied,
+                isLoading: _isLoadingLocation,
+              ),
               const SizedBox(height: 18),
-              _MapPreviewCard(district: district),
+              _MapPreviewCard(
+                district: _currentLocation?.city ?? _fallbackDistrict(),
+                subtitle: _permissionDenied
+                    ? 'Location permission is required'
+                    : _currentLocation?.addressLabel ??
+                          '${_fallbackDistrict()}, Nepal',
+              ),
               const SizedBox(height: 18),
               const Text(
                 'Share with',
@@ -104,45 +144,50 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              const Row(
+              Row(
                 children: [
                   Expanded(
                     child: _ShareOptionCard(
                       icon: Icons.people,
-                      iconColor: Color(0xFF19B95A),
+                      iconColor: const Color(0xFF19B95A),
                       label: 'Emergency\nContacts',
+                      onTap: _isWorking ? null : _shareWithEmergencyContacts,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: _ShareOptionCard(
                       icon: Icons.emergency,
-                      iconColor: Color(0xFFFF2231),
+                      iconColor: const Color(0xFFFF2231),
                       label: 'Call\nAmbulance',
+                      onTap: _isWorking ? null : _openAmbulanceSupport,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: _ShareOptionCard(
                       icon: Icons.local_hospital,
-                      iconColor: Color(0xFF2581F4),
+                      iconColor: const Color(0xFF2581F4),
                       label: 'Nearby\nHospitals',
+                      onTap: _openNearbyHospitals,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: _ShareOptionCard(
                       icon: Icons.chat,
-                      iconColor: Color(0xFF18C45E),
+                      iconColor: const Color(0xFF18C45E),
                       label: 'Send via\nWhatsApp',
+                      onTap: _isWorking ? null : _shareViaWhatsApp,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: _ShareOptionCard(
                       icon: Icons.more_horiz,
-                      iconColor: Color(0xFF9EA8D4),
+                      iconColor: const Color(0xFF9EA8D4),
                       label: 'More\nOptions',
+                      onTap: _isWorking ? null : _shareWithMoreOptions,
                     ),
                   ),
                 ],
@@ -154,7 +199,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                 child: SizedBox(
                   width: 300,
                   child: FilledButton.icon(
-                    onPressed: _startSharing,
+                    onPressed: _isWorking ? null : _startSharing,
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF0EAF4C),
                       foregroundColor: Colors.white,
@@ -196,7 +241,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                 child: SizedBox(
                   width: 300,
                   child: OutlinedButton.icon(
-                    onPressed: _stopSharing,
+                    onPressed: _isWorking ? null : _stopSharing,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFFF1212),
                       side: const BorderSide(color: Color(0xFFFF2D2D)),
@@ -227,32 +272,323 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
     );
   }
 
-  void _startSharing() {
+  Future<void> _loadCurrentLocation() async {
+    if (mounted) {
+      setState(() {
+        _isLoadingLocation = true;
+      });
+    }
+
+    final location = await EmergencyLocationService.getCurrentLocation(
+      fallbackDistrict: widget.user?.district,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
-      _isSharing = true;
+      _currentLocation = location;
+      _permissionDenied = location == null;
+      _isLoadingLocation = false;
     });
-    _showFeedback('Live location shared successfully.');
+
+    if (location == null) {
+      _showFeedback('Location permission is required to share your location.');
+    }
   }
 
-  void _stopSharing() {
-    setState(() {
-      _isSharing = false;
+  Future<void> _startSharing() async {
+    await _runBusyAction(() async {
+      final session = await _ensureActiveSession();
+      if (session == null) {
+        return;
+      }
+
+      await EmergencyNotificationService.addLiveLocationSharedNotification();
+      _showFeedback('Live location shared successfully.');
     });
-    _showFeedback('Location sharing stopped.');
+  }
+
+  Future<void> _stopSharing() async {
+    if (!_isSharing || _session == null) {
+      _showFeedback('Location sharing stopped.');
+      return;
+    }
+
+    await _runBusyAction(() async {
+      await _sharingService.stopSharing();
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isSharing = false;
+        _session = null;
+      });
+
+      await EmergencyNotificationService.addLocationSharingStoppedNotification();
+      _showFeedback('Location sharing stopped.');
+    });
+  }
+
+  Future<void> _shareWithEmergencyContacts() async {
+    await _runBusyAction(() async {
+      final contacts = await _loadSavedEmergencyContacts();
+
+      if (contacts.isEmpty) {
+        _showFeedback(
+          'No emergency contact found. Please add an emergency contact first.',
+        );
+        return;
+      }
+
+      final session = await _ensureActiveSession();
+      if (session == null) {
+        return;
+      }
+
+      final message = _trackingMessage(session.trackingLink);
+
+      await _sharingService.sendShareContact(
+        userId: widget.user?.id ?? 'guest',
+        shareId: session.shareId,
+        trackingLink: session.trackingLink,
+        message: message,
+      );
+
+      final smsUri = Uri(
+        scheme: 'sms',
+        path: contacts.join(','),
+        queryParameters: {'body': message},
+      );
+
+      final launched = await launchUrl(
+        smsUri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!launched) {
+        _showFeedback('Unable to open the messaging app right now.');
+        return;
+      }
+
+      await EmergencyNotificationService.addEmergencyContactsNotifiedNotification();
+      _showFeedback('Emergency contacts notified successfully.');
+    });
+  }
+
+  Future<void> _openAmbulanceSupport() async {
+    await _runBusyAction(() async {
+      final session = await _ensureActiveSession();
+      if (session == null) {
+        return;
+      }
+
+      await Share.share(
+        _trackingMessage(session.trackingLink),
+        subject: 'Emergency Ambulance Support',
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => CallAmbulanceScreen(user: widget.user),
+        ),
+      );
+    });
+  }
+
+  Future<void> _openNearbyHospitals() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => HospitalScreen(user: widget.user),
+      ),
+    );
+  }
+
+  Future<void> _shareViaWhatsApp() async {
+    await _runBusyAction(() async {
+      final session = await _ensureActiveSession();
+      if (session == null) {
+        return;
+      }
+
+      final message = _trackingMessage(session.trackingLink);
+      final whatsappUri = Uri.parse(
+        'whatsapp://send?text=${Uri.encodeComponent(message)}',
+      );
+
+      final launched = await launchUrl(
+        whatsappUri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (launched) {
+        return;
+      }
+
+      final fallbackUri = Uri.parse(
+        'https://wa.me/?text=${Uri.encodeComponent(message)}',
+      );
+
+      final fallbackLaunched = await launchUrl(
+        fallbackUri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!fallbackLaunched) {
+        _showFeedback('Unable to open WhatsApp right now.');
+      }
+    });
+  }
+
+  Future<void> _shareWithMoreOptions() async {
+    await _runBusyAction(() async {
+      final session = await _ensureActiveSession();
+      if (session == null) {
+        return;
+      }
+
+      await Share.share(
+        _trackingMessage(session.trackingLink),
+        subject: 'Emergency Live Location',
+      );
+    });
+  }
+
+  Future<LiveLocationSession?> _ensureActiveSession() async {
+    if (_session != null && _isSharing) {
+      return _session;
+    }
+
+    var location = _currentLocation;
+    location ??= await EmergencyLocationService.getCurrentLocation(
+      fallbackDistrict: widget.user?.district,
+    );
+
+    if (location == null) {
+      if (mounted) {
+        setState(() {
+          _permissionDenied = true;
+          _isLoadingLocation = false;
+        });
+      }
+      _showFeedback('Location permission is required to share your location.');
+      return null;
+    }
+
+    final session = await _sharingService.startSharing(
+      user: widget.user,
+      location: location,
+    );
+
+    if (!mounted) {
+      return session;
+    }
+
+    setState(() {
+      _currentLocation = location;
+      _permissionDenied = false;
+      _session = session;
+      _isSharing = true;
+    });
+
+    return session;
+  }
+
+  Future<void> _runBusyAction(Future<void> Function() action) async {
+    if (_isWorking) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isWorking = true;
+      });
+    }
+
+    try {
+      await action();
+    } on LiveLocationException catch (error) {
+      _showFeedback(error.message);
+    } catch (_) {
+      _showFeedback('Unable to complete this action right now.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isWorking = false;
+        });
+      }
+    }
+  }
+
+  Future<List<String>> _loadSavedEmergencyContacts() async {
+    const storageKey = 'health_record_data';
+
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(storageKey);
+
+    if (raw == null || raw.isEmpty) {
+      return <String>[];
+    }
+
+    final json = jsonDecode(raw) as Map<String, dynamic>;
+    final value = (json['emergencyContactNumber'] as String?)?.trim() ?? '';
+
+    if (value.isEmpty) {
+      return <String>[];
+    }
+
+    return value
+        .split(RegExp(r'[,;\n]+'))
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  String _fallbackDistrict() {
+    return widget.user?.district.trim().isNotEmpty == true
+        ? widget.user!.district.trim()
+        : 'Kathmandu';
+  }
+
+  String _trackingMessage(String trackingLink) {
+    return 'Emergency! I need help. Track my live location here: '
+        '$trackingLink';
   }
 
   void _showFeedback(String message) {
+    if (!mounted) {
+      return;
+    }
+
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+      );
   }
 }
 
 class _LocationStatusCard extends StatelessWidget {
-  const _LocationStatusCard({required this.district, required this.isSharing});
+  const _LocationStatusCard({
+    required this.locationLine,
+    required this.accuracyLine,
+    required this.isSharing,
+    required this.isPermissionDenied,
+    required this.isLoading,
+  });
 
-  final String district;
+  final String locationLine;
+  final String accuracyLine;
   final bool isSharing;
+  final bool isPermissionDenied;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +642,7 @@ class _LocationStatusCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '$district, Bagmati Province',
+                  isLoading ? 'Loading current location...' : locationLine,
                   style: const TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w700,
@@ -314,14 +650,15 @@ class _LocationStatusCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
-                  'Accuracy: High (10 m)',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Color(0xFF79849B),
-                    fontWeight: FontWeight.w600,
+                if (accuracyLine.isNotEmpty)
+                  Text(
+                    accuracyLine,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFF79849B),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -347,7 +684,9 @@ class _LocationStatusCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 7),
                     Text(
-                      isSharing ? 'Live' : 'Ready',
+                      isPermissionDenied
+                          ? 'Blocked'
+                          : (isSharing ? 'Live' : 'Ready'),
                       style: const TextStyle(
                         color: Color(0xFF13B954),
                         fontSize: 12,
@@ -368,7 +707,9 @@ class _LocationStatusCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    isSharing ? 'GPS Active' : 'GPS Ready',
+                    isPermissionDenied
+                        ? 'GPS Off'
+                        : (isSharing ? 'GPS Active' : 'GPS Ready'),
                     style: const TextStyle(
                       color: Color(0xFF14B95B),
                       fontSize: 10.5,
@@ -386,9 +727,10 @@ class _LocationStatusCard extends StatelessWidget {
 }
 
 class _MapPreviewCard extends StatelessWidget {
-  const _MapPreviewCard({required this.district});
+  const _MapPreviewCard({required this.district, required this.subtitle});
 
   final String district;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -476,11 +818,26 @@ class _MapPreviewCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '$district, Nepal',
+                          district,
                           style: const TextStyle(
                             fontSize: 9.5,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF647089),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            subtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF647089),
+                            ),
                           ),
                         ),
                       ],
@@ -511,24 +868,27 @@ class _MapPreviewCard extends StatelessWidget {
             Positioned(
               bottom: 10,
               right: 18,
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x14000000),
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.gps_fixed_rounded,
-                  color: Color(0xFF5F6880),
-                  size: 18,
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0x14000000),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.gps_fixed_rounded,
+                    color: Color(0xFF5F6880),
+                    size: 18,
+                  ),
                 ),
               ),
             ),
@@ -544,38 +904,43 @@ class _ShareOptionCard extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     required this.label,
+    required this.onTap,
   });
 
   final IconData icon;
   final Color iconColor;
   final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 96,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFB2B2B2)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: iconColor, size: 28),
-          const SizedBox(height: 7),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 9.5,
-              height: 1.3,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF263143),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 96,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFB2B2B2)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: iconColor, size: 28),
+            const SizedBox(height: 7),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 9.5,
+                height: 1.3,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF263143),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -760,31 +1125,48 @@ class _MapPatternPainter extends CustomPainter {
       canvas.drawLine(Offset(x, 0), Offset(x - 12, size.height), road);
     }
 
-    canvas.drawRect(const Rect.fromLTWH(124, 12, 62, 36), park);
-    canvas.drawRect(const Rect.fromLTWH(18, 132, 72, 38), park);
-    canvas.drawRect(const Rect.fromLTWH(244, 106, 54, 42), park);
+    final highlightPath = Path()
+      ..moveTo(0, 118)
+      ..quadraticBezierTo(70, 92, 124, 110)
+      ..quadraticBezierTo(194, 134, 258, 112)
+      ..quadraticBezierTo(314, 92, size.width, 124);
+    canvas.drawPath(highlightPath, highlightRoad);
 
-    final mainRoad = Path()
-      ..moveTo(size.width * .66, size.height)
-      ..quadraticBezierTo(
-        size.width * .72,
-        size.height * .78,
-        size.width * .92,
-        size.height * .68,
-      );
-    canvas.drawPath(mainRoad, highlightRoad);
+    final verticalHighlight = Path()
+      ..moveTo(170, 0)
+      ..quadraticBezierTo(146, 76, 158, 126)
+      ..quadraticBezierTo(172, 176, 148, size.height);
+    canvas.drawPath(verticalHighlight, highlightRoad);
 
     final riverPath = Path()
-      ..moveTo(size.width * .73, 0)
-      ..cubicTo(
-        size.width * .8,
-        size.height * .14,
-        size.width * .7,
-        size.height * .42,
-        size.width * .92,
-        size.height,
-      );
+      ..moveTo(6, 166)
+      ..quadraticBezierTo(54, 138, 94, 162)
+      ..quadraticBezierTo(142, 188, 194, 162)
+      ..quadraticBezierTo(242, 136, 296, 166)
+      ..quadraticBezierTo(324, 182, size.width, 170);
     canvas.drawPath(riverPath, river);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(18, 82, 56, 36),
+        const Radius.circular(12),
+      ),
+      park,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(238, 20, 68, 44),
+        const Radius.circular(12),
+      ),
+      park,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(228, 164, 58, 34),
+        const Radius.circular(12),
+      ),
+      park,
+    );
   }
 
   @override

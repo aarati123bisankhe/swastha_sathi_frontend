@@ -159,4 +159,8 @@ class ApiEndpoints {
 
   static const String login = '/auth/login';
   static const String signup = '/auth/register';
+  static const String locationStart = '/location/start';
+  static const String locationUpdate = '/location/update';
+  static const String locationStop = '/location/stop';
+  static const String locationShareContact = '/location/share-contact';
 }
