@@ -48,8 +48,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
   Widget build(BuildContext context) {
     final locationLine = _permissionDenied
         ? 'Location permission is required to share your location.'
-        : _currentLocation?.cityProvinceLabel ??
-              '${_fallbackDistrict()}, Bagmati Province';
+        : '$_previewMapDistrict, Bagmati Province';
     final accuracyLine = _permissionDenied ? '' : 'Accuracy: High';
 
     return Scaffold(
@@ -584,12 +583,6 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .toList();
-  }
-
-  String _fallbackDistrict() {
-    return widget.user?.district.trim().isNotEmpty == true
-        ? widget.user!.district.trim()
-        : 'Lalitpur';
   }
 
   String _trackingMessage(String trackingLink) {
