@@ -133,6 +133,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                     ? 'Location permission is required'
                     : _currentLocation?.addressLabel ??
                           '${_fallbackDistrict()}, Nepal',
+                onTap: _isWorking ? null : _openMapPreview,
               ),
               const SizedBox(height: 18),
               const Text(
@@ -409,6 +410,91 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
         builder: (context) => HospitalScreen(user: widget.user),
       ),
     );
+  }
+
+  Future<void> _openMapPreview() async {
+    await _runBusyAction(() async {
+      var location = _currentLocation;
+      location ??= await EmergencyLocationService.getCurrentLocation(
+        fallbackDistrict: widget.user?.district,
+      );
+
+      if (location == null) {
+        if (mounted) {
+          setState(() {
+            _permissionDenied = true;
+            _isLoadingLocation = false;
+          });
+        }
+        final launched = await _launchFallbackMap();
+        if (!launched) {
+          _showFeedback('Unable to open the map right now.');
+        }
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          _currentLocation = location;
+          _permissionDenied = false;
+        });
+      }
+
+      final launched = await _launchMap(location);
+      if (!launched) {
+        _showFeedback('Unable to open the map right now.');
+      }
+    });
+  }
+
+  Future<bool> _launchFallbackMap() async {
+    final district = _fallbackDistrict();
+    final query = '$district, Nepal';
+    final googleMapsUri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': query,
+    });
+
+    try {
+      if (await launchUrl(googleMapsUri, mode: LaunchMode.platformDefault)) {
+        return true;
+      }
+    } catch (_) {}
+
+    try {
+      if (await launchUrl(
+        googleMapsUri,
+        mode: LaunchMode.externalApplication,
+      )) {
+        return true;
+      }
+    } catch (_) {}
+
+    return false;
+  }
+
+  Future<bool> _launchMap(EmergencyLocationData location) async {
+    final googleMapsUri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': '${location.latitude},${location.longitude}',
+    });
+
+    try {
+      if (await launchUrl(googleMapsUri, mode: LaunchMode.platformDefault)) {
+        return true;
+      }
+    } catch (_) {}
+
+    try {
+      if (await launchUrl(
+        googleMapsUri,
+        mode: LaunchMode.externalApplication,
+      )) {
+        return true;
+      }
+    } catch (_) {}
+
+    return false;
   }
 
   Future<void> _shareViaWhatsApp() async {
@@ -727,172 +813,185 @@ class _LocationStatusCard extends StatelessWidget {
 }
 
 class _MapPreviewCard extends StatelessWidget {
-  const _MapPreviewCard({required this.district, required this.subtitle});
+  const _MapPreviewCard({
+    required this.district,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   final String district;
   final String subtitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
-      child: Container(
-        height: 220,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF6F4F3),
-          border: Border.all(color: const Color(0xFFC8D2DD)),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Stack(
-          children: [
-            Positioned.fill(child: CustomPaint(painter: _MapPatternPainter())),
-            const Positioned(
-              top: 18,
-              left: 34,
-              child: _MapLabel(label: 'Thamel'),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            height: 220,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF6F4F3),
+              border: Border.all(color: const Color(0xFFC8D2DD)),
+              borderRadius: BorderRadius.circular(18),
             ),
-            const Positioned(
-              top: 28,
-              right: 42,
-              child: _MapPlaceMarker(
-                label: 'Kathmandu\nDurbar Square',
-                color: Color(0xFF9A61F2),
-                icon: Icons.account_balance,
-              ),
-            ),
-            const Positioned(
-              top: 94,
-              left: 22,
-              child: _MapPlaceMarker(
-                label: 'Garden of Dreams',
-                color: Color(0xFF1FB864),
-                icon: Icons.park,
-              ),
-            ),
-            const Positioned(
-              top: 106,
-              right: 28,
-              child: _MapLabel(label: 'Pashupatinath Temple'),
-            ),
-            const Positioned(
-              bottom: 34,
-              left: 56,
-              child: _MapLabel(label: 'Lazimpat'),
-            ),
-            const Positioned(
-              bottom: 6,
-              left: 126,
-              child: _MapLabel(label: 'Jawalakhel'),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              top: 48,
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x14000000),
-                          blurRadius: 12,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'You are here',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF293255),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          district,
-                          style: const TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF647089),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        SizedBox(
-                          width: 150,
-                          child: Text(
-                            subtitle,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 8.5,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF647089),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: CustomPaint(painter: _MapPatternPainter()),
+                ),
+                const Positioned(
+                  top: 18,
+                  left: 34,
+                  child: _MapLabel(label: 'Thamel'),
+                ),
+                const Positioned(
+                  top: 28,
+                  right: 42,
+                  child: _MapPlaceMarker(
+                    label: 'Kathmandu\nDurbar Square',
+                    color: Color(0xFF9A61F2),
+                    icon: Icons.account_balance,
                   ),
-                  const SizedBox(height: 4),
-                  const _LocationPulse(),
-                ],
-              ),
-            ),
-            Positioned(
-              top: 10,
-              left: 174,
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF56767),
-                  shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.local_hospital,
-                  color: Colors.white,
-                  size: 14,
+                const Positioned(
+                  top: 94,
+                  left: 22,
+                  child: _MapPlaceMarker(
+                    label: 'Garden of Dreams',
+                    color: Color(0xFF1FB864),
+                    icon: Icons.park,
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: 10,
-              right: 18,
-              child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x14000000),
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
+                const Positioned(
+                  top: 106,
+                  right: 28,
+                  child: _MapLabel(label: 'Pashupatinath Temple'),
+                ),
+                const Positioned(
+                  bottom: 34,
+                  left: 56,
+                  child: _MapLabel(label: 'Lazimpat'),
+                ),
+                const Positioned(
+                  bottom: 6,
+                  left: 126,
+                  child: _MapLabel(label: 'Jawalakhel'),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 48,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x14000000),
+                              blurRadius: 12,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'You are here',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF293255),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              district,
+                              style: const TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF647089),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            SizedBox(
+                              width: 150,
+                              child: Text(
+                                subtitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF647089),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 4),
+                      const _LocationPulse(),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.gps_fixed_rounded,
-                    color: Color(0xFF5F6880),
-                    size: 18,
+                ),
+                Positioned(
+                  top: 10,
+                  left: 174,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF56767),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.local_hospital,
+                      color: Colors.white,
+                      size: 14,
+                    ),
                   ),
                 ),
-              ),
+                Positioned(
+                  bottom: 10,
+                  right: 18,
+                  child: GestureDetector(
+                    onTap: onTap,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x14000000),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.gps_fixed_rounded,
+                        color: Color(0xFF5F6880),
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
