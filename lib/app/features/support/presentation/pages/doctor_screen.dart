@@ -80,6 +80,7 @@ class DoctorScreen extends StatelessWidget {
                       imageAssetPath: doctor.imageAssetPath,
                     ),
                     onCall: () => _confirmAndCallDoctor(context, doctor),
+                    onDirection: () => _openDoctorLocation(context, doctor),
                     onMessage: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
@@ -172,6 +173,31 @@ class DoctorScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _openDoctorLocation(
+    BuildContext context,
+    _DoctorInfo doctor,
+  ) async {
+    final mapsUri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': doctor.hospitalName,
+    });
+
+    final launched = await launchUrl(
+      mapsUri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched && context.mounted) {
+      _showInfo(
+        context,
+        context.tx(
+          'Unable to open the map right now.',
+          'अहिले नक्सा खोल्न सकिएन।',
+        ),
+      );
+    }
+  }
+
   void _showInfo(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -259,12 +285,14 @@ class _DoctorCard extends StatelessWidget {
     required this.doctor,
     required this.avatarBuilder,
     required this.onCall,
+    required this.onDirection,
     required this.onMessage,
   });
 
   final _DoctorInfo doctor;
   final WidgetBuilder avatarBuilder;
   final VoidCallback onCall;
+  final VoidCallback onDirection;
   final VoidCallback onMessage;
 
   @override
@@ -394,22 +422,32 @@ class _DoctorCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 1),
-                child: Icon(
-                  Icons.location_on,
-                  size: 18,
-                  color: Color(0xFF1C355E),
-                ),
-              ),
-              const SizedBox(width: 4),
               Expanded(
-                child: Text(
-                  'Hospital: ${doctor.hospitalName}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.25,
-                    color: Color(0xFF5D6470),
+                child: GestureDetector(
+                  onTap: onDirection,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 1),
+                        child: Icon(
+                          Icons.location_on,
+                          size: 18,
+                          color: Color(0xFF1C355E),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'Hospital: ${doctor.hospitalName}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            height: 1.25,
+                            color: Color(0xFF5D6470),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
