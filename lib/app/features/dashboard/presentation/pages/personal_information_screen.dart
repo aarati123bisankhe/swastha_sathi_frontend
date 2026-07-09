@@ -263,11 +263,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Row(
-                        children: [
-                          IconButton(
+                    Row(
+                      children: [
+                        Transform.translate(
+                          offset: const Offset(-24, 0),
+                          child: IconButton(
                             onPressed: () => Navigator.of(context).pop(),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -277,9 +277,12 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               size: 20,
                             ),
                           ),
-                          const SizedBox(width: 18),
-                          const Expanded(
-                            child: Column(
+                        ),
+                        const SizedBox(width: 0),
+                        Expanded(
+                          child: Transform.translate(
+                            offset: const Offset(-20, 0),
+                            child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
@@ -290,7 +293,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                     color: Color(0xFF20196E),
                                   ),
                                 ),
-                                SizedBox(height: 1),
+                                SizedBox(height: 0),
                                 Text(
                                   'Manage your personal details',
                                   style: TextStyle(
@@ -301,15 +304,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     _ProfileSummaryCard(
                       data: _data,
                       onChangePhoto: _showImageOptions,
                     ),
-                    const SizedBox(height: 23),
+                    const SizedBox(height: 12),
                     _DetailCard(
                       icon: Icons.person_rounded,
                       iconBackground: const Color(0xFFEAF4FF),
@@ -324,7 +327,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _DetailCard(
                       icon: Icons.calendar_month_rounded,
                       iconBackground: const Color(0xFFEAF2FF),
@@ -339,7 +342,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _DetailCard(
                       icon: Icons.transgender_rounded,
                       iconBackground: const Color(0xFFF4ECFF),
@@ -354,7 +357,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _DetailCard(
                       icon: Icons.opacity_rounded,
                       iconBackground: const Color(0xFFF7D8D8),
@@ -369,7 +372,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _DetailCard(
                       icon: Icons.call_rounded,
                       iconBackground: const Color(0xFFD4E6CB),
@@ -385,7 +388,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _DetailCard(
                       icon: Icons.email_rounded,
                       iconBackground: const Color(0xFFE8F3FF),
@@ -401,7 +404,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _DetailCard(
                       icon: Icons.location_on_rounded,
                       iconBackground: const Color(0xFFEAF4FF),
@@ -416,24 +419,24 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 15),
                     SizedBox(
                       width: double.infinity,
-                      height: 76,
+                      height: 54,
                       child: FilledButton.icon(
                         onPressed: _saveChanges,
                         style: FilledButton.styleFrom(
                           backgroundColor: const Color(0xFF0B73E8),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: 0,
                         ),
-                        icon: const Icon(Icons.save_outlined, size: 28),
+                        icon: const Icon(Icons.save_outlined, size: 22),
                         label: const Text(
                           'Save Changes',
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -476,7 +479,7 @@ class _ProfileSummaryCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         gradient: const LinearGradient(
@@ -497,15 +500,15 @@ class _ProfileSummaryCard extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              CircleAvatar(radius: 32, backgroundImage: imageProvider),
+              CircleAvatar(radius: 28, backgroundImage: imageProvider),
               Positioned(
                 bottom: -2,
                 right: -2,
                 child: GestureDetector(
                   onTap: onChangePhoto,
                   child: Container(
-                    width: 24,
-                    height: 24,
+                    width: 22,
+                    height: 22,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -516,7 +519,7 @@ class _ProfileSummaryCard extends StatelessWidget {
                     ),
                     child: const Icon(
                       Icons.photo_camera_outlined,
-                      size: 14,
+                      size: 12,
                       color: Color(0xFF2A66D9),
                     ),
                   ),
@@ -524,7 +527,7 @@ class _ProfileSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -534,15 +537,15 @@ class _ProfileSummaryCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF33373B),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 const Text(
                   'HealthCare Companion users',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF434A51)),
+                  style: TextStyle(fontSize: 12, color: Color(0xFF434A51)),
                 ),
               ],
             ),
@@ -574,7 +577,7 @@ class _DetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.96),
         borderRadius: BorderRadius.circular(20),
@@ -589,15 +592,15 @@ class _DetailCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
               color: iconBackground,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 24),
+            child: Icon(icon, color: iconColor, size: 21),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -605,18 +608,18 @@ class _DetailCard extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF271770),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   value,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF21176D),
                   ),
@@ -626,10 +629,12 @@ class _DetailCard extends StatelessWidget {
           ),
           IconButton(
             onPressed: onEdit,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints.tightFor(width: 28, height: 28),
             icon: const Icon(
               Icons.edit_outlined,
               color: Color(0xFF0B73E8),
-              size: 26,
+              size: 24,
             ),
           ),
         ],
