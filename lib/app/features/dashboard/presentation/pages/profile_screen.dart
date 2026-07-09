@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/dashboard/presentation/pages/language_setting_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/personal_information_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
 
@@ -73,6 +74,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ..showSnackBar(
         const SnackBar(
           content: Text('Personal information updated successfully.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _openLanguageSetting() async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (context) => LanguageSettingScreen(user: widget.user),
+      ),
+    );
+
+    if (updated != true || !mounted) return;
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Language updated successfully.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -159,10 +179,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Health Record',
                     ),
                     const SizedBox(height: 14),
-                    const _ProfileMenuCard(
+                    _ProfileMenuCard(
                       icon: Icons.language_rounded,
-                      iconBackground: Color(0xFFFF8A00),
+                      iconBackground: const Color(0xFFFF8A00),
                       title: 'Language Setting',
+                      onTap: _openLanguageSetting,
                     ),
                     const SizedBox(height: 14),
                     const _ProfileToggleCard(),
