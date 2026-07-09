@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swasthasathi/app/core/state/app_theme_controller.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/language_setting_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/personal_information_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:swasthasathi/app/theme/app.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.user});
@@ -130,8 +133,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appThemeColors;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: _loading
             ? const Center(child: CircularProgressIndicator())
@@ -147,26 +152,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Color(0xFF24229A),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     _ProfilePhotoView(
                       profileImagePath: _personalInfo.profileImagePath,
                       profileImageUrl: _personalInfo.profileImageUrl,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                     Text(
                       _personalInfo.fullName,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF2E3338),
+                        color: colors.primaryText,
                       ),
                     ),
                     const SizedBox(height: 1),
-                    const Text(
+                    Text(
                       'HealthCare Companion users',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Color(0xFF434A51)),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: colors.secondaryText,
+                      ),
                     ),
                     const SizedBox(height: 9),
                     _ProfileStatsCard(
@@ -196,7 +204,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: _openLanguageSetting,
                     ),
                     const SizedBox(height: 14),
-                    const _ProfileToggleCard(),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final isDarkMode =
+                            ref.watch(appThemeProvider) == ThemeMode.dark;
+                        return _ProfileToggleCard(
+                          isDarkMode: isDarkMode,
+                          onChanged: (value) => ref
+                              .read(appThemeProvider.notifier)
+                              .setDarkMode(value),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 16),
                     const _LogoutButton(),
                   ],
@@ -262,13 +281,17 @@ class _ProfileStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFB3DCF0), Color(0xFFD7DFE4)],
+        gradient: LinearGradient(
+          colors: isDark
+              ? const [Color(0xFF213449), Color(0xFF172534)]
+              : const [Color(0xFFB3DCF0), Color(0xFFD7DFE4)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -352,6 +375,8 @@ class _ProfileInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appThemeColors;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -373,19 +398,19 @@ class _ProfileInfoItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF4A5056),
+                    color: colors.secondaryText,
                   ),
                 ),
                 const SizedBox(height: 0.5),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black,
+                    color: colors.primaryText,
                   ),
                 ),
               ],
@@ -412,6 +437,8 @@ class _ProfileMenuCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appThemeColors;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -421,7 +448,7 @@ class _ProfileMenuCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.95),
+            color: colors.elevatedSurface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(18),
             boxShadow: const [
               BoxShadow(
@@ -446,16 +473,16 @@ class _ProfileMenuCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black,
+                    color: colors.primaryText,
                   ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
-                color: Color(0xFF7C7F86),
+                color: colors.secondaryText,
                 size: 34,
               ),
             ],
@@ -467,15 +494,20 @@ class _ProfileMenuCard extends StatelessWidget {
 }
 
 class _ProfileToggleCard extends StatelessWidget {
-  const _ProfileToggleCard();
+  const _ProfileToggleCard({required this.isDarkMode, required this.onChanged});
+
+  final bool isDarkMode;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appThemeColors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: colors.elevatedSurface.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
@@ -494,33 +526,19 @@ class _ProfileToggleCard extends StatelessWidget {
             child: const Text('🌙', style: TextStyle(fontSize: 19)),
           ),
           const SizedBox(width: 14),
-          const Expanded(
+          Expanded(
             child: Text(
               'Dark Mode',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: Colors.black,
+                color: colors.primaryText,
               ),
             ),
           ),
-          Container(
-            width: 68,
-            height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF6D4FB3),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            alignment: Alignment.centerRight,
-            child: Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-            ),
+          Switch(
+            value: isDarkMode,
+            onChanged: onChanged,
           ),
         ],
       ),
@@ -533,20 +551,22 @@ class _LogoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appThemeColors;
+
     return Container(
       width: double.infinity,
       height: 50,
       decoration: BoxDecoration(
-        color: const Color(0xFF2287EE),
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(25),
       ),
       alignment: Alignment.center,
-      child: const Text(
+      child: Text(
         'Logout',
         style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w500,
-          color: Colors.white,
+          color: colors.elevatedSurface,
         ),
       ),
     );

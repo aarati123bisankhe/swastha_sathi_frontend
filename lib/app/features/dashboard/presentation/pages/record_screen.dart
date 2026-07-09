@@ -31,7 +31,7 @@ class _RecordScreenState extends State<RecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: _loading
             ? const Center(child: CircularProgressIndicator())
@@ -696,10 +696,10 @@ class _EditHealthRecordScreenState extends State<EditHealthRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xFFDCEAF5),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: const Color(0xFF24229A),
         title: const Text(
           'Edit Health Record',

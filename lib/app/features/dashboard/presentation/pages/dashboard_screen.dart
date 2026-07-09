@@ -14,7 +14,7 @@
 //         : 'O+';
 
 //     return Scaffold(
-//       backgroundColor: const Color(0xFFDCEAF5),
+//       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 //       body: SafeArea(
 //         child: SingleChildScrollView(
 //           padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
@@ -667,7 +667,7 @@ class DashboardScreen extends StatelessWidget {
         : 'O+';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),

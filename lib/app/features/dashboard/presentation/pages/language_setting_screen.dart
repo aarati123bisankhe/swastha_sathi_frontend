@@ -34,7 +34,7 @@ class _LanguageSettingScreenState extends ConsumerState<LanguageSettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),

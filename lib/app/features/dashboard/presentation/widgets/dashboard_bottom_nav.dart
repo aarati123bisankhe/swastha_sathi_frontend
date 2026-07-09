@@ -5,6 +5,7 @@ import 'package:swasthasathi/app/features/dashboard/presentation/pages/profile_s
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
 import 'package:swasthasathi/app/features/emergency/presentation/pages/emergency_screen.dart';
 import 'package:swasthasathi/app/features/support/presentation/pages/support_screen.dart';
+import 'package:swasthasathi/app/theme/app.dart';
 
 enum DashboardNavTab { home, emergency, support, record, profile }
 
@@ -16,10 +17,12 @@ class DashboardBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appThemeColors;
+
     return Container(
       height: 79,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: colors.bottomNavBackground,
         borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       child: Transform.translate(
@@ -125,7 +128,9 @@ class _BottomNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? const Color(0xFF0B73E8) : const Color(0xFF183B66);
+    final colors = context.appThemeColors;
+    final color =
+        active ? const Color(0xFF0B73E8) : colors.bottomNavInactive;
 
     return GestureDetector(
       onTap: onTap,
@@ -140,7 +145,7 @@ class _BottomNavItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: active ? color : Colors.black,
+              color: color,
             ),
           ),
         ],

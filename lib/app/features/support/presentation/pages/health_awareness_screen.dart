@@ -70,7 +70,7 @@ class _HealthAwarenessScreenState extends State<HealthAwarenessScreen> {
               .toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: ValueListenableBuilder<Set<String>>(
           valueListenable: AwarenessSavedStore.savedTitles,
@@ -503,7 +503,7 @@ class SavedAwarenessVideosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: ValueListenableBuilder<Set<String>>(
           valueListenable: AwarenessSavedStore.savedTitles,

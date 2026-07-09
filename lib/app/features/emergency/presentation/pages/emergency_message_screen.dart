@@ -56,7 +56,7 @@ class _EmergencyMessageScreenState extends State<EmergencyMessageScreen> {
         : selectedContacts.map((contact) => contact.phoneNumber).join(', ');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFDCEAF5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),

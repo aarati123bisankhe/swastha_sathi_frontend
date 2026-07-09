@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final config = _dataSource.getConfig();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFD9EAF6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: AnimatedOpacity(
