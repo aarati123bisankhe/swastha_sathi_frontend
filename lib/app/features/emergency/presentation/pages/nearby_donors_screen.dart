@@ -140,14 +140,6 @@ class NearbyDonorsScreen extends StatelessWidget {
                 lastDonated: 'Last donated 3 month ago',
                 avatarAsset: 'assets/images/donor_avatar_6.png',
               ),
-              // const SizedBox(height: 16),
-              // const _DonorListTile(
-              //   name: 'Kayan Rau',
-              //   bloodGroup: 'O+',
-              //   location: 'Kathamndu, Nepal',
-              //   lastDonated: 'Last donated 1 month ago',
-              //   avatarAsset: 'assets/images/ambulance_avatar_4.png',
-              // ),
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
