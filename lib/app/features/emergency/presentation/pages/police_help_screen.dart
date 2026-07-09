@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/notification_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/widgets/dashboard_bottom_nav.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PoliceHelpScreen extends StatelessWidget {
   const PoliceHelpScreen({super.key, this.user});
@@ -46,7 +47,7 @@ class PoliceHelpScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 14),
                   child: _PoliceStationCard(
                     station: station,
-                    onCall: () => _showCall(context, station),
+                    onCall: () => _confirmAndCall(context, station),
                   ),
                 ),
               ),
@@ -61,15 +62,64 @@ class PoliceHelpScreen extends StatelessWidget {
     );
   }
 
-  void _showCall(BuildContext context, _PoliceStation station) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('Calling ${station.name} at ${station.phone}'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+  Future<void> _confirmAndCall(
+    BuildContext context,
+    _PoliceStation station,
+  ) async {
+    final shouldCall = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Call Police?',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1B2330),
+            ),
+          ),
+          content: const Text(
+            'Are you sure you want to call this police station now?',
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.4,
+              color: Color(0xFF4E5968),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Call Now'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldCall != true) return;
+
+    final launched = await launchUrl(
+      Uri(scheme: 'tel', path: station.phone),
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Unable to open the phone dialer right now.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
   }
 }
 

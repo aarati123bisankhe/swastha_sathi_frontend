@@ -103,6 +103,18 @@ class AuthViewModel extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> logout() async {
+    await _storage.delete(key: _tokenKey);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
+
+    state = state.copyWith(
+      currentUser: null,
+      clearErrorMessage: true,
+      clearSuccessMessage: true,
+    );
+  }
+
   void clearMessages() {
     state = state.copyWith(clearErrorMessage: true, clearSuccessMessage: true);
   }

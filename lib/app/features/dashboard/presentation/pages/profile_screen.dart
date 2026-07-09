@@ -6,6 +6,8 @@ import 'package:swasthasathi/app/core/localization/app_text.dart';
 import 'package:swasthasathi/app/core/services/profile_sync_service.dart';
 import 'package:swasthasathi/app/core/state/app_theme_controller.dart';
 import 'package:swasthasathi/app/features/auth/domain/entities/auth_user.dart';
+import 'package:swasthasathi/app/features/auth/presentation/pages/login_screen.dart';
+import 'package:swasthasathi/app/features/auth/presentation/viewmodels/auth_view_model.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/language_setting_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/personal_information_screen.dart';
 import 'package:swasthasathi/app/features/dashboard/presentation/pages/record_screen.dart';
@@ -578,27 +580,85 @@ class _ProfileToggleCard extends StatelessWidget {
   }
 }
 
-class _LogoutButton extends StatelessWidget {
+class _LogoutButton extends ConsumerWidget {
   const _LogoutButton();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.appThemeColors;
 
-    return Container(
-      width: double.infinity,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        context.tx('Logout', 'लगआउट'),
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w500,
-          color: colors.elevatedSurface,
+    return GestureDetector(
+      onTap: () async {
+        final shouldLogout = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Text(
+                context.tx('Logout?', 'लगआउट गर्ने?'),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1B2330),
+                ),
+              ),
+              content: Text(
+                context.tx(
+                  'Are you sure you want to logout from your account?',
+                  'के तपाईं आफ्नो खाताबाट लगआउट गर्न चाहनुहुन्छ?',
+                ),
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: Color(0xFF4E5968),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: Text(context.tx('Cancel', 'रद्द गर्नुहोस्')),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: Text(context.tx('Logout', 'लगआउट')),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (shouldLogout != true || !context.mounted) {
+          return;
+        }
+
+        await ref.read(authViewModelProvider.notifier).logout();
+
+        if (!context.mounted) {
+          return;
+        }
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (context) => const LoginScreen()),
+          (route) => false,
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: 50,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0B73E8),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          context.tx('Logout', 'लगआउट'),
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            color: colors.elevatedSurface,
+          ),
         ),
       ),
     );
